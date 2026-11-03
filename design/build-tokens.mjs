@@ -92,5 +92,37 @@ for (const [k, val] of Object.entries(semantic("dark"))) lines.push(`  --${k}: $
 lines.push("}");
 lines.push("");
 
+// Dark-mode safety net for legacy markup that has no dark: variant.
+// Text in a dark shade becomes the family's light step; light tinted grounds become the
+// family's deepest step; white surfaces become the surface token. Specificity (0,2,0) beats a
+// bare utility, and components' own dark: classes still win because Tailwind emits them later.
+const families = {
+  steel: ["steel", "blue", "indigo", "sky", "cyan", "violet", "purple", "fuchsia"],
+  ember: ["ember", "orange", "primary"],
+  moss: ["moss", "green", "emerald", "teal", "lime"],
+  amber: ["amber", "yellow"],
+  brick: ["brick", "red", "rose", "pink", "error"],
+  ink: ["ink", "gray", "slate", "zinc", "neutral", "stone"],
+};
+const esc = (s) => s.replace(/\//g, "\\/");
+lines.push("/* Dark-mode remap for legacy colour classes (generated). */");
+for (const [scaleName, aliases] of Object.entries(families)) {
+  const textSel = [], bgSel = [], borderSel = [];
+  for (const a of aliases) {
+    for (const step of ["500", "600", "700", "800", "900", "950"]) textSel.push(`.dark .text-${a}-${step}`);
+    for (const step of ["50", "100", "200"]) {
+      bgSel.push(`.dark .bg-${a}-${step}`);
+      borderSel.push(`.dark .border-${a}-${step}`, `.dark .border-${a}-300`);
+    }
+  }
+  const light = scaleName === "ink" ? S.ink["200"] : S[scaleName]["300"];
+  lines.push(`${textSel.join(",\n")} {\n  color: ${light};\n}`);
+  lines.push(`${bgSel.join(",\n")} {\n  background-color: ${scaleName === "ink" ? "#1E252D" : esc(S[scaleName]["950"])};\n}`);
+  lines.push(`${[...new Set(borderSel)].join(",\n")} {\n  border-color: #3B4652;\n}`);
+}
+lines.push(`.dark .bg-white {\n  background-color: #171D24;\n}`);
+lines.push(`.dark .text-black {\n  color: ${S.ink["100"]};\n}`);
+lines.push("");
+
 writeFileSync(join(root, "src/styles/tokens.css"), lines.join("\n"));
 console.log("wrote src/styles/tokens.css");

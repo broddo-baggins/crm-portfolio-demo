@@ -131,7 +131,7 @@ const OptimizedMessages = () => {
     return (
       <div className="flex items-center justify-center h-64">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
-        <span className="ml-2 text-muted-foreground">INIT Loading optimized conversations...</span>
+        <span className="ml-2 text-muted-foreground">Loading optimized conversations...</span>
       </div>
     );
   }
@@ -159,7 +159,7 @@ const OptimizedMessages = () => {
       {/* Header with stats */}
       <div className="mb-4">
         <div className="flex justify-between items-center mb-4">
-          <h1 className="text-2xl font-bold">INIT Optimized Messages</h1>
+          <h1 className="text-2xl font-bold">Optimized Messages</h1>
           <div className="text-sm text-gray-500">
             Project: {currentProject?.name || 'All Projects'}
           </div>
@@ -328,7 +328,7 @@ const OptimizedMessages = () => {
                 {messagesLoading ? (
                   <div className="flex items-center justify-center py-8">
                     <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-primary"></div>
-                    <span className="ml-2 text-gray-500">INIT Loading optimized messages...</span>
+                    <span className="ml-2 text-gray-500">Loading optimized messages...</span>
                   </div>
                 ) : messagesError ? (
                   <div className="text-center text-red-500 py-8">

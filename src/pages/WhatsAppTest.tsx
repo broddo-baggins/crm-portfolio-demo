@@ -158,7 +158,7 @@ const WhatsAppTestPage: React.FC = () => {
     <div className="p-6 space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold">MOBILE WhatsApp® API Test</h1>
+          <h1 className="text-3xl font-bold">WhatsApp® API Test</h1>
           <p className="text-gray-600 mt-2">
             Test your live WhatsApp® Business API integration
           </p>
@@ -189,8 +189,8 @@ const WhatsAppTestPage: React.FC = () => {
                   <p className="font-medium">Access Token</p>
                   <p className="text-sm text-gray-600">
                     {env.WHATSAPP_ACCESS_TOKEN
-                      ? `SUCCESS Configured (${env.WHATSAPP_ACCESS_TOKEN.length} characters)`
-                      : "ERROR Missing"}
+                      ? `Configured (${env.WHATSAPP_ACCESS_TOKEN.length} characters)`
+                      : "Missing"}
                   </p>
                 </div>
               </div>
@@ -206,7 +206,7 @@ const WhatsAppTestPage: React.FC = () => {
                   <p className="text-sm text-gray-600">
                     {env.WHATSAPP_PHONE_NUMBER_ID
                       ? `SUCCESS ${env.WHATSAPP_PHONE_NUMBER_ID}`
-                      : "WARNING Not configured"}
+                      : "Not configured"}
                   </p>
                 </div>
               </div>
@@ -221,8 +221,8 @@ const WhatsAppTestPage: React.FC = () => {
                   <p className="font-medium">Webhook Security</p>
                   <p className="text-sm text-gray-600">
                     {env.WHATSAPP_WEBHOOK_VERIFY_TOKEN
-                      ? "SUCCESS Webhook verification configured"
-                      : "WARNING Webhook security not set"}
+                      ? "Webhook verification configured"
+                      : "Webhook security not set"}
                   </p>
                 </div>
               </div>
@@ -240,7 +240,7 @@ const WhatsAppTestPage: React.FC = () => {
                 </Badge>
               </div>
 
-              <h4 className="font-medium mb-2">DATA Integration Status</h4>
+              <h4 className="font-medium mb-2">Integration Status</h4>
               <div className="space-y-2 text-sm">
                 <div className="flex justify-between">
                   <span>Business ID:</span>
@@ -257,7 +257,7 @@ const WhatsAppTestPage: React.FC = () => {
                 <div className="flex justify-between">
                   <span>Webhook URL:</span>
                   <span className="text-xs">
-                    {env.WHATSAPP_WEBHOOK_URL ? "SUCCESS Set" : "ERROR Missing"}
+                    {env.WHATSAPP_WEBHOOK_URL ? "Set" : "Missing"}
                   </span>
                 </div>
               </div>
@@ -327,7 +327,7 @@ const WhatsAppTestPage: React.FC = () => {
       {/* Test Results */}
       <Card>
         <CardHeader>
-          <CardTitle>DATA Test Results</CardTitle>
+          <CardTitle>Test Results</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="space-y-3 max-h-96 overflow-y-auto">

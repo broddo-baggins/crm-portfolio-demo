@@ -167,9 +167,9 @@ VITE_META_BUSINESS_ID=your_meta_business_id_here`;
                   </div>
                   <div className="text-sm">
                     {env.WHATSAPP_ACCESS_TOKEN && !env.WHATSAPP_ACCESS_TOKEN.includes('your_') ? (
-                      <span className="text-green-600">SUCCESS Configured</span>
+                      <span className="text-green-600">Configured</span>
                     ) : (
-                      <span className="text-red-600">ERROR Missing</span>
+                      <span className="text-red-600">Missing</span>
                     )}
                   </div>
                 </div>
@@ -181,9 +181,9 @@ VITE_META_BUSINESS_ID=your_meta_business_id_here`;
                   </div>
                   <div className="text-sm">
                     {env.WHATSAPP_PHONE_NUMBER_ID && !env.WHATSAPP_PHONE_NUMBER_ID.includes('your_') ? (
-                      <span className="text-green-600">SUCCESS Configured</span>
+                      <span className="text-green-600">Configured</span>
                     ) : (
-                      <span className="text-red-600">ERROR Missing</span>
+                      <span className="text-red-600">Missing</span>
                     )}
                   </div>
                 </div>
@@ -195,9 +195,9 @@ VITE_META_BUSINESS_ID=your_meta_business_id_here`;
                   </div>
                   <div className="text-sm">
                     {env.WHATSAPP_BUSINESS_ID && !env.WHATSAPP_BUSINESS_ID.includes('your_') ? (
-                      <span className="text-green-600">SUCCESS Configured</span>
+                      <span className="text-green-600">Configured</span>
                     ) : (
-                      <span className="text-orange-600">WARNING Missing</span>
+                      <span className="text-orange-600">Missing</span>
                     )}
                   </div>
                 </div>
@@ -209,9 +209,9 @@ VITE_META_BUSINESS_ID=your_meta_business_id_here`;
                   </div>
                   <div className="text-sm">
                     {env.isWhatsAppFullyConfigured ? (
-                      <span className="text-green-600">SUCCESS Ready</span>
+                      <span className="text-green-600">Ready</span>
                     ) : (
-                      <span className="text-red-600">ERROR Needs Setup</span>
+                      <span className="text-red-600">Needs Setup</span>
                     )}
                   </div>
                 </div>
@@ -341,7 +341,7 @@ VITE_META_BUSINESS_ID=your_meta_business_id_here`;
             <CardContent className="space-y-4">
               <div className="space-y-4">
                 <div className="border rounded-lg p-4">
-                  <h4 className="font-medium text-red-600 mb-2">ERROR Send Button Not Working</h4>
+                  <h4 className="font-medium text-red-600 mb-2">Send Button Not Working</h4>
                   <p className="text-sm mb-2">The green send button fails when clicked.</p>
                   <div className="text-sm">
                     <strong>Common Causes:</strong>
@@ -383,7 +383,7 @@ VITE_META_BUSINESS_ID=your_meta_business_id_here`;
                 </div>
 
                 <div className="border rounded-lg p-4">
-                  <h4 className="font-medium text-green-600 mb-2">SUCCESS Best Practices</h4>
+                  <h4 className="font-medium text-green-600 mb-2">Best Practices</h4>
                   <div className="text-sm">
                     <ul className="list-disc list-inside ml-4">
                       <li>Always test with approved phone numbers first</li>

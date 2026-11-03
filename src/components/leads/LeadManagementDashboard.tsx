@@ -663,7 +663,7 @@ export const LeadManagementDashboard: React.FC = () => {
   useEffect(() => {
     const handleProjectChange = (event: CustomEvent) => {
       console.log(
-        "REFRESH LeadManagementDashboard: Project changed via event",
+        "LeadManagementDashboard: Project changed via event",
         event.detail,
       );
       loadingRef.current = false; // Reset loading state
@@ -798,7 +798,7 @@ export const LeadManagementDashboard: React.FC = () => {
 
       const loadTime = Date.now() - loadStart;
       console.log(
-        `DATA Loaded ${transformedLeads.length} leads for project: ${currentProject?.name || "All"} (${loadTime}ms)`,
+        `Loaded ${transformedLeads.length} leads for project: ${currentProject?.name || "All"} (${loadTime}ms)`,
       );
       
       // Log performance for zero-data scenarios

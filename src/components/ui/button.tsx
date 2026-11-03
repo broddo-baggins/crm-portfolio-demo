@@ -6,7 +6,7 @@ import { designTokens } from "@/config/design-system"
 
 const buttonVariants = cva(
   // Thermal: radius 6, ui type (14/500), 120 ms colour change, 1 px press, ember focus ring.
-  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium leading-5 ring-offset-background transition-[color,background-color,border-color,transform] duration-[120ms] ease-out active:translate-y-px focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 [&_svg]:flex-shrink-0",
+  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md [&>svg]:!m-0 text-sm font-medium leading-5 ring-offset-background transition-[color,background-color,border-color,transform] duration-[120ms] ease-out active:translate-y-px focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 [&_svg]:flex-shrink-0",
   {
     variants: {
       variant: {
@@ -144,7 +144,8 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         
         {!iconOnly && (
           <span className={cn(
-            "flex items-center justify-center gap-2",
+            // One 8px gap between icon and label; legacy mr-2/ml-2 on icons is neutralised
+            "flex items-center justify-center gap-2 [&>svg]:!m-0",
             loading && "opacity-70",
             // Ensure text doesn't break on mobile
             "whitespace-nowrap overflow-hidden text-ellipsis"

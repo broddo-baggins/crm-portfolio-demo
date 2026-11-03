@@ -535,6 +535,41 @@
 .legal-prose a:hover { text-decoration-color: currentColor; }
 .legal-prose strong { color: var(--text); font-weight: 600; }
 
+/* Every app page has one title in the page-title role (DESIGN.md, "Type"),
+   whatever size the page's own markup asks for. */
+#main-content h1 {
+  font-size: 24px;
+  line-height: 32px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+@media (max-width: 640px) {
+  #main-content h1 { font-size: 22px; line-height: 28px; }
+}
+
+/* Toasts sit on the float elevation in both themes */
+[data-sonner-toast] {
+  background: var(--surface) !important;
+  color: var(--text) !important;
+  border: 1px solid var(--line) !important;
+  border-radius: var(--radius-surface) !important;
+  box-shadow: var(--shadow-float) !important;
+  font-family: var(--font-sans) !important;
+}
+[data-sonner-toast] [data-description] {
+  color: var(--text-secondary) !important;
+}
+
+/* Toasts never widen the page on a phone */
+@media (max-width: 600px) {
+  [data-sonner-toaster] {
+    left: 16px !important;
+    right: 16px !important;
+    width: auto !important;
+    max-width: calc(100vw - 32px);
+  }
+}
+
 @keyframes skeleton-sweep {
   from { background-position: 100% 0; }
   to { background-position: -100% 0; }
@@ -1010,11 +1045,8 @@
     padding-right: 0 !important;
   }
 
-  /* Mobile-optimized spacing */
-  .p-4 {
-    padding: 1rem !important;
-  }
-
+  /* Mobile-optimized spacing (the old `.p-4 { padding: 1rem !important }` here
+     overrode every px-0/pt-0 refinement on phones and was removed) */
   .gap-6 {
     gap: 1rem !important;
   }

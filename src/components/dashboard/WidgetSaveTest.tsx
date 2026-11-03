@@ -19,11 +19,11 @@ const WidgetSaveTest: React.FC = () => {
       // Find the first widget to test with
       const testWidget = widgets[0];
       if (!testWidget) {
-        addTestResult('ERROR No widgets found to test with');
+        addTestResult('No widgets found to test with');
         return;
       }
 
-      addTestResult(`SUCCESS Found test widget: ${testWidget.id}`);
+      addTestResult(`Found test widget: ${testWidget.id}`);
 
       // Create updated widget with new settings
       const updatedWidget = {
@@ -36,41 +36,41 @@ const WidgetSaveTest: React.FC = () => {
         }
       };
 
-      addTestResult('NOTE Created updated widget config');
-      addTestResult(`NOTE New refresh interval: ${updatedWidget.settings.refreshInterval}`);
-      addTestResult(`NOTE New title: ${updatedWidget.settings.customTitle}`);
+      addTestResult('Created updated widget config');
+      addTestResult(`New refresh interval: ${updatedWidget.settings.refreshInterval}`);
+      addTestResult(`New title: ${updatedWidget.settings.customTitle}`);
 
       // Update the widget
-      addTestResult(`REFRESH About to call updateWidget with: ${JSON.stringify(updatedWidget.settings, null, 2)}`);
+      addTestResult(`About to call updateWidget with: ${JSON.stringify(updatedWidget.settings, null, 2)}`);
       updateWidget(updatedWidget);
-      addTestResult('REFRESH Called updateWidget function');
+      addTestResult('Called updateWidget function');
 
       // Wait a moment and check if the widget was updated
       setTimeout(() => {
         const updatedWidgetInState = widgets.find(w => w.id === testWidget.id);
         if (updatedWidgetInState) {
-          addTestResult(`SEARCH Current widget in state: ${JSON.stringify(updatedWidgetInState.settings, null, 2)}`);
+          addTestResult(`Current widget in state: ${JSON.stringify(updatedWidgetInState.settings, null, 2)}`);
           
           const settingsMatch = updatedWidgetInState.settings.refreshInterval === updatedWidget.settings.refreshInterval;
           const titleMatch = updatedWidgetInState.settings.customTitle === updatedWidget.settings.customTitle;
           const widgetTitleMatch = updatedWidgetInState.title === updatedWidget.settings.customTitle;
           
-          addTestResult(`SEARCH Settings match: ${settingsMatch} (${updatedWidgetInState.settings.refreshInterval} vs ${updatedWidget.settings.refreshInterval})`);
-          addTestResult(`SEARCH Custom title match: ${titleMatch} (${updatedWidgetInState.settings.customTitle} vs ${updatedWidget.settings.customTitle})`);
-          addTestResult(`SEARCH Widget title match: ${widgetTitleMatch} (${updatedWidgetInState.title} vs ${updatedWidget.settings.customTitle})`);
+          addTestResult(`Settings match: ${settingsMatch} (${updatedWidgetInState.settings.refreshInterval} vs ${updatedWidget.settings.refreshInterval})`);
+          addTestResult(`Custom title match: ${titleMatch} (${updatedWidgetInState.settings.customTitle} vs ${updatedWidget.settings.customTitle})`);
+          addTestResult(`Widget title match: ${widgetTitleMatch} (${updatedWidgetInState.title} vs ${updatedWidget.settings.customTitle})`);
           
           if (settingsMatch && (titleMatch || widgetTitleMatch)) {
-            addTestResult('SUCCESS Widget settings updated successfully in state');
+            addTestResult('Widget settings updated successfully in state');
             toast.success('Widget save test passed!');
           } else {
-            addTestResult('ERROR Widget settings not properly updated in state');
+            addTestResult('Widget settings not properly updated in state');
             addTestResult(`Expected interval: ${updatedWidget.settings.refreshInterval}, Got: ${updatedWidgetInState.settings.refreshInterval}`);
             addTestResult(`Expected custom title: ${updatedWidget.settings.customTitle}, Got: ${updatedWidgetInState.settings.customTitle}`);
             addTestResult(`Expected widget title: ${updatedWidget.settings.customTitle}, Got: ${updatedWidgetInState.title}`);
             toast.error('Widget save test failed!');
           }
         } else {
-          addTestResult('ERROR Widget not found in state after update');
+          addTestResult('Widget not found in state after update');
           toast.error('Widget save test failed!');
         }
 
@@ -81,22 +81,22 @@ const WidgetSaveTest: React.FC = () => {
             const parsedLayout = JSON.parse(savedLayout);
             const savedWidget = parsedLayout.widgets?.find((w: { id: string }) => w.id === testWidget.id);
             if (savedWidget && savedWidget.settings.refreshInterval === updatedWidget.settings.refreshInterval) {
-              addTestResult('SUCCESS Widget settings saved to localStorage');
+              addTestResult('Widget settings saved to localStorage');
             } else {
-              addTestResult('ERROR Widget settings not properly saved to localStorage');
+              addTestResult('Widget settings not properly saved to localStorage');
             }
           } catch (error) {
             console.error('Error parsing saved layout:', error);
-            addTestResult('ERROR Error parsing saved layout from localStorage');
+            addTestResult('Error parsing saved layout from localStorage');
           }
         } else {
-          addTestResult('ERROR No saved layout found in localStorage');
+          addTestResult('No saved layout found in localStorage');
         }
       }, 2000); // Increased timeout to allow for state updates
 
     } catch (error) {
       console.error('Error during widget save test:', error);
-      addTestResult(`ERROR Error during test: ${error}`);
+      addTestResult(`Error during test: ${error}`);
       toast.error('Widget save test failed with error!');
     }
   };

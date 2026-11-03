@@ -91,7 +91,7 @@ const WhatsAppDrawer = () => {
           }));
 
         console.log(
-          "MOBILE Debug: Conversations processed:",
+          "Debug: Conversations processed:",
           processedConversations.length,
         );
         setMessages(processedConversations);

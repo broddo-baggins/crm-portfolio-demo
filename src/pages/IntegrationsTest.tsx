@@ -124,12 +124,12 @@ export default function IntegrationsTest() {
       const decrypted = encryptionUtils.decryptCredentials(encrypted);
 
       if (decrypted.clientId === testData) {
-        toast.success("SUCCESS Encryption test passed!");
+        toast.success("Encryption test passed!");
       } else {
-        toast.error("ERROR Encryption test failed!");
+        toast.error("Encryption test failed!");
       }
     } catch (error) {
-      toast.error("ERROR Encryption test error!");
+      toast.error("Encryption test error!");
     }
   };
 
@@ -269,9 +269,9 @@ export default function IntegrationsTest() {
                   <div className="space-y-2 text-sm text-muted-foreground">
                     <p>Type: {type}</p>
                     <p>
-                      Configured: {status?.isConfigured ? "SUCCESS Yes" : "ERROR No"}
+                      Configured: {status?.isConfigured ? "Yes" : "No"}
                     </p>
-                    <p>Active: {status?.isActive ? "SUCCESS Yes" : "ERROR No"}</p>
+                    <p>Active: {status?.isActive ? "Yes" : "No"}</p>
                     {integration && (
                       <p>
                         Created:{" "}

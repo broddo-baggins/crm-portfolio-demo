@@ -332,18 +332,18 @@ const QueueManagement: React.FC = () => {
   return (
     <div className={cn('space-y-6', isRTL && 'rtl')} dir={isRTL ? 'rtl' : 'ltr'} data-testid="queue-management-section">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight" data-testid="queue-management-title">
+          <h1 className="text-2xl font-semibold leading-8 tracking-[-0.02em]" data-testid="queue-management-title">
             {t('queueManagement.title', 'Queue Management')}
           </h1>
           <h2 className="sr-only">Queue Management</h2>
-          <p className="text-muted-foreground">
+          <p className="mt-1 text-sm text-muted-foreground">
             {t('queueManagement.description', 'Manage lead automation queue and processing')}
           </p>
         </div>
-        
-        <div className="flex items-center space-x-2">
+
+        <div className="flex flex-wrap items-center gap-2">
           <Badge variant={queueRunning ? 'default' : 'secondary'}>
             {queueRunning ? 'Running' : 'Paused'}
           </Badge>

@@ -1101,7 +1101,7 @@ const Messages = () => {
       data-testid="messages-page"
     >
       {/* Header Section */}
-      <div className={cn("flex items-center justify-between", flexRowReverse())}>
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div className={textStart()}>
           <h1 className="text-2xl font-semibold leading-8 tracking-[-0.02em]">
             {t("pages.messages.messagesAndConversations", "Messages & Conversations")}
@@ -1114,7 +1114,7 @@ const Messages = () => {
           </p>
         </div>
 
-        <div className={cn("flex items-center gap-3", flexRowReverse())}>
+        <div className="flex flex-wrap items-center gap-2">
           <Badge variant="outline">
             {filteredConversations.length}{" "}
             {t("pages.messages.conversationsCount", "conversations")}
@@ -1151,7 +1151,7 @@ const Messages = () => {
       {/* Quick Stats */}
       <div className="grid grid-cols-2 gap-3 lg:grid-cols-4 lg:gap-4">
         <Card data-testid="message-stats-total">
-          <CardContent className="p-6">
+          <CardContent className="p-4 md:p-5">
             <div className={cn("flex items-center", flexRowReverse())}>
               <div className={cn("flex-1", textStart())}>
                 <p className="text-sm font-medium text-muted-foreground">
@@ -1161,13 +1161,13 @@ const Messages = () => {
                   {filteredConversations.length}
                 </p>
               </div>
-              <MessageSquare className="h-8 w-8 text-blue-500" />
+              <MessageSquare className="hidden h-5 w-5 text-muted-foreground sm:block" aria-hidden="true" />
             </div>
           </CardContent>
         </Card>
 
         <Card data-testid="message-stats-active">
-          <CardContent className="p-6">
+          <CardContent className="p-4 md:p-5">
             <div className={cn("flex items-center", flexRowReverse())}>
               <div className={cn("flex-1", textStart())}>
                 <p className="text-sm font-medium text-muted-foreground">
@@ -1177,13 +1177,13 @@ const Messages = () => {
                   {stats.activeConversations}
                 </p>
               </div>
-              <Activity className="h-8 w-8 text-green-500" />
+              <Activity className="hidden h-5 w-5 text-muted-foreground sm:block" aria-hidden="true" />
             </div>
           </CardContent>
         </Card>
 
         <Card data-testid="message-stats-messages">
-          <CardContent className="p-6">
+          <CardContent className="p-4 md:p-5">
             <div className={cn("flex items-center", flexRowReverse())}>
               <div className={cn("flex-1", textStart())}>
                 <p className="text-sm font-medium text-muted-foreground">
@@ -1193,13 +1193,13 @@ const Messages = () => {
                   {stats.totalMessages}
                 </p>
               </div>
-              <MessageSquare className="h-8 w-8 text-blue-500" />
+              <MessageSquare className="hidden h-5 w-5 text-muted-foreground sm:block" aria-hidden="true" />
             </div>
           </CardContent>
         </Card>
 
         <Card data-testid="message-stats-response">
-          <CardContent className="p-6">
+          <CardContent className="p-4 md:p-5">
             <div className={cn("flex items-center", flexRowReverse())}>
               <div className={cn("flex-1", textStart())}>
                 <p className="text-sm font-medium text-muted-foreground">
@@ -1207,7 +1207,7 @@ const Messages = () => {
                 </p>
                 <p className="text-[28px] font-semibold leading-8 tracking-[-0.02em] tabular-nums">2.3h</p>
               </div>
-              <Clock className="h-8 w-8 text-orange-500" />
+              <Clock className="hidden h-5 w-5 text-muted-foreground sm:block" aria-hidden="true" />
             </div>
           </CardContent>
         </Card>

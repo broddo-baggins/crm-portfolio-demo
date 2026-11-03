@@ -39,7 +39,7 @@ const parseMarkdown = (markdown: string): string => {
     
     // Lists (numbered and bullet)
     .replace(/^\d+\.\s+(.*$)/gm, '<li class="ml-6 mb-1">$1</li>')
-    .replace(/^[\*\-]\s+(.*$)/gm, '<li class="ml-6 mb-1">$1</li>')
+    .replace(/^[*-]\s+(.*$)/gm, '<li class="ml-6 mb-1">$1</li>')
     
     // Links
     .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" class="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 underline" target="_blank" rel="noopener noreferrer">$1</a>')

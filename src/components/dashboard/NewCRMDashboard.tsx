@@ -329,7 +329,7 @@ const NewCRMDashboard: React.FC = () => {
 
       {/* Debug Information */}
       <div className="mt-6 p-4 bg-gray-50 rounded-lg">
-        <h4 className="font-medium text-gray-700 mb-2">DATA Debug Information</h4>
+        <h4 className="font-medium text-gray-700 mb-2">Debug Information</h4>
         <div className="text-sm text-gray-600 space-y-1">
           <div>
             Total Leads:{" "}

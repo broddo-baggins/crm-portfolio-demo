@@ -343,14 +343,15 @@ export function QueueEditableDataTable({
     <div className="space-y-4">
       {/* Controls */}
       <div className="flex flex-wrap gap-4 items-center justify-between">
-        <div className="flex gap-2">
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+        <div className="flex w-full flex-wrap gap-2 sm:w-auto">
+          <div className="relative w-full sm:w-64">
+            <Search className="pointer-events-none absolute start-3 top-5 z-10 h-4 w-4 -translate-y-1/2 text-muted-foreground" aria-hidden="true" />
             <Input
               placeholder="Search leads..."
+              aria-label="Search leads"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10 w-64"
+              className="w-full ps-10"
             />
           </div>
           
