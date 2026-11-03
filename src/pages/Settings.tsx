@@ -5,7 +5,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useTranslation } from "react-i18next";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -94,6 +94,31 @@ interface SystemStatus {
   leadCount: number;
   errors: string[];
 }
+
+const AdminAccessButtons = () => {
+  const navigate = useNavigate();
+  const { isSystemAdmin, isCompanyAdmin } = useAdminAccess();
+
+  if (!isSystemAdmin && !isCompanyAdmin) {
+    return null;
+  }
+
+  return (
+    <div className="flex items-center gap-2">
+      {(isSystemAdmin || isCompanyAdmin) && (
+        <Button
+          variant="outline"
+          onClick={() => navigate("/admin")}
+          className="flex items-center gap-2"
+          title="Access Admin Center - choose your administrative area"
+        >
+          <ShieldCheck className="h-4 w-4" />
+          Admin Center
+        </Button>
+      )}
+    </div>
+  );
+};
 
 const Settings = () => {
   const { t } = useTranslation("pages");
@@ -633,46 +658,22 @@ const Settings = () => {
     }
   };
 
-  const AdminAccessButtons = () => {
-    const { isSystemAdmin, isCompanyAdmin } = useAdminAccess();
-
-    if (!isSystemAdmin && !isCompanyAdmin) {
-      return null;
-    }
-
-    return (
-      <div className="flex items-center gap-2">
-        {(isSystemAdmin || isCompanyAdmin) && (
-          <Button
-            variant="outline"
-            onClick={() => navigate("/admin")}
-            className="flex items-center gap-2"
-            title="Access Admin Center - choose your administrative area"
-          >
-            <ShieldCheck className="h-4 w-4" />
-            Admin Center
-          </Button>
-        )}
-      </div>
-    );
-  };
 
   return (
-    <div className="container mx-auto p-6 space-y-6" data-testid="settings-page">
+    <div className="space-y-6" data-testid="settings-page">
       {/* Header */}
-      <div className="flex justify-between items-center">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <h1 className="text-3xl font-bold flex items-center gap-2">
-            <SettingsIcon className="h-8 w-8" />
-        {t("settings.title", "Settings")}
-      </h1>
-          <p className="text-muted-foreground mt-1">
+          <h1 className="text-2xl font-semibold leading-8 tracking-[-0.02em]">
+            {t("settings.title", "Settings")}
+          </h1>
+          <p className="mt-1 text-sm text-muted-foreground">
             {t("settings.description", "Manage your project and system settings")}
           </p>
-            </div>
-        
+        </div>
+
         {/* Action Buttons */}
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
           <AdminAccessButtons />
           <Button onClick={handleOpenDashboard} variant="outline">
             {t("settings.openDashboard", "Open Dashboard")}

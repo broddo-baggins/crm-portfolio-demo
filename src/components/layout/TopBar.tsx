@@ -1,8 +1,19 @@
-import { Bell, Search, UserPlus, FolderOpen, Sparkles } from "lucide-react";
+import {
+  Activity,
+  Bell,
+  CalendarClock,
+  FolderOpen,
+  Menu,
+  MessageSquare,
+  Search,
+  Sparkles,
+  UserPlus,
+  UserRound,
+} from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/context/ClientAuthContext";
-import { Link } from "react-router-dom";
+import { Link } from "react-router";
 import { useSidebar } from "@/components/ui/sidebar";
 import { cn } from "@/lib/utils";
 import { BasicProjectSelector } from "@/components/common/BasicProjectSelector";
@@ -24,6 +35,8 @@ import { useAgentOnboarding } from "@/hooks/useAgentOnboarding";
 
 interface TopBarProps {
   pendingUserCount?: number;
+  /** Opens the navigation drawer (shown below 1024 px). */
+  onOpenNav?: () => void;
 }
 
 interface SearchResult {
@@ -159,7 +172,7 @@ const generateDynamicNotifications = async (t: any, isRTL: boolean) => {
   }
 };
 
-const TopBar = ({ pendingUserCount = 0 }: TopBarProps) => {
+const TopBar = ({ pendingUserCount = 0, onOpenNav }: TopBarProps) => {
   const { user } = useAuth();
   const { isRTL } = useLang();
   const { t } = useTranslation('common');
@@ -281,18 +294,24 @@ const TopBar = ({ pendingUserCount = 0 }: TopBarProps) => {
   };
   
   const getNotificationIcon = (type: string) => {
-    switch(type) {
-      case 'lead':
-        return <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-500">👤</div>;
-      case 'meeting':
-        return <div className="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center text-green-500">CALENDAR</div>;
-      case 'system':
-        return <div className="w-8 h-8 rounded-full bg-purple-100 flex items-center justify-center text-purple-500">NOTIFY</div>;
-      default:
-        return <div className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-gray-500">📌</div>;
-    }
+    const Icon =
+      type === 'lead' ? UserRound
+      : type === 'message' ? MessageSquare
+      : type === 'meeting' ? CalendarClock
+      : type === 'system' ? Activity
+      : Bell;
+    return (
+      <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-muted text-subtle">
+        <Icon className="h-4 w-4" aria-hidden="true" />
+      </span>
+    );
   };
-  
+
+  const getResultIcon = (type: string) => {
+    const Icon = type === 'project' ? FolderOpen : type === 'conversation' ? MessageSquare : UserRound;
+    return <Icon className="h-4 w-4 shrink-0 text-muted-foreground" aria-hidden="true" />;
+  };
+
   const handleSearchResultClick = (result: SearchResult) => {
     logger.info("Search result clicked", "TopBar", { result });
     setGlobalSearch("");
@@ -301,336 +320,177 @@ const TopBar = ({ pendingUserCount = 0 }: TopBarProps) => {
     // TODO: Navigate to the selected item
   };
 
+  const iconButton = "relative h-9 w-9 min-h-[36px] min-w-[36px] text-subtle hover:text-foreground";
+  const countBadge =
+    "absolute -top-0.5 -end-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-primary px-1 text-[10px] font-semibold leading-none text-primary-foreground tabular-nums";
+
   return (
-          <div className="sticky top-0 z-50 border-b px-3 sm:px-4 md:px-6 py-3 bg-background safe-area-top">
-      {/* Main header container following design specification */}
-      <header className="topbar flex items-center gap-2 sm:gap-4">
-        
-        {/* Removed non-functional sidebar toggle button */}
+    <div className="sticky top-0 z-40 border-b border-border bg-surface">
+      <header className="topbar flex h-[60px] items-center gap-2 px-3 sm:gap-3 sm:px-6 lg:px-8">
+        {/* Navigation drawer trigger, below 1024 px */}
+        {onOpenNav && (
+          <Button
+            variant="ghost"
+            size="icon"
+            className={cn(iconButton, "lg:hidden")}
+            onClick={onOpenNav}
+            aria-label={isRTL ? "פתח תפריט" : "Open navigation"}
+          >
+            <Menu className="h-5 w-5" />
+          </Button>
+        )}
 
-        {/* Project Selector - hidden on mobile to save space */}
-        <div className="shrink-0 hidden lg:block">
+        {/* Project Selector */}
+        <div className="min-w-0 shrink">
           <BasicProjectSelector />
         </div>
-        
-        {/* Mobile Project Selector - compact version for small screens */}
-        <div className="shrink-0 block lg:hidden h-8">
-          <BasicProjectSelector />
-        </div>
 
-        {/* Search Box - responsive sizing */}
-        <div className="flex-1 min-w-0 mx-2 sm:mx-4 relative">
-          <Search className={cn(
-            "absolute top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400 z-10",
-            isRTL ? "right-3" : "left-3"
-          )} />
+        {/* Search Box */}
+        <div className="relative hidden min-w-0 max-w-[420px] flex-1 md:block">
+          <Search
+            className="pointer-events-none absolute start-3 top-1/2 z-10 h-4 w-4 -translate-y-1/2 text-muted-foreground"
+            aria-hidden="true"
+          />
           <Input
             placeholder="Search everything..."
-            className={cn(
-              "w-full min-w-0",
-              isRTL ? "pr-10" : "pl-10"
-            )}
+            aria-label="Search leads, projects and conversations"
+            className="h-9 w-full min-w-0 ps-9"
             value={globalSearch}
             onChange={e => setGlobalSearch(e.target.value)}
             onFocus={() => globalSearch.length > 1 && setShowResults(true)}
             onBlur={() => setTimeout(() => setShowResults(false), 200)}
           />
           {showResults && (
-            <div className={cn(
-              "absolute top-12 bg-white border rounded shadow-lg z-50 max-h-72 overflow-auto",
-              "w-full min-w-[280px]",
-              isRTL ? "right-0" : "left-0"
-            )}>
+            <div className="absolute start-0 top-11 z-50 max-h-72 w-full min-w-[280px] overflow-auto rounded-lg border border-border bg-popover py-1 shadow-float">
               {searchResults.length === 0 ? (
-                <div className="p-4 text-gray-500 text-center">No results found</div>
+                <div className="px-4 py-3 text-sm text-muted-foreground">No results found</div>
               ) : (
                 searchResults.map((result, idx) => (
-                  <div 
-                    key={idx} 
-                    className={cn(
-                      "p-3 hover:bg-blue-50 cursor-pointer flex items-center gap-2",
-                      isRTL && "flex-row-reverse"
-                    )}
+                  <button
+                    type="button"
+                    key={idx}
+                    className="flex w-full items-center gap-2 px-3 py-2 text-start text-sm hover:bg-accent focus-visible:bg-accent focus-visible:outline-none"
                     onClick={() => handleSearchResultClick(result)}
                   >
-                    <span className="inline-block w-5 text-gray-400">
-                      {result.type === 'project' && '📁'}
-                      {result.type === 'lead' && '👤'}
-                      {result.type === 'conversation' && 'CHAT'}
-                    </span>
-                    <span className="font-medium">{result.name}</span>
-                    <span className={cn(
-                      "text-xs text-gray-400",
-                      isRTL ? "mr-auto" : "ml-auto"
-                    )}>{result.type}</span>
-                  </div>
+                    {getResultIcon(result.type)}
+                    <span className="truncate font-medium text-foreground">{result.name}</span>
+                    <span className="ms-auto text-xs capitalize text-muted-foreground">{result.type}</span>
+                  </button>
                 ))
               )}
             </div>
           )}
         </div>
 
-        {/* Controls - proper flex layout */}
-        <div className={cn(
-          "flex items-center gap-2 sm:gap-4 shrink-0",
-          isRTL && "flex-row-reverse"
-        )}>
-          {/* In RTL (Hebrew): Language selector first, then bell */}
-          {isRTL && (
-            <>
-              <DaisyUIThemeController />
-              <LanguageSelector variant="dropdown" size="sm" />
-              <Popover open={isNotificationsOpen} onOpenChange={setIsNotificationsOpen}>
-                <PopoverTrigger asChild>
-                  <Button variant="ghost" size="icon" className="relative h-8 w-8">
-                    <Bell className="h-5 w-5" />
-                    {unreadCount > 0 && (
-                      <span className="absolute -top-1 -right-1 h-4 w-4 rounded-full bg-red-500 text-white text-[10px] flex items-center justify-center">
-                        {unreadCount}
-                      </span>
-                    )}
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent 
-                  className="w-80 p-0" 
-                  align="end" 
-                  side="bottom" 
-                  sideOffset={2}
-                >
-                  <div className="bg-white rounded-md shadow-lg max-h-[400px] flex flex-col">
-                    <div className="flex items-center justify-between p-3 border-b">
-                      <h3 className="font-semibold">Notifications</h3>
-                      {unreadCount > 0 && (
-                        <Button 
-                          variant="ghost" 
-                          size="sm" 
-                          className="text-xs text-primary hover:text-primary/80"
-                          onClick={markAllAsRead}
-                        >
-                          Mark all as read
-                        </Button>
-                      )}
-                    </div>
-                    
-                    <div className="overflow-y-auto">
-                      {notifications.length === 0 ? (
-                        <div className="p-4 text-center text-gray-500">
-                          No notifications yet
-                        </div>
-                      ) : (
-                        <div className="divide-y divide-border">
-                          {notifications.map((notification) => (
-                            <div 
-                              key={notification.id} 
-                              className={cn(
-                                "p-3 hover:bg-muted/50 cursor-pointer flex gap-3 transition-colors duration-200",
-                                !notification.read && "bg-primary/5",
-                                isRTL && "flex-row-reverse"
-                              )}
-                              onClick={() => markAsRead(notification.id)}
-                            >
-                              {getNotificationIcon(notification.type)}
-                              <div className={cn(
-                                "flex-1 min-w-0",
-                                isRTL && "text-right"
-                              )}>
-                                <div className={cn(
-                                  "flex justify-between items-start gap-2",
-                                  isRTL && "flex-row-reverse"
-                                )}>
-                                  <h4 className={cn(
-                                    "text-sm font-medium text-foreground",
-                                    !notification.read && "font-semibold"
-                                  )}>
-                                    {notification.title}
-                                  </h4>
-                                  <span className={cn(
-                                    "text-xs text-muted-foreground whitespace-nowrap flex-shrink-0",
-                                    isRTL ? "mr-2" : "ml-2"
-                                  )}>
-                                    {notification.time}
-                                  </span>
-                                </div>
-                                <p className="text-xs text-muted-foreground mt-1 truncate">
-                                  {notification.message}
-                                </p>
-                              </div>
-                              {!notification.read && (
-                                <div className="w-2 h-2 rounded-full bg-primary self-center flex-shrink-0"></div>
-                              )}
-                            </div>
-                          ))}
-                        </div>
-                      )}
-                    </div>
-                    
-                    <div className="border-t p-2">
-                      <Button 
-                        variant="ghost" 
-                        size="sm" 
-                        className="w-full text-sm justify-center"
-                        asChild
-                      >
-                        <Link to="/notifications">
-                          View all notifications
-                        </Link>
-                      </Button>
-                    </div>
-                  </div>
-                </PopoverContent>
-              </Popover>
-              
-              {/* Admin User Plus Icon (if admin) */}
-              {isAdmin && (
-                <Button variant="ghost" size="icon" className="relative h-8 w-8" asChild>
-                  <Link to="/users">
-                    <UserPlus className="h-5 w-5" />
-                    {pendingUserCount > 0 && (
-                      <span className="absolute -top-1 -right-1 h-4 w-4 rounded-full bg-red-500 text-white text-[10px] flex items-center justify-center">
-                        {pendingUserCount}
-                      </span>
-                    )}
-                  </Link>
-                </Button>
-              )}
-            </>
-          )}
-          
-          {/* In LTR (English): Bell first, then language selector */}
-          {!isRTL && (
-            <>
-              <DaisyUIThemeController />
-              <LanguageSelector variant="dropdown" size="sm" />
-              <Popover open={isNotificationsOpen} onOpenChange={setIsNotificationsOpen}>
-                <PopoverTrigger asChild>
-                  <Button variant="ghost" size="icon" className="relative h-8 w-8">
-                    <Bell className="h-5 w-5" />
-                    {unreadCount > 0 && (
-                      <span className="absolute -top-1 -right-1 h-4 w-4 rounded-full bg-red-500 text-white text-[10px] flex items-center justify-center">
-                        {unreadCount}
-                      </span>
-                    )}
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent 
-                  className="w-80 p-0" 
-                  align="end" 
-                  side="bottom" 
-                  sideOffset={2}
-                >
-                  <div className="bg-white rounded-md shadow-lg max-h-[400px] flex flex-col">
-                    <div className="flex items-center justify-between p-3 border-b">
-                      <h3 className="font-semibold">Notifications</h3>
-                      {unreadCount > 0 && (
-                        <Button 
-                          variant="ghost" 
-                          size="sm" 
-                          className="text-xs text-primary hover:text-primary/80"
-                          onClick={markAllAsRead}
-                        >
-                          Mark all as read
-                        </Button>
-                      )}
-                    </div>
-                    
-                    <div className="overflow-y-auto">
-                      {notifications.length === 0 ? (
-                        <div className="p-4 text-center text-gray-500">
-                          No notifications yet
-                        </div>
-                      ) : (
-                        <div className="divide-y divide-border">
-                          {notifications.map((notification) => (
-                            <div 
-                              key={notification.id} 
-                              className={cn(
-                                "p-3 hover:bg-muted/50 cursor-pointer flex gap-3 transition-colors duration-200",
-                                !notification.read && "bg-primary/5"
-                              )}
-                              onClick={() => markAsRead(notification.id)}
-                            >
-                              {getNotificationIcon(notification.type)}
-                              <div className="flex-1 min-w-0">
-                                <div className="flex justify-between items-start gap-2">
-                                  <h4 className={cn(
-                                    "text-sm font-medium text-foreground",
-                                    !notification.read && "font-semibold"
-                                  )}>
-                                    {notification.title}
-                                  </h4>
-                                  <span className="text-xs text-muted-foreground whitespace-nowrap flex-shrink-0 ml-2">
-                                    {notification.time}
-                                  </span>
-                                </div>
-                                <p className="text-xs text-muted-foreground mt-1 truncate">
-                                  {notification.message}
-                                </p>
-                              </div>
-                              {!notification.read && (
-                                <div className="w-2 h-2 rounded-full bg-primary self-center flex-shrink-0"></div>
-                              )}
-                            </div>
-                          ))}
-                        </div>
-                      )}
-                    </div>
-                    
-                    <div className="border-t p-2">
-                      <Button 
-                        variant="ghost" 
-                        size="sm" 
-                        className="w-full text-sm justify-center"
-                        asChild
-                      >
-                        <Link to="/notifications">
-                          View all notifications
-                        </Link>
-                      </Button>
-                    </div>
-                  </div>
-                </PopoverContent>
-              </Popover>
-              
-              {/* Admin User Plus Icon (if admin) */}
-              {isAdmin && (
-                <Button variant="ghost" size="icon" className="relative h-8 w-8" asChild>
-                  <Link to="/users">
-                    <UserPlus className="h-5 w-5" />
-                    {pendingUserCount > 0 && (
-                      <span className="absolute -top-1 -right-1 h-4 w-4 rounded-full bg-red-500 text-white text-[10px] flex items-center justify-center">
-                        {pendingUserCount}
-                      </span>
-                    )}
-                  </Link>
-                </Button>
-              )}
+        <div className="flex-1 md:hidden" />
 
-              {/* AI Assistant Button with Onboarding */}
-              <div className="relative">
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className={cn(
-                    "relative h-8 w-8",
-                    showPulse && "animate-pulse-glow"
+        {/* Controls */}
+        <div className="flex shrink-0 items-center gap-1 sm:gap-2 md:ms-auto">
+          <div className="hidden items-center gap-1 sm:flex">
+            <DaisyUIThemeController />
+            <LanguageSelector variant="dropdown" size="sm" />
+          </div>
+
+          <Popover open={isNotificationsOpen} onOpenChange={setIsNotificationsOpen}>
+            <PopoverTrigger asChild>
+              <Button
+                variant="ghost"
+                size="icon"
+                className={iconButton}
+                aria-label={unreadCount > 0 ? `Notifications, ${unreadCount} unread` : "Notifications"}
+              >
+                <Bell className="h-[18px] w-[18px]" />
+                {unreadCount > 0 && <span className={countBadge}>{unreadCount}</span>}
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-80 p-0" align="end" side="bottom" sideOffset={6}>
+              <div className="flex max-h-[400px] flex-col">
+                <div className="flex items-center justify-between border-b border-border px-4 py-3">
+                  <h3 className="text-sm font-semibold text-foreground">Notifications</h3>
+                  {unreadCount > 0 && (
+                    <Button variant="link" size="sm" className="h-auto min-h-0 text-xs" onClick={markAllAsRead}>
+                      Mark all as read
+                    </Button>
                   )}
-                  onClick={() => {
-                    markAsInteracted();
-                    setAgentQuestion(undefined);
-                    setIsAgentOpen(true);
-                  }}
-                  title="AI Assistant - Ask about this CRM"
-                >
-                  <Sparkles className="h-5 w-5 text-purple-500" />
-                  
-                  {/* Animated ping ring for pulsing state */}
-                  {showPulse && (
-                    <span className="absolute inset-0 rounded-full bg-purple-500/20 animate-ping-slow" />
+                </div>
+
+                <div className="overflow-y-auto">
+                  {notifications.length === 0 ? (
+                    <div className="px-4 py-6 text-sm text-muted-foreground">
+                      No notifications yet
+                    </div>
+                  ) : (
+                    <ul className="divide-y divide-border">
+                      {notifications.map((notification) => (
+                        <li key={notification.id}>
+                          <button
+                            type="button"
+                            className={cn(
+                              "flex w-full gap-3 px-4 py-3 text-start transition-colors duration-[120ms] hover:bg-accent focus-visible:bg-accent focus-visible:outline-none",
+                              !notification.read && "bg-action-soft/60",
+                            )}
+                            onClick={() => markAsRead(notification.id)}
+                          >
+                            {getNotificationIcon(notification.type)}
+                            <span className="min-w-0 flex-1">
+                              <span className="flex items-start justify-between gap-2">
+                                <span className={cn("text-sm text-foreground", notification.read ? "font-medium" : "font-semibold")}>
+                                  {notification.title}
+                                </span>
+                                <span className="shrink-0 whitespace-nowrap text-xs text-muted-foreground">
+                                  {notification.time}
+                                </span>
+                              </span>
+                              <span className="mt-0.5 block truncate text-xs text-muted-foreground">
+                                {notification.message}
+                              </span>
+                            </span>
+                            {!notification.read && (
+                              <span className="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-primary" aria-label="Unread" />
+                            )}
+                          </button>
+                        </li>
+                      ))}
+                    </ul>
                   )}
-                </Button>
+                </div>
+
+                <div className="border-t border-border p-1.5">
+                  <Button variant="ghost" size="sm" className="w-full justify-center" asChild>
+                    <Link to="/notifications">View all notifications</Link>
+                  </Button>
+                </div>
               </div>
-            </>
+            </PopoverContent>
+          </Popover>
+
+          {/* Admin User Plus Icon (if admin) */}
+          {isAdmin && (
+            <Button variant="ghost" size="icon" className={iconButton} asChild>
+              <Link to="/users" aria-label={pendingUserCount > 0 ? `Users, ${pendingUserCount} pending` : "Users"}>
+                <UserPlus className="h-[18px] w-[18px]" />
+                {pendingUserCount > 0 && <span className={countBadge}>{pendingUserCount}</span>}
+              </Link>
+            </Button>
           )}
+
+          {/* AI Assistant Button with Onboarding */}
+          <Button
+            variant="outline"
+            size="sm"
+            className={cn("relative h-9 gap-1.5 px-2.5 sm:px-3", showPulse && "animate-pulse-glow")}
+            onClick={() => {
+              markAsInteracted();
+              setAgentQuestion(undefined);
+              setIsAgentOpen(true);
+            }}
+            title="AI Assistant - Ask about this CRM"
+            // Starts with the visible "Ask AI" so voice-control users can say what they see
+            aria-label="Ask AI Assistant"
+          >
+            <Sparkles className="h-4 w-4 text-primary" />
+            <span className="hidden xl:inline">Ask AI</span>
+          </Button>
         </div>
       </header>
 

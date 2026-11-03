@@ -129,8 +129,8 @@
     "messages": "Messages"
   },
   "leads": {
-    "title": "Leads",
-    "subtitle": "Lead management and tracking",
+    "title": "Lead Management Dashboard",
+    "subtitle": "Manage and track your leads with real-time updates",
     "searchPlaceholder": "Search leads...",
     "allLeads": "All Leads",
     "newLeads": "New Leads",
@@ -167,7 +167,35 @@
     "qualification_not_started": "Qualification Not Started",
     "loadingLeads": "Loading leads...",
     "noLeadsFound": "No leads found",
-    "refreshLeads": "Refresh Leads"
+    "refreshLeads": "Refresh Leads",
+    "allLeadsInSystem": "All leads in the system",
+    "requiresAttention": "Requires attention",
+    "hotLeads": "Hot Leads",
+    "highPriorityLeads": "High priority leads",
+    "filters": "Filters",
+    "search": "Search",
+    "state": "State",
+    "allStates": "All States",
+    "heatLevel": "Heat Level",
+    "allHeatLevels": "All Heat Levels",
+    "allSources": "All Sources",
+    "dateRange": "Date Range",
+    "all": "All",
+    "showing": "Showing {{from}} of {{total}} leads",
+    "overview": "Overview",
+    "queueManagement": "Queue Management",
+    "analytics": "Analytics",
+    "addLead": "Add Lead",
+    "export": "Export",
+    "connected": "Connected",
+    "live": "Live",
+    "heatLevels": {
+      "all": "All Heat Levels",
+      "cold": "Cold",
+      "warm": "Warm",
+      "hot": "Hot",
+      "burning": "Burning"
+    }
   },
   "projects": {
     "title": "Projects",
@@ -187,8 +215,8 @@
     "loadingProjects": "Loading projects..."
   },
   "templates": {
-    "title": "Templates",
-    "subtitle": "Message template management",
+    "title": "Message Template Management",
+    "subtitle": "Manage your message templates with drag & drop. Choose 1-3 active templates from your template bank.",
     "activeTemplates": "Active Templates",
     "totalTemplates": "Total Templates",
     "templateName": "Template Name",
@@ -202,7 +230,26 @@
     "viewTemplate": "View Template",
     "createTemplate": "Create Template",
     "noTemplatesFound": "No templates found",
-    "loadingTemplates": "Loading templates..."
+    "loadingTemplates": "Loading templates...",
+    "filterTemplates": "Filter Templates",
+    "export": "Export",
+    "newTemplate": "New Template",
+    "avgResponseRate": "Average Response Rate",
+    "totalUsage": "Total Usage",
+    "templateBank": "Template Bank",
+    "saveTemplate": "Save Template",
+    "cancelEdit": "Cancel Edit",
+    "templateContent": "Template Content",
+    "templateType": "Template Type",
+    "industry": "Industry",
+    "targetAudience": "Target Audience",
+    "priority": "Priority",
+    "overLimit": "Over Limit",
+    "optimizationNeeded": "Optimization Needed",
+    "overLimitGuide": "You have more than 3 active templates. For optimal performance, consider moving some to Template Bank.",
+    "templateGuideDescription": "Drag templates from your Template Bank to Active Templates (max 3). These will be used as your message hooks. Click any template to edit content and targeting.",
+    "autoOptimize": "Auto-Optimize",
+    "templateGuide": "Template Management Guide"
   },
   "reports": {
     "title": "Reports",
@@ -213,7 +260,17 @@
     "generatePDF": "Generate PDF",
     "generatingAdvanced": "Generating Advanced...",
     "advancedReport": "Advanced Report",
-    "exportOptions": "Export Options"
+    "exportOptions": "Export Options",
+    "subtitle": "Reports and analytics",
+    "generateReport": "Generate Report",
+    "downloadReport": "Download Report",
+    "exportData": "Export Data",
+    "dateRange": "Date Range",
+    "reportType": "Report Type",
+    "conversationReport": "Conversation Report",
+    "leadReport": "Lead Report",
+    "performanceReport": "Performance Report",
+    "messageReport": "Message Report"
   },
   "messages": {
     "title": "Messages",
@@ -305,22 +362,9 @@
     "startWithMeeting": "Start with a meeting",
     "addMeetingLink": "Add meeting link to message"
   },
-  "reports": {
-    "title": "Reports",
-    "subtitle": "Reports and analytics",
-    "generateReport": "Generate Report",
-    "downloadReport": "Download Report",
-    "exportData": "Export Data",
-    "dateRange": "Date Range",
-    "reportType": "Report Type",
-    "conversationReport": "Conversation Report",
-    "leadReport": "Lead Report",
-    "performanceReport": "Performance Report",
-    "messageReport": "Message Report"
-  },
   "settings": {
     "title": "Settings",
-    "subtitle": "System settings and configuration",
+    "subtitle": "System configuration and preferences",
     "general": "General",
     "notifications": "Notifications",
     "integrations": "Integrations",
@@ -331,12 +375,39 @@
     "theme": "Theme",
     "timezone": "Timezone",
     "saveSettings": "Save Settings",
-    "resetSettings": "Reset Settings"
+    "resetSettings": "Reset Settings",
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "saveCadenceSettings": "Save Cadence Settings"
   },
   "users": {
     "title": "Users",
-    "subtitle": "User management",
-    "addUser": "Add User"
+    "subtitle": "User management and permissions",
+    "addUser": "Add User",
+    "createUser": "Create User",
+    "resetPassword": "Reset Password",
+    "newUser": "New User",
+    "resetUserPassword": "Reset User Password",
+    "setNewPassword": "Set a new password for {{email}}",
+    "newPassword": "New Password",
+    "searchUsers": "Search users...",
+    "name": "Name",
+    "email": "Email",
+    "role": "Role",
+    "client": "Client",
+    "projects": "Projects",
+    "status": "Status",
+    "actions": "Actions",
+    "selectRole": "Select role",
+    "staff": "Staff",
+    "admin": "Admin",
+    "superAdmin": "Super Admin",
+    "active": "Active",
+    "disabled": "Disabled",
+    "disableUser": "Disable User",
+    "enableUser": "Enable User",
+    "noUsersFound": "No users found."
   },
   "common": {
     "loading": "Loading...",
@@ -600,7 +671,7 @@
     "status": {
       "scheduled": "Scheduled Maintenance",
       "scheduledDesc": "Maintenance is scheduled to begin soon",
-      "ongoing": "Maintenance in Progress", 
+      "ongoing": "Maintenance in Progress",
       "ongoingDesc": "We are currently performing system updates",
       "extended": "Extended Maintenance",
       "extendedDesc": "Maintenance is taking longer than expected",
@@ -614,7 +685,7 @@
     },
     "timer": {
       "hours": "Hours",
-      "minutes": "Minutes", 
+      "minutes": "Minutes",
       "seconds": "Seconds",
       "expected": "Expected completion: {{time}}"
     }
@@ -694,7 +765,7 @@
         "desc": "55% of leads still in cold status - optimize automated sequences to increase temperature faster."
       },
       "bant_improvement": {
-        "title": "BANT Process Enhancement", 
+        "title": "BANT Process Enhancement",
         "desc": "Improve BANT qualification rate from 68% to 80% through better discovery questions and timing."
       },
       "calendly_optimization": {
@@ -726,7 +797,7 @@
     "cancelEditing": "Cancel",
     "categories": {
       "basicMetrics": "Basic Metrics",
-      "engagement": "Engagement", 
+      "engagement": "Engagement",
       "bantHeat": "BANT & HEAT"
     },
     "targets": {
@@ -738,108 +809,14 @@
     "progress": "Progress",
     "current": "Current"
   },
-  "leads": {
-    "title": "Lead Management Dashboard",
-    "subtitle": "Manage and track your leads with real-time updates",
-    "totalLeads": "Total Leads",
-    "allLeadsInSystem": "All leads in the system",
-    "newLeads": "New Leads", 
-    "requiresAttention": "Requires attention",
-    "hotLeads": "Hot Leads",
-    "highPriorityLeads": "High priority leads",
-    "conversionRate": "Conversion Rate",
-    "filters": "Filters",
-    "search": "Search",
-    "state": "State",
-    "allStates": "All States",
-    "heatLevel": "Heat Level",
-    "allHeatLevels": "All Heat Levels",
-    "source": "Source",
-    "allSources": "All Sources",
-    "dateRange": "Date Range",
-    "all": "All",
-    "showing": "Showing {{from}} of {{total}} leads",
-    "overview": "Overview",
-    "queueManagement": "Queue Management",
-    "analytics": "Analytics",
-    "addLead": "Add Lead",
-    "export": "Export",
-    "connected": "Connected",
-    "live": "Live",
-    "heatLevels": {
-      "all": "All Heat Levels",
-      "cold": "Cold",
-      "warm": "Warm", 
-      "hot": "Hot",
-      "burning": "Burning"
-    }
-  },
-  "templates": {
-    "title": "Message Template Management",
-    "subtitle": "Manage your message templates with drag & drop. Choose 1-3 active templates from your template bank.",
-    "filterTemplates": "Filter Templates",
-    "export": "Export",
-    "newTemplate": "New Template",
-    "activeTemplates": "Active Templates",
-    "totalTemplates": "Total Templates",
-    "avgResponseRate": "Average Response Rate",
-    "totalUsage": "Total Usage",
-    "templateBank": "Template Bank",
-    "editTemplate": "Edit Template",
-    "saveTemplate": "Save Template",
-    "cancelEdit": "Cancel Edit",
-    "deleteTemplate": "Delete Template",
-    "templateContent": "Template Content",
-    "templateType": "Template Type",
-    "industry": "Industry",
-    "targetAudience": "Target Audience",
-    "language": "Language",
-    "priority": "Priority",
-    "overLimit": "Over Limit",
-    "optimizationNeeded": "Optimization Needed",
-    "overLimitGuide": "You have more than 3 active templates. For optimal performance, consider moving some to Template Bank.",
-    "templateGuideDescription": "Drag templates from your Template Bank to Active Templates (max 3). These will be used as your message hooks. Click any template to edit content and targeting.",
-    "autoOptimize": "Auto-Optimize",
-    "templateGuide": "Template Management Guide"
-  },
-  "users": {
-    "title": "Users",
-    "subtitle": "User management and permissions",
-    "createUser": "Create User",
-    "resetPassword": "Reset Password",
-    "newUser": "New User",
-    "resetUserPassword": "Reset User Password",
-    "setNewPassword": "Set a new password for {{email}}",
-    "newPassword": "New Password",
-    "searchUsers": "Search users...",
-    "name": "Name",
-    "email": "Email",
-    "role": "Role",
-    "client": "Client",
-    "projects": "Projects",
-    "status": "Status",
-    "actions": "Actions",
-    "selectRole": "Select role",
-    "staff": "Staff",
-    "admin": "Admin",
-    "superAdmin": "Super Admin",
-    "active": "Active",
-    "disabled": "Disabled",
-    "disableUser": "Disable User",
-    "enableUser": "Enable User",
-    "noUsersFound": "No users found."
-  },
-  "settings": {
-    "title": "Settings",
-    "subtitle": "System configuration and preferences",
-    "save": "Save",
-    "cancel": "Cancel",
-    "delete": "Delete",
-    "saveCadenceSettings": "Save Cadence Settings"
-  },
   "demo": {
     "deleteAccount": "Delete Account",
     "cancel": "Cancel",
     "submit": "Submit"
+  },
+  "calendar": {
+    "title": "Calendar",
+    "refresh": "Refresh",
+    "settings": "Settings"
   }
-} 
+}

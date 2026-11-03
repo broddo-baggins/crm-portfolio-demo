@@ -3,7 +3,7 @@ import {
   Routes,
   Route,
   Navigate,
-} from "react-router-dom";
+} from "react-router";
 import { Toaster } from "sonner";
 import { Toaster as ShadcnToaster } from "@/components/ui/toaster";
 import { AuthProvider } from "./context/ClientAuthContext";
@@ -14,7 +14,6 @@ import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/react";
 import { ThemeProvider } from "@/components/theme-provider";
 import Layout from "./components/layout/Layout";
-import AppLayout from "./components/layout/AppLayout.tsx";
 import { RequireAuth } from "./components/auth/RequireAuth";
 import { useTranslation } from "react-i18next";
 import { useEffect, lazy, Suspense, useState } from "react";
@@ -25,7 +24,7 @@ import { DemoLogoutBanner } from "@/components/demo/DemoLogoutBanner";
 
 // Import analytics utilities
 import { initializeAnalytics, trackPageView } from "@/utils/combined-analytics";
-import { useLocation } from "react-router-dom";
+import { useLocation } from "react-router";
 
 // Import authSync
 import { authSync } from "@/lib/authSync";
@@ -426,17 +425,10 @@ function App() {
                               {/* Backward compatibility redirects */}
                               <Route path="company-management" element={<Navigate to="/admin/company" replace />} />
                               <Route path="admin/users" element={<AdminUserManagement />} />
-                            </Route>
 
-                            {/* Admin Routes with AppLayout */}
-                            <Route 
-                              path="/admin/app-layout" 
-                              element={
-                                <RequireAuth>
-                                  <AppLayout />
-                                </RequireAuth>
-                              } 
-                            />
+                              {/* Unknown paths match the "/*" layout first, so catch them here */}
+                              <Route path="*" element={<NotFound />} />
+                            </Route>
 
                             {/* Error Pages */}
                             <Route path="/unauthorized" element={<UnauthorizedPage />} />

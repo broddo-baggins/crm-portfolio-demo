@@ -36,10 +36,11 @@ export const WhatsAppIntegrationStatus: React.FC<WhatsAppIntegrationStatusProps>
   const checkConnectionStatus = async () => {
     setIsLoading(true);
     try {
-      // TODO: Replace with actual API call to your WhatsApp service
-      const response = await fetch('/api/whatsapp/status');
-      
-      if (response.ok) {
+      // There is no /api/whatsapp/status function in the portfolio demo (it 404s on
+      // Vercel and returns index.html locally), so demo mode goes straight to sample data
+      const response = import.meta.env.VITE_DEMO_MODE === 'true' ? null : await fetch('/api/whatsapp/status');
+
+      if (response?.ok && response.headers.get('content-type')?.includes('application/json')) {
         const data = await response.json();
         setStatus(data);
       } else {

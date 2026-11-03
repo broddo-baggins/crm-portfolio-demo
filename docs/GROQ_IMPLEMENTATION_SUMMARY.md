@@ -35,14 +35,14 @@ npm install groq-sdk
 
 ✅ **Vercel Production** (Already Set)
 ```
-Environment Variable: VITE_GROQ_API_KEY
+Environment Variable: GROQ_API_KEY
 Value: gsk_YOUR_GROQ_API_KEY_HERE
 ```
 
 📝 **Local Development** (Optional - for testing)
 Add to `.env.local`:
 ```bash
-VITE_GROQ_API_KEY=gsk_YOUR_GROQ_API_KEY_HERE
+GROQ_API_KEY=gsk_YOUR_GROQ_API_KEY_HERE
 ```
 
 ## How It Works in Production
@@ -122,7 +122,7 @@ git push origin main
 
 Vercel will:
 1. ✅ Install `groq-sdk` package
-2. ✅ Read `VITE_GROQ_API_KEY` from environment
+2. ✅ Read `GROQ_API_KEY` from environment
 3. ✅ Enable automatic fallback
 
 ## Verification Checklist
@@ -141,7 +141,7 @@ Vercel will:
 
 If something doesn't work as expected:
 
-1. **Check Vercel Env Vars**: Settings → Environment Variables → Verify `VITE_GROQ_API_KEY` is set
+1. **Check Vercel Env Vars**: Settings → Environment Variables → Verify `GROQ_API_KEY` is set
 2. **Check Console**: Look for error messages in browser console
 3. **Verify Key**: Test at https://console.groq.com/keys
 4. **Redeploy**: Sometimes a fresh deploy is needed for env vars to take effect

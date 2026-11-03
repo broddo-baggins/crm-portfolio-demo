@@ -49,7 +49,7 @@
 .edit-toggle {
   background: rgba(59, 130, 246, 0.1);
   border: 1px solid rgba(59, 130, 246, 0.3);
-  color: #3b82f6;
+  color: #C24816;
   border-radius: 20px;
   padding: 8px 16px;
   font-weight: 500;
@@ -62,9 +62,9 @@
 }
 
 .springboard-dashboard.edit-mode .edit-toggle {
-  background: #3b82f6;
+  background: #C24816;
   color: white;
-  border-color: #3b82f6;
+  border-color: #C24816;
 }
 
 /* Scrollable Content Area */
@@ -172,7 +172,7 @@
   border-radius: 22px;
   background: rgba(59, 130, 246, 0.1);
   border: 1px solid rgba(59, 130, 246, 0.3);
-  color: #3b82f6;
+  color: #C24816;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -196,7 +196,7 @@
 .remove-btn {
   background: rgba(239, 68, 68, 0.1);
   border-color: rgba(239, 68, 68, 0.3);
-  color: #ef4444;
+  color: #A5332D;
   font-size: 20px;
 }
 
@@ -240,7 +240,7 @@
 }
 
 .add-widget-btn:hover {
-  color: #3b82f6;
+  color: #C24816;
   background: rgba(59, 130, 246, 0.1);
 }
 

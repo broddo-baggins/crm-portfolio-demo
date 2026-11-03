@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useMemo } from 'react';
-import { Responsive, WidthProvider, Layout } from 'react-grid-layout';
+import { Responsive, WidthProvider, type Layout } from 'react-grid-layout/legacy';
 import { WidgetConfig } from '@/types/widgets';
 import { toast } from "sonner";
 import GridWidget from './GridWidget';
@@ -67,7 +67,7 @@ const GridDashboard: React.FC<GridDashboardProps> = ({
   }), [widgets, isGlobalLocked]);
 
   // Handle layout changes with proper grid snapping
-  const onLayoutChange = useCallback((layout: Layout[]) => {
+  const onLayoutChange = useCallback((layout: Layout) => {
     if (isGlobalLocked) {
       console.log('Layout change blocked - dashboard is globally locked');
       return;
@@ -129,7 +129,7 @@ const GridDashboard: React.FC<GridDashboardProps> = ({
     
     widgets.forEach(widget => {
       // Auto-resize logic based on widget type - optimized for minimal whitespace
-      let optimalSize = { w: widget.gridLayout.w, h: widget.gridLayout.h };
+      let optimalSize: { w: number; h: number };
       
       switch (widget.type) {
         case 'lead-funnel':
@@ -203,7 +203,6 @@ const GridDashboard: React.FC<GridDashboardProps> = ({
           breakpoints={{ lg: 1200, md: 996, sm: 768, xs: 480, xxs: 0 }}
           cols={{ lg: 24, md: 20, sm: 12, xs: 8, xxs: 4 }}
           rowHeight={80}
-          width={1200}
           margin={[6, 6]}
           containerPadding={[12, 12]}
           onLayoutChange={onLayoutChange}

@@ -71,6 +71,7 @@ import {
   Tag,
   Calendar as CalendarIcon
 } from 'lucide-react';
+import { PublicPageShell } from '@/components/marketing/PublicPageShell';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -83,7 +84,8 @@ import { cn } from '@/lib/utils';
 const FAQ: React.FC = () => {
   const { t } = useTranslation(['pages', 'common']);
   const { isRTL } = useLang();
-  const [searchQuery, setSearchQuery] = useState('');
+  // ?q= pre-fills the search (the 404 page's search box sends visitors here)
+  const [searchQuery, setSearchQuery] = useState(() => new URLSearchParams(window.location.search).get('q') ?? '');
   const [activeCategory, setActiveCategory] = useState('all');
 
   // Enhanced FAQ Categories with more comprehensive coverage
@@ -827,11 +829,11 @@ const FAQ: React.FC = () => {
       answer: t('pages:faq.admin.systemPromptSections.answer', 'The system prompt reader organizes content into logical sections with icons and collapsible interface. Each section can be expanded, collapsed, searched, and copied independently. The interface supports both English and Hebrew with proper RTL layout.'),
       steps: [
         t('pages:faq.admin.systemPromptSections.step1', '🤖 Role & Identity: Defines the AI assistant\'s personality and core identity'),
-        t('pages:faq.admin.systemPromptSections.step2', 'TARGET Primary Goal: Main objectives and success criteria for conversations'),
-        t('pages:faq.admin.systemPromptSections.step3', 'DATA Current User State: Context about the current conversation state'),
-        t('pages:faq.admin.systemPromptSections.step4', 'CHAT State-Aware Communication: Rules for contextual conversation flow'),
-        t('pages:faq.admin.systemPromptSections.step5', 'SUCCESS BANT Qualification Process: Lead qualification methodology and criteria'),
-        t('pages:faq.admin.systemPromptSections.step6', 'CALENDAR Meeting Scheduling Protocol: Calendly integration and meeting booking rules'),
+        t('pages:faq.admin.systemPromptSections.step2', 'Primary Goal: Main objectives and success criteria for conversations'),
+        t('pages:faq.admin.systemPromptSections.step3', 'Current User State: Context about the current conversation state'),
+        t('pages:faq.admin.systemPromptSections.step4', 'State-Aware Communication: Rules for contextual conversation flow'),
+        t('pages:faq.admin.systemPromptSections.step5', 'BANT Qualification Process: Lead qualification methodology and criteria'),
+        t('pages:faq.admin.systemPromptSections.step6', 'Meeting Scheduling Protocol: Calendly integration and meeting booking rules'),
         t('pages:faq.admin.systemPromptSections.step7', 'ALERT Smart Escalation Triggers: When to escalate to human agents'),
         t('pages:faq.admin.systemPromptSections.step8', '🏢 Project Details: Specific project information and context'),
         t('pages:faq.admin.systemPromptSections.step9', '📋 JSON Output Requirements: Structured data format specifications')
@@ -1017,39 +1019,31 @@ const FAQ: React.FC = () => {
   }, [searchQuery, activeCategory, faqData]);
 
   return (
-    <div className={cn("min-h-screen bg-background", isRTL && "rtl")} dir={isRTL ? 'rtl' : 'ltr'}>
+    <PublicPageShell dir={isRTL ? 'rtl' : 'ltr'}>
+    <div className={cn("bg-background", isRTL && "rtl")}>
       {/* Header */}
-      <div className="bg-gradient-to-r from-primary/10 via-primary/5 to-background border-b">
-        <div className="container mx-auto px-4 py-12">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            className="text-center max-w-3xl mx-auto"
-          >
-            <div className="flex items-center justify-center mb-6">
-              <div className="p-3 bg-primary/10 rounded-full">
-                <HelpCircle className="h-8 w-8 text-primary" />
-              </div>
-            </div>
-            <h1 className="text-4xl font-bold mb-4 bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
+      <div className="border-b border-border bg-sunken">
+        <div className="container mx-auto px-4 py-10 md:py-14">
+          <div className="max-w-3xl">
+            <h1 className="mb-3 text-[32px] font-semibold leading-[38px] tracking-[-0.025em] text-foreground md:text-[40px] md:leading-[46px]">
               {t('pages:faq.title', 'Help & Support Center')}
             </h1>
-            <p className="text-xl text-muted-foreground mb-8">
+            <p className="mb-6 text-lg text-subtle">
               {t('pages:faq.subtitle', 'Find answers to common questions and learn how to make the most of CRM Demo')}
             </p>
-            
+
             {/* Search */}
-            <div className="relative max-w-lg mx-auto">
-              <Search className={cn("absolute top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground", isRTL ? "right-3" : "left-3")} />
+            <div className="relative max-w-lg">
+              <Search className="pointer-events-none absolute start-3 top-[22px] z-10 h-4 w-4 -translate-y-1/2 text-muted-foreground" aria-hidden="true" />
               <Input
                 placeholder={t('pages:faq.searchPlaceholder', 'Search help articles...')}
+                aria-label={t('pages:faq.searchPlaceholder', 'Search help articles...')}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className={cn("h-12", isRTL ? "pr-10" : "pl-10")}
+                className="h-11 ps-10"
               />
             </div>
-          </motion.div>
+          </div>
         </div>
       </div>
 
@@ -1078,6 +1072,7 @@ const FAQ: React.FC = () => {
                         <TabsTrigger
                           key={category.id}
                           value={category.id}
+                          aria-controls="faq-content"
                           className={cn(
                             "w-full justify-start gap-2 p-3 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground",
                             isRTL ? "flex-row-reverse text-right" : "text-left"
@@ -1100,6 +1095,9 @@ const FAQ: React.FC = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.4 }}
             className="lg:col-span-3"
+            id="faq-content"
+            role="tabpanel"
+            aria-label={t('pages:faq.categories.title', 'Categories')}
           >
             {filteredFAQ.length === 0 ? (
               <Card>
@@ -1135,7 +1133,8 @@ const FAQ: React.FC = () => {
                       key={faq.id}
                       initial={{ opacity: 0, y: 10 }}
                       animate={{ opacity: 1, y: 0 }}
-                      transition={{ duration: 0.3, delay: index * 0.1 }}
+                      // Capped stagger: an uncapped index * 0.1 s left the 20th question pale for 2 s.
+                      transition={{ duration: 0.3, delay: Math.min(index, 5) * 0.05 }}
                     >
                       <AccordionItem value={faq.id} className="border border-muted rounded-lg">
                         <AccordionTrigger className={cn("px-6 py-4 hover:no-underline", isRTL ? "text-right" : "text-left")}>
@@ -1223,6 +1222,7 @@ const FAQ: React.FC = () => {
         </motion.div>
       </div>
     </div>
+    </PublicPageShell>
   );
 };
 

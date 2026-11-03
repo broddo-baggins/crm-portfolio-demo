@@ -8,7 +8,7 @@
  * @returns {JSX.Element} The rendered login form
  */
 import React, { useState, useEffect } from 'react';
-import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router';
 import { Button } from '@/components/ui/button';
 import { CardContent, CardFooter } from '@/components/ui/card';
 import { useAuth } from '@/context/ClientAuthContext';
@@ -104,7 +104,7 @@ const LoginForm: React.FC = () => {
 
   return (
     <form onSubmit={handleSubmit}>
-      <CardContent className="space-y-4">
+      <CardContent className="space-y-4 px-0 md:px-0 pt-0 md:pt-0">
         <LoginErrorAlert error={authError} />
         
         <EmailField
@@ -121,20 +121,21 @@ const LoginForm: React.FC = () => {
           required
         />
 
-        <div className="text-center">
-          <Link 
-            to="/password-recovery" 
-            className="text-sm text-primary hover:text-primary/80 hover:underline"
+        <div className="text-end">
+          <Link
+            to="/auth/password-recovery"
+            className="rounded-sm text-sm font-medium text-foreground underline decoration-line-strong underline-offset-4 hover:decoration-current focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
           >
             {t('auth.forgotPassword', 'Forgot your password?')}
           </Link>
         </div>
       </CardContent>
 
-      <CardFooter className="flex flex-col space-y-4">
-        <Button 
-          type="submit" 
-          className="w-full" 
+      <CardFooter className="flex flex-col space-y-4 px-0 md:px-0">
+        <Button
+          type="submit"
+          size="lg"
+          className="w-full"
           disabled={isLoading}
           data-testid="login-button"
         >

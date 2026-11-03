@@ -2,9 +2,9 @@
 
 > A comprehensive, production-ready CRM demonstration showcasing modern web development practices, AI integration, and enterprise-grade features.
 
-[![TypeScript](https://img.shields.io/badge/TypeScript-5.8-blue.svg)](https://www.typescriptlang.org/)
-[![React](https://img.shields.io/badge/React-18.3-61dafb.svg)](https://reactjs.org/)
-[![Vite](https://img.shields.io/badge/Vite-6.3-646cff.svg)](https://vitejs.dev/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-6.0-blue.svg)](https://www.typescriptlang.org/)
+[![React](https://img.shields.io/badge/React-19.3-61dafb.svg)](https://react.dev/)
+[![Vite](https://img.shields.io/badge/Vite-8.3-646cff.svg)](https://vite.dev/)
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind-3.4-38bdf8.svg)](https://tailwindcss.com/)
 
 ## ✨ Features
@@ -30,7 +30,7 @@
 
 ### Prerequisites
 
-- **Node.js** 14+ (LTS recommended)
+- **Node.js** 24.x (the version Vercel builds with; see `engines` in package.json)
 - **npm** or **yarn**
 - Modern web browser (Chrome, Firefox, Safari, Edge)
 
@@ -75,30 +75,30 @@ The AI assistant provides context-aware responses and knows the entire system in
 
 ## 📚 Documentation
 
-- **[Getting Started](GETTING_STARTED.md)** - Detailed setup and configuration guide
-- **[Contributing](.docs/guides/CONTRIBUTING.md)** - How to contribute to the project
-- **[Deployment](.docs/deployment/)** - Production deployment guides
-- **[Development](.docs/development/)** - Development workflow and tools
-- **[API Documentation](.docs/api/)** - API reference and integration guides
-- **[Testing](.docs/testing/)** - Testing strategies and test coverage
+- **[Documentation index](docs/README.md)** - Project structure, decisions and guides
+- **[Deployment](docs/deployment/DEPLOYMENT_GUIDE.md)** - Production deployment guide
+- **[Development notes](docs/development/)** - Demo data, RAG and onboarding notes
+- **[Security](docs/security/SECURITY_AUDIT.md)** - Security audit
+- **[Upgrade notes](docs/UPGRADE_NOTES.md)** - Dependency versions, AI models, and what was left behind
 
 ## 🛠️ Technology Stack
 
 ### Frontend
-- **React 18.3** - UI library with hooks and concurrent features
-- **TypeScript 5.8** - Type-safe development
-- **Vite 6.3** - Lightning-fast build tool
+- **React 19.3** - UI library with hooks and concurrent features
+- **TypeScript 6.0** - Type-safe development
+- **Vite 8.3** - Rolldown-based build tool
 - **Tailwind CSS 3.4** - Utility-first CSS framework
 - **Shadcn/ui** - Beautiful, accessible component library
 - **Framer Motion** - Smooth animations and transitions
-- **React Router 6** - Client-side routing
+- **React Router 8** - Client-side routing
 - **TanStack Query** - Data fetching and caching
 - **Zustand** - State management
 - **i18next** - Internationalization
 
 ### AI Integration
-- **Google Gemini** - Primary AI model for natural language understanding
-- **Groq (Llama 3.3 70B)** - High-speed fallback AI (14,400 req/day)
+- **Google Gemini 3.8 Flash** - Primary model (`GEMINI_MODEL`, falls back to `GEMINI_FALLBACK_MODEL`, default `gemini-3.5-flash-lite`)
+- **Groq GPT-OSS 120B** - High-speed fallback (`GROQ_MODEL`, falls back to `GROQ_FALLBACK_MODEL`, default `openai/gpt-oss-20b`)
+- **Server-side only** - Keys live in the `/api/ai-assistant` Vercel function (`GOOGLE_GENERATIVE_AI_API_KEY`, `GROQ_API_KEY`); without them the assistant answers from built-in mock responses
 - **RAG Knowledge Base** - Retrieval-augmented generation with 100+ documentation chunks
 - **Context-Aware Responses** - Different AI behavior for landing page vs. dashboard
 - **Streaming Responses** - Real-time message streaming for better UX
@@ -131,33 +131,27 @@ The AI assistant provides context-aware responses and knows the entire system in
 │   ├── context/            # React context providers
 │   ├── lib/                # Core libraries
 │   └── data/               # Mock data and constants
-├── public/                 # Static assets
-├── scripts/                # Build and deployment scripts
-├── tests/                  # Test files
-├── quality-validation/     # QA and validation tests
-├── supabase/              # Database and backend
-├── .docs/                 # Project documentation
-└── docs/                  # Public documentation
+├── api/                    # Vercel serverless function (AI assistant) + its tests
+├── e2e/                    # Playwright end-to-end suite
+├── public/                 # Static assets and locales
+└── docs/                   # Documentation
 ```
 
 ## 🧪 Testing
 
 ```bash
-# Run unit tests
-npm run test
-
-# Run E2E tests
-npm run test:e2e
-
-# Run all tests with coverage
-npm run test:complete
-
-# Type checking
+npm run test            # unit tests (Vitest, app + /api function)
+npm run test:e2e        # end-to-end (Playwright): builds, serves with the production CSP,
+                        # every route + user flows at 1440x900 and 390x844, axe a11y checks,
+                        # zero console errors / failed requests allowed
+npm run test:e2e:mobile # one viewport only (also :desktop)
 npm run type-check
-
-# Linting
 npm run lint
+npm run knip            # unused files and dependencies
+npm run verify          # all of the above
 ```
+
+First run only: `npx playwright install chromium`.
 
 ## 🏗️ Build & Deploy
 
@@ -168,9 +162,9 @@ npm run build
 # Preview production build
 npm run preview
 
-# Deploy to Vercel (configured)
-npm run deploy
 ```
+
+Vercel deploys from Git (see `vercel.json`, which also sets the Content-Security-Policy and security headers).
 
 ## 🎨 Design System
 
@@ -186,11 +180,10 @@ The project uses a comprehensive design system built on:
 
 - **Row Level Security (RLS)** on all database tables
 - **Authentication** with Supabase Auth
-- **API rate limiting** to prevent abuse
-- **Input validation** on all forms
-- **XSS protection** with sanitization
-- **CSRF protection** with tokens
-- **Secure headers** configuration
+- **No secrets in the browser** - AI keys are only read by the server function
+- **Input validation** on forms and in `/api/ai-assistant` (type, size and content-type checks)
+- **XSS protection** - AI replies are escaped before rendering
+- **Security headers** - CSP, HSTS, X-Frame-Options, Permissions-Policy (`vercel.json`)
 
 ## 🌍 Internationalization
 
@@ -207,18 +200,11 @@ Fully localized for:
 
 ## 📈 Performance
 
-- **Bundle Size**: ~2.8MB (optimized with code splitting)
-- **First Load**: < 2s on 3G
-- **Lighthouse Score**: 90+ across all metrics
-- **Code Coverage**: 85%+ on critical paths
+- Minified production build with route-level code splitting (main chunk ~680 KB before gzip)
 
 ## 🤝 Contributing
 
-We welcome contributions! Please see [CONTRIBUTING.md](.docs/guides/CONTRIBUTING.md) for details on:
-- Code of conduct
-- Development workflow
-- Pull request process
-- Coding standards
+Contributions are welcome: open an issue or a pull request, and run `npm run verify` before submitting.
 
 ## 📄 License
 

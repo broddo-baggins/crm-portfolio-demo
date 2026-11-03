@@ -9,7 +9,8 @@ const Card = React.forwardRef<
   <div
     ref={ref}
     className={cn(
-      "rounded-lg border bg-card text-card-foreground shadow-sm",
+      // Thermal surface: 1 px line, radius 10, no shadow (a card sits on the page, it doesn't float)
+      "rounded-lg border border-border bg-card text-card-foreground",
       // Ensure proper mobile sizing and prevent inheritance issues
       "w-full max-w-full", // Full width but prevent overflow
       "box-border", // Include padding/border in width calculation
@@ -28,9 +29,9 @@ const CardHeader = React.forwardRef<
   <div
     ref={ref}
     className={cn(
-      "flex flex-col space-y-1.5", 
-      // Mobile-responsive padding: smaller on mobile, larger on desktop
-      "p-3 sm:p-4 md:p-6",
+      "flex flex-col space-y-1",
+      // Mobile-responsive padding: 16 on phones, 20 from md
+      "p-4 md:p-5",
       // Ensure proper sizing
       "w-full",
       className
@@ -47,8 +48,8 @@ const CardTitle = React.forwardRef<
   <h3
     ref={ref}
     className={cn(
-      // Mobile-responsive font size
-      "text-sm sm:text-base md:text-lg font-semibold leading-none tracking-tight",
+      // h2 role: 16 at 390, 18 from md
+      "text-base md:text-lg font-semibold leading-6 tracking-[-0.01em] text-foreground",
       // Ensure proper text handling
       "break-words", // Break long words if needed
       "w-full",
@@ -84,9 +85,8 @@ const CardContent = React.forwardRef<
   <div 
     ref={ref} 
     className={cn(
-      "pt-0",
-      // Mobile-responsive padding: smaller on mobile, larger on desktop
-      "p-3 sm:p-4 md:p-6",
+      // Mobile-responsive padding: 16 on phones, 20 from md
+      "p-4 md:p-5",
       // Ensure proper sizing
       "w-full",
       className
@@ -103,7 +103,7 @@ const CardFooter = React.forwardRef<
   <div
     ref={ref}
     className={cn(
-      "flex items-center p-3 sm:p-4 md:p-6 pt-0",
+      "flex items-center p-4 md:p-5 pt-0 md:pt-0",
       // Ensure proper sizing
       "w-full",
       className

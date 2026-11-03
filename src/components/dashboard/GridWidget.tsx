@@ -335,6 +335,7 @@ const GridWidget: React.FC<GridWidgetProps> = ({
                   onClick={handleMaximizeToggle}
                   className="h-7 w-7 p-0 text-gray-500 hover:text-gray-700"
                   title={isMaximized ? "Minimize widget" : "Maximize widget"}
+                  aria-label={isMaximized ? "Minimize widget" : "Maximize widget"}
                   disabled={isGlobalLocked}
                 >
                   {isMaximized ? (

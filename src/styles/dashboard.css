@@ -92,7 +92,7 @@
 /* Ensure proper grid snapping behavior */
 .react-grid-item.react-grid-placeholder {
   background: rgba(59, 130, 246, 0.15);
-  border: 2px dashed #3b82f6;
+  border: 2px dashed #C24816;
   border-radius: 8px;
   opacity: 0.8;
   /* Removed transition to prevent interference with grid snapping */
@@ -271,7 +271,7 @@
   width: 24px;
   height: 24px;
   border: 2px solid #e5e7eb;
-  border-top: 2px solid #3b82f6;
+  border-top: 2px solid #C24816;
   border-radius: 50%;
   animation: spin 1s linear infinite;
 }
@@ -288,7 +288,7 @@
   align-items: center;
   justify-content: center;
   height: 100%;
-  color: #ef4444;
+  color: #A5332D;
   text-align: center;
   padding: 1rem;
 }
@@ -314,12 +314,12 @@
 
 /* Focus States */
 .widget-container:focus-within {
-  outline: 2px solid #3b82f6;
+  outline: 2px solid #C24816;
   outline-offset: 2px;
 }
 
 button:focus-visible {
-  outline: 2px solid #3b82f6;
+  outline: 2px solid #C24816;
   outline-offset: 2px;
 }
 
@@ -330,7 +330,7 @@ button:focus-visible {
   }
   
   .widget-locked {
-    border-color: #dc2626;
+    border-color: #A5332D;
   }
 }
 

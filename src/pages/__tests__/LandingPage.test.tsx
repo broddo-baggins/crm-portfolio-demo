@@ -1,5 +1,5 @@
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
-import { BrowserRouter } from "react-router-dom";
+import { BrowserRouter } from "react-router";
 import { vi, describe, it, expect, beforeEach } from "vitest";
 import LandingPage from "../LandingPage";
 import { RTLProvider } from "@/contexts/RTLContext";
@@ -20,8 +20,8 @@ vi.mock("@/context/ClientAuthContext", () => ({
   }),
 }));
 
-vi.mock("react-router-dom", async () => {
-  const actual = await vi.importActual("react-router-dom");
+vi.mock("react-router", async () => {
+  const actual = await vi.importActual("react-router");
   return {
     ...actual,
     useNavigate: () => vi.fn(),
@@ -266,10 +266,6 @@ vi.mock("framer-motion", () => ({
   }),
 }));
 
-vi.mock("react-countup", () => ({
-  default: ({ end }: { end: number }) => <span>{end}</span>,
-}));
-
 // Mock UI components
 vi.mock("@/components/ui/button", () => ({
   Button: ({ children, ...props }: any) => (
@@ -302,12 +298,6 @@ vi.mock("@/components/common/ChatMockup", () => ({
   ChatMockup: () => <div data-testid="chat-mockup">Chat Mockup</div>,
 }));
 
-vi.mock("@/components/ui/animated-shiny-text", () => ({
-  AnimatedShinyText: ({ children, ...props }: any) => (
-    <span {...props}>{children}</span>
-  ),
-}));
-
 vi.mock("@/components/landing/IntegrationVisualization", () => ({
   default: () => (
     <div data-testid="integration-visualization">Integration Visualization</div>
@@ -324,16 +314,6 @@ vi.mock("@/components/landing/FAQ", () => ({
       <div>We support Hebrew and English</div>
     </div>
   ),
-}));
-
-vi.mock("@/components/ui/text-reveal", () => ({
-  TextRevealByWord: ({ children, ...props }: any) => (
-    <div {...props}>{children}</div>
-  ),
-}));
-
-vi.mock("@/components/ui/meteors", () => ({
-  Meteors: () => <div data-testid="meteors">Meteors Effect</div>,
 }));
 
 // Test wrapper component
@@ -962,7 +942,8 @@ describe("LandingPage", () => {
       expect(screen.getByTestId("chat-mockup")).toBeInTheDocument();
     });
 
-    it("should render meteors effect", async () => {
+    // The redesign (DESIGN.md) replaced the decorative meteors with real captures of the app.
+    it("should render product screenshots of the running app", async () => {
       render(
         <TestWrapper>
           <LandingPage />
@@ -973,7 +954,11 @@ describe("LandingPage", () => {
         expect(screen.queryByText("Loading...")).not.toBeInTheDocument();
       });
 
-      expect(screen.getByTestId("meteors")).toBeInTheDocument();
+      const shots = screen
+        .getAllByRole("img")
+        .filter((img) => (img.getAttribute("src") || "").startsWith("/screens/"));
+      expect(shots.length).toBeGreaterThanOrEqual(3);
+      shots.forEach((img) => expect(img).toHaveAttribute("alt"));
     });
   });
 

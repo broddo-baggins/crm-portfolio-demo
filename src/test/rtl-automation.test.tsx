@@ -305,7 +305,7 @@ describe("Automated RTL Compliance Testing", () => {
       );
       const ltrDiv = ltrContainer.querySelector("div");
       expect(ltrDiv).toHaveAttribute("dir", "ltr");
-      expect(ltrDiv?.className).toMatch(/flex-row(?!\-reverse)/);
+      expect(ltrDiv?.className).toMatch(/flex-row(?!-reverse)/);
 
       // Test RTL
       const { container: rtlContainer } = render(

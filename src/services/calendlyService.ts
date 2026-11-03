@@ -480,7 +480,7 @@ export class CalendlyService {
           end_time: new Date(new Date(booking.scheduled_time).getTime() + booking.duration * 60000).toISOString(),
           event_type: booking.meeting_type,
           location: { type: 'custom', location: booking.meeting_link },
-          invitees_counter: { total: booking.attendees?.length || 1, active: booking.attendees?.length || 1 },
+          invitees_counter: { total: booking.attendees?.length || 1, active: booking.attendees?.length || 1, limit: booking.attendees?.length || 1 },
           created_at: booking.scheduled_time,
           updated_at: booking.scheduled_time,
         }));

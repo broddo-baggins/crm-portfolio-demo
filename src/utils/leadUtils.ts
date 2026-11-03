@@ -94,11 +94,45 @@ export function getLeadCompany(lead: Lead): string | null {
 /**
  * Get lead heat level from temperature
  */
-export function getHeatLevelFromTemperature(temperature: number): 'cold' | 'warm' | 'hot' | 'burning' {
+export function getHeatLevelFromTemperature(temperature: number | string): 'cold' | 'warm' | 'hot' | 'burning' {
+  // Demo data stores the label itself ("hot") instead of a 0-100 score
+  if (typeof temperature === 'string') {
+    const label = temperature.toLowerCase();
+    if (label === 'burning' || label === 'hot' || label === 'warm' || label === 'cold') return label;
+    temperature = Number(temperature) || 0;
+  }
   if (temperature >= 80) return 'burning';
   if (temperature >= 60) return 'hot';
   if (temperature >= 40) return 'warm';
   return 'cold';
+}
+
+export type HeatScaleLevel = 'FROZEN' | 'ICE_COLD' | 'COLD' | 'COOL' | 'WARM' | 'HOT' | 'BURNING' | 'WHITE_HOT';
+
+const HEAT_SCALE_LEVELS: HeatScaleLevel[] = ['FROZEN', 'ICE_COLD', 'COLD', 'COOL', 'WARM', 'HOT', 'BURNING', 'WHITE_HOT'];
+
+/**
+ * Seven-step heat level from a 0-100 temperature score. Demo data stores labels
+ * ("hot") instead of scores; those used to parse as NaN and land in FROZEN, so the
+ * /leads "Hot Leads" card always showed 0.
+ */
+export function getHeatScaleLevel(temperature: number | string | null | undefined): HeatScaleLevel {
+  if (temperature === null || temperature === undefined) return 'FROZEN';
+  if (typeof temperature === 'string') {
+    const label = temperature.trim().toUpperCase().replace(/[\s-]+/g, '_') as HeatScaleLevel;
+    if (HEAT_SCALE_LEVELS.includes(label)) return label;
+  }
+  const temp = typeof temperature === 'string' ? parseInt(temperature, 10) : temperature;
+  if (isNaN(temp)) return 'FROZEN';
+
+  if (temp <= 10) return 'FROZEN';
+  if (temp <= 20) return 'ICE_COLD';
+  if (temp <= 35) return 'COLD';
+  if (temp <= 50) return 'COOL';
+  if (temp <= 65) return 'WARM';
+  if (temp <= 80) return 'HOT';
+  if (temp <= 95) return 'BURNING';
+  return 'WHITE_HOT';
 }
 
 /**

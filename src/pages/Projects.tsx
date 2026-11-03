@@ -30,7 +30,6 @@ import {
   Plus,
   Search,
   Filter,
-  MoreHorizontal,
   FolderOpen,
   Users,
   MessageSquare,
@@ -80,7 +79,7 @@ const getStaticProjectsData = (): ProjectWithStats[] => {
       last_activity: now.toISOString(),
       priority: 'high',
       tags: ['Enterprise', 'CRM', 'Priority'],
-      color: '#3B82F6',
+      color: '#C24816',
     },
     {
       id: 'demo-proj-2',
@@ -96,7 +95,7 @@ const getStaticProjectsData = (): ProjectWithStats[] => {
       last_activity: now.toISOString(),
       priority: 'high',
       tags: ['Digital', 'Automation', 'WhatsApp'],
-      color: '#10B981',
+      color: '#367E50',
     },
     {
       id: 'demo-proj-3',
@@ -112,7 +111,7 @@ const getStaticProjectsData = (): ProjectWithStats[] => {
       last_activity: now.toISOString(),
       priority: 'medium',
       tags: ['Sales', 'Optimization'],
-      color: '#F59E0B',
+      color: '#D69A2E',
     },
   ];
 };
@@ -173,7 +172,7 @@ const Projects: React.FC = () => {
     description: "",
     status: "active",
     priority: "medium",
-    color: "#3B82F6",
+    color: "#C24816",
   });
 
   // Auto-switch to list view on mobile for better UX and ensure mobile optimization
@@ -232,7 +231,7 @@ const Projects: React.FC = () => {
                 last_activity: project.updated_at || project.created_at,
                 priority: (project as any).priority || "medium",
                 tags: (project as any).tags || ["General"],
-                color: (project as any).color || "#3B82F6",
+                color: (project as any).color || "#C24816",
               } as ProjectWithStats;
             }
             
@@ -278,7 +277,7 @@ const Projects: React.FC = () => {
               last_activity: project.updated_at || project.created_at,
               priority: (project as any).priority || "medium",
               tags: (project as any).tags || ["General"],
-              color: (project as any).color || "#3B82F6",
+              color: (project as any).color || "#C24816",
             };
           } catch (error) {
             console.error(
@@ -295,7 +294,7 @@ const Projects: React.FC = () => {
               last_activity: project.updated_at || project.created_at,
               priority: "medium" as const,
               tags: ["General"],
-              color: "#3B82F6",
+              color: "#C24816",
             };
           }
         }),
@@ -341,7 +340,7 @@ const Projects: React.FC = () => {
           description: "",
           status: "active",
           priority: "medium",
-          color: "#3B82F6",
+          color: "#C24816",
         });
         loadProjects();
       }
@@ -413,7 +412,7 @@ const Projects: React.FC = () => {
       description: project.description || "",
       status: project.status,
       priority: project.priority,
-      color: project.color || "#3B82F6",
+      color: project.color || "#C24816",
     });
     setIsEditModalOpen(true);
     console.log("SUCCESS Edit modal should open"); // Debug log
@@ -441,7 +440,7 @@ const Projects: React.FC = () => {
         description: "",
         status: "active",
         priority: "medium",
-        color: "#3B82F6",
+        color: "#C24816",
       });
       loadProjects();
     } catch (error) {
@@ -578,6 +577,8 @@ const Projects: React.FC = () => {
                 size="sm"
                 onClick={() => setViewMode("grid")}
                 className="p-2"
+                aria-label="Grid view"
+                aria-pressed={viewMode === "grid"}
               >
                 <Grid3X3 className="h-4 w-4" />
               </Button>
@@ -586,6 +587,8 @@ const Projects: React.FC = () => {
                 size="sm"
                 onClick={() => setViewMode("list")}
                 className="p-2"
+                aria-label="List view"
+                aria-pressed={viewMode === "list"}
               >
                 <List className="h-4 w-4" />
               </Button>
@@ -681,7 +684,7 @@ const Projects: React.FC = () => {
           {/* Filters - stacked on mobile */}
           <div className="flex gap-2 sm:gap-3">
             <Select value={filterStatus} onValueChange={setFilterStatus}>
-              <SelectTrigger className="w-full sm:w-32">
+              <SelectTrigger className="w-full sm:w-32" aria-label={t("projects.filterByStatus", "Filter by status")}>
                 <Filter className="h-4 w-4 mr-1 sm:hidden" />
                 <SelectValue />
               </SelectTrigger>
@@ -705,7 +708,7 @@ const Projects: React.FC = () => {
             </Select>
 
             <Select value={sortBy} onValueChange={setSortBy}>
-              <SelectTrigger className="w-full sm:w-36">
+              <SelectTrigger className="w-full sm:w-36" aria-label={t("projects.sortBy", "Sort by")}>
                 <SortAsc className="h-4 w-4 mr-1 sm:hidden" />
                 <SelectValue />
               </SelectTrigger>
@@ -780,13 +783,6 @@ const Projects: React.FC = () => {
                     </div>
                   </div>
 
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="opacity-0 group-hover:opacity-100 transition-opacity shrink-0"
-                  >
-                    <MoreHorizontal className="h-4 w-4" />
-                  </Button>
                 </div>
 
                 {project.description && (

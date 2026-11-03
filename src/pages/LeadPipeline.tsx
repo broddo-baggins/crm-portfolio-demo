@@ -10,9 +10,6 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import {
-  Plus,
-  Filter,
-  Download,
   MoreHorizontal,
   MessageSquare,
   Users,
@@ -66,7 +63,7 @@ const initialTemplateColumns: KanbanColumn[] = [
   {
     id: "active",
     title: "Active Templates (1-3)",
-    color: "#10b981",
+    color: "#367E50",
     limit: 3,
     items: [
       {
@@ -224,6 +221,9 @@ const META_WHATSAPP_CONFIG = {
   PHONE_NUMBER_ID: env.WHATSAPP_PHONE_NUMBER_ID,
 };
 
+
+type PipelineTab = "pipeline" | "whatsapp" | "whatsapp-manager";
+
 const TemplateManagement: React.FC = () => {
   const { t } = useTranslation("pages");
   const { isRTL } = useLang();
@@ -238,7 +238,7 @@ const TemplateManagement: React.FC = () => {
   );
   const [isEditing, setIsEditing] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
-  const [activeTab, setActiveTab] = useState<"pipeline" | "whatsapp">("pipeline");
+  const [activeTab, setActiveTab] = useState<PipelineTab>("pipeline");
 
   // Calculate template metrics
   const totalTemplates = columns.reduce(
@@ -422,56 +422,41 @@ const TemplateManagement: React.FC = () => {
 
   return (
     <div
-      className="min-h-screen bg-gray-50 dark:bg-gray-950"
+      className="min-h-screen bg-background"
       dir={isRTL ? "rtl" : "ltr"}
       data-testid="template-management"
     >
-      <div className="p-6 space-y-6">
+      <div className="space-y-6">
         {/* Header */}
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
+        <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+          <div className="min-w-0">
+            <h1 className="text-2xl font-semibold leading-8 tracking-[-0.02em] text-foreground">
               {t("templates.title", "Template Management")}
             </h1>
-            <p className="text-gray-600 dark:text-slate-400 mt-1">
+            <p className="mt-1 max-w-[68ch] text-sm text-muted-foreground">
               {t(
                 "templates.subtitle",
                 "Manage lead pipeline templates and WhatsApp Business templates for Meta integration.",
               )}
             </p>
-            <div className="mt-3 flex items-center gap-2">
-              <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
-                MOBILE Meta WhatsApp Business ID: 847392016254731
+            <div className="mt-3 flex flex-wrap items-center gap-2">
+              <Badge variant="outline" className="border-moss-200 bg-moss-50 text-moss-700">
+                Meta WhatsApp Business ID: <span className="tabular-nums">847392016254731</span>
               </Badge>
-              <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200">
-                INIT Ready for Template Submission
+              <Badge variant="outline">
+                Ready for template submission
               </Badge>
             </div>
           </div>
 
-          <div className="flex items-center gap-3">
-            <Button variant="outline" size="sm">
-              <Filter className="h-4 w-4 mr-2" />
-              {t("templates.filterTemplates", "Filter Templates")}
-            </Button>
-            <Button variant="outline" size="sm">
-              <Download className="h-4 w-4 mr-2" />
-              {t("templates.export", "Export")}
-            </Button>
-            <Button size="sm">
-              <Plus className="h-4 w-4 mr-2" />
-              {t("templates.newTemplate", "New Template")}
-            </Button>
-          </div>
         </div>
 
         {/* Template Management Tabs */}
-        <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as "pipeline" | "whatsapp")}>
-          <TabsList className="grid w-full grid-cols-4">
-            <TabsTrigger value="kanban">{t("leadPipeline.kanban", "Pipeline")}</TabsTrigger>
-            <TabsTrigger value="templates">{t("leadPipeline.templates", "Templates")}</TabsTrigger>
+        <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as PipelineTab)}>
+          <TabsList className="grid w-full grid-cols-3">
+            <TabsTrigger value="pipeline">{t("leadPipeline.kanban", "Pipeline")}</TabsTrigger>
+            <TabsTrigger value="whatsapp">{t("leadPipeline.templates", "Templates")}</TabsTrigger>
             <TabsTrigger value="whatsapp-manager">WhatsApp Manager</TabsTrigger>
-            <TabsTrigger value="integration">{t("leadPipeline.integration", "Integration")}</TabsTrigger>
           </TabsList>
 
           <TabsContent value="pipeline" className="space-y-6">
@@ -693,7 +678,7 @@ const TemplateManagement: React.FC = () => {
                     </div>
                     <div>
                       <h4 className="font-medium mb-2">Template Submission:</h4>
-                      <p>SUCCESS Templates are automatically submitted to Meta for approval</p>
+                      <p>Templates are automatically submitted to Meta for approval</p>
                       <p>WAIT Approval typically takes 1-3 business days</p>
                     </div>
                   </div>

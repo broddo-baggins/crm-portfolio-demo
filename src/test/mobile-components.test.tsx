@@ -50,7 +50,7 @@ vi.mock('@/services/supabaseProjectService', () => ({
 }));
 
 // Mock react-router-dom
-vi.mock('react-router-dom', () => ({
+vi.mock('react-router', () => ({
   useNavigate: () => vi.fn(),
 }));
 
@@ -91,9 +91,9 @@ describe('Mobile Responsive Components', () => {
       const cardHeader = screen.getByTestId('card-header');
       const cardContent = screen.getByTestId('card-content');
 
-      // Should have mobile-responsive padding classes
-      expect(cardHeader).toHaveClass('p-3', 'sm:p-4', 'md:p-6');
-      expect(cardContent).toHaveClass('p-3', 'sm:p-4', 'md:p-6');
+      // Mobile-responsive padding on the spacing scale (DESIGN.md): 16 on phones, 20 from md
+      expect(cardHeader).toHaveClass('p-4', 'md:p-5');
+      expect(cardContent).toHaveClass('p-4', 'md:p-5');
     });
 
     it('maintains proper width constraints on mobile', () => {

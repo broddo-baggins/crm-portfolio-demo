@@ -106,7 +106,14 @@
     "converted": "הומר",
     "proposal": "הצעה",
     "won": "נזכה",
-    "lost": "הפסד"
+    "lost": "הפסד",
+    "loading": "טוען...",
+    "saving": "שומר...",
+    "saved": "נשמר",
+    "validating": "מאמת...",
+    "processing": "מעבד...",
+    "complete": "הושלם",
+    "error": "שגיאה"
   },
   "priority": {
     "low": "נמוכה",
@@ -305,14 +312,5 @@
     "charactersRemaining": "תווים נותרו",
     "maxLength": "אורך מקסימלי",
     "minLength": "אורך מינימלי"
-  },
-  "status": {
-    "loading": "טוען...",
-    "saving": "שומר...",
-    "saved": "נשמר",
-    "validating": "מאמת...",
-    "processing": "מעבד...",
-    "complete": "הושלם",
-    "error": "שגיאה"
   }
-} 
+}

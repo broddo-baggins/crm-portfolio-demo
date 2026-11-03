@@ -8,7 +8,7 @@ interface PasswordStrengthIndicatorProps {
 const PasswordStrengthIndicator = ({ 
   password, 
   passwordStrength 
-}: PasswordStrengthIndicatorProps): JSX.Element => {
+}: PasswordStrengthIndicatorProps): React.JSX.Element => {
   
   const getPasswordStrengthLabel = () => {
     if (password.length === 0) return '';

@@ -1,0 +1,6 @@
+{
+  "$schema": "https://unpkg.com/knip@6/schema.json",
+  "entry": ["api/*.ts", "e2e/**/*.ts", "src/**/*.test.{ts,tsx}"],
+  "project": ["src/**/*.{ts,tsx,js,jsx}", "api/**/*.ts", "e2e/**/*.ts"],
+  "ignore": ["src/components/system/PageHeader.tsx"]
+}

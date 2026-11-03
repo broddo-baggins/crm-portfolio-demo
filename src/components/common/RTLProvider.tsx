@@ -26,7 +26,7 @@ const RTLContext = createContext<RTLContextValue | null>(null);
 interface RTLProviderProps {
   children: ReactNode;
   className?: string;
-  as?: keyof JSX.IntrinsicElements;
+  as?: keyof React.JSX.IntrinsicElements;
 }
 
 export const RTLProvider: React.FC<RTLProviderProps> = ({ 
@@ -153,7 +153,7 @@ export const RTLIcon: React.FC<{
 interface EnglishTextProps {
   children: ReactNode;
   className?: string;
-  as?: keyof JSX.IntrinsicElements;
+  as?: keyof React.JSX.IntrinsicElements;
   'data-testid'?: string;
 }
 

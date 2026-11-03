@@ -23,8 +23,10 @@ export const useLang = () => {
     // Text alignment utilities
     textLeft: isRTL ? 'text-right' : 'text-left',
     textRight: isRTL ? 'text-left' : 'text-right',
-    textStart: isRTL ? 'text-right' : 'text-left',
-    textEnd: isRTL ? 'text-left' : 'text-right',
+    // Logical alignment: index.css flips physical .text-right to left under dir="rtl"
+    // (for legacy markup), so a physical class here would land on the wrong side.
+    textStart: 'text-start',
+    textEnd: 'text-end',
     
     // Margin utilities (logical)
     marginStart: isRTL ? 'mr' : 'ml',
@@ -147,11 +149,15 @@ export const useLang = () => {
   const borderEnd = (value: string = '1') => isRTL ? `border-l-${value}` : `border-r-${value}`;
   
   // Text alignment utilities
-  const textStart = () => isRTL ? 'text-right' : 'text-left';
-  const textEnd = () => isRTL ? 'text-left' : 'text-right';
+  // Logical alignment: index.css flips physical .text-right to left under dir="rtl"
+  // (for legacy markup), so the RTL-aware start/end must be the logical classes.
+  const textStart = () => 'text-start';
+  const textEnd = () => 'text-end';
   
-  // Flex utilities
-  const flexRowReverse = () => isRTL ? 'flex-row' : 'flex-row-reverse';
+  // Flex utilities. Containers carry dir="rtl" in Hebrew, which already mirrors a plain
+  // flex row, so the "RTL-aware" row is flex-row in both directions (it used to return
+  // flex-row-reverse in English, which mirrored every English layout that called it).
+  const flexRowReverse = () => 'flex-row';
   
   // Position utilities
   const left = () => isRTL ? 'right' : 'left';

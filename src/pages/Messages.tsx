@@ -27,7 +27,6 @@ import {
   Download,
   SortAsc,
   SortDesc,
-  Filter,
   Calendar,
   ChevronLeft,
   ChevronRight,
@@ -370,7 +369,7 @@ const Messages = () => {
         // Transform conversations into messages format
         const messages: WhatsAppMessage[] = leadConversations.map((conv, index) => {
           // Determine direction based on message_type or alternating pattern
-          let direction: "inbound" | "outbound" = "inbound";
+          let direction: "inbound" | "outbound";
           
           if (conv.message_type === "incoming") {
             direction = "inbound";
@@ -531,6 +530,33 @@ const Messages = () => {
         lead.phone,
       );
 
+      // DEMO MODE: no WhatsApp Business account is connected, so show the message
+      // locally instead of calling Meta's API (which always failed here)
+      if (import.meta.env.VITE_DEMO_MODE === "true") {
+        const now = new Date().toISOString();
+        setCurrentMessages((prev) => [
+          ...prev,
+          {
+            id: `demo-${Date.now()}`,
+            lead_id: lead.id,
+            sender_number: "",
+            receiver_number: lead.phone,
+            content: messageText,
+            wamid: "",
+            created_at: now,
+            updated_at: now,
+            wa_timestamp: now,
+            direction: "outbound",
+            message_type: "text",
+          },
+        ]);
+        setMessageText("");
+        setAttachments([]);
+        setReplyToMessage(null);
+        toast.success("Demo mode: message added to the conversation (not sent to WhatsApp)");
+        return;
+      }
+
       // Initialize WhatsApp® service and send message
       const whatsappService = new WhatsAppService();
       const result = await whatsappService.sendMessage(lead.phone, messageText);
@@ -556,7 +582,7 @@ const Messages = () => {
         setAttachments([]);
         setReplyToMessage(null);
 
-        toast.success("Message sent successfully via WhatsApp®! MOBILE");
+        toast.success("Message sent successfully via WhatsApp®!");
 
         // Reload messages for this conversation to show the new message
         await loadMessagesForConversation(selectedConversation);
@@ -686,7 +712,7 @@ const Messages = () => {
   const sortConversations = useCallback(
     (conversations: ConversationWithMeta[]) => {
       return [...conversations].sort((a, b) => {
-        let comparison = 0;
+        let comparison: number;
 
         switch (sortBy) {
           case "date":
@@ -1101,12 +1127,12 @@ const Messages = () => {
       data-testid="messages-page"
     >
       {/* Header Section */}
-      <div className={cn("flex items-center justify-between", flexRowReverse())}>
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div className={textStart()}>
-          <h1 className="text-3xl font-bold">
+          <h1 className="text-2xl font-semibold leading-8 tracking-[-0.02em]">
             {t("pages.messages.messagesAndConversations", "Messages & Conversations")}
           </h1>
-          <p className="text-muted-foreground">
+          <p className="mt-1 text-sm text-muted-foreground">
             {t(
               "pages.messages.manageWhatsAppConversations",
               "Manage WhatsApp conversations and automate responses",
@@ -1114,7 +1140,7 @@ const Messages = () => {
           </p>
         </div>
 
-        <div className={cn("flex items-center gap-3", flexRowReverse())}>
+        <div className="flex flex-wrap items-center gap-2">
           <Badge variant="outline">
             {filteredConversations.length}{" "}
             {t("pages.messages.conversationsCount", "conversations")}
@@ -1149,65 +1175,65 @@ const Messages = () => {
       </div>
 
       {/* Quick Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div className="grid grid-cols-2 gap-3 lg:grid-cols-4 lg:gap-4">
         <Card data-testid="message-stats-total">
-          <CardContent className="p-6">
+          <CardContent className="p-4 md:p-5">
             <div className={cn("flex items-center", flexRowReverse())}>
               <div className={cn("flex-1", textStart())}>
                 <p className="text-sm font-medium text-muted-foreground">
                   {t("pages.messages.totalConversations", "Total Conversations")}
                 </p>
-                <p className="text-2xl font-bold">
+                <p className="text-[28px] font-semibold leading-8 tracking-[-0.02em] tabular-nums">
                   {filteredConversations.length}
                 </p>
               </div>
-              <MessageSquare className="h-8 w-8 text-blue-500" />
+              <MessageSquare className="hidden h-5 w-5 text-muted-foreground sm:block" aria-hidden="true" />
             </div>
           </CardContent>
         </Card>
 
         <Card data-testid="message-stats-active">
-          <CardContent className="p-6">
+          <CardContent className="p-4 md:p-5">
             <div className={cn("flex items-center", flexRowReverse())}>
               <div className={cn("flex-1", textStart())}>
                 <p className="text-sm font-medium text-muted-foreground">
                   {t("pages.messages.activeChatToday", "Active Chat Today")}
                 </p>
-                <p className="text-2xl font-bold text-green-600">
+                <p className="text-[28px] font-semibold leading-8 tracking-[-0.02em] tabular-nums">
                   {stats.activeConversations}
                 </p>
               </div>
-              <Activity className="h-8 w-8 text-green-500" />
+              <Activity className="hidden h-5 w-5 text-muted-foreground sm:block" aria-hidden="true" />
             </div>
           </CardContent>
         </Card>
 
         <Card data-testid="message-stats-messages">
-          <CardContent className="p-6">
+          <CardContent className="p-4 md:p-5">
             <div className={cn("flex items-center", flexRowReverse())}>
               <div className={cn("flex-1", textStart())}>
                 <p className="text-sm font-medium text-muted-foreground">
                   {t("pages.messages.messagesSent", "Messages Sent")}
                 </p>
-                <p className="text-2xl font-bold text-blue-600">
+                <p className="text-[28px] font-semibold leading-8 tracking-[-0.02em] tabular-nums">
                   {stats.totalMessages}
                 </p>
               </div>
-              <MessageSquare className="h-8 w-8 text-blue-500" />
+              <MessageSquare className="hidden h-5 w-5 text-muted-foreground sm:block" aria-hidden="true" />
             </div>
           </CardContent>
         </Card>
 
         <Card data-testid="message-stats-response">
-          <CardContent className="p-6">
+          <CardContent className="p-4 md:p-5">
             <div className={cn("flex items-center", flexRowReverse())}>
               <div className={cn("flex-1", textStart())}>
                 <p className="text-sm font-medium text-muted-foreground">
                   {t("pages.messages.avgResponseTime", "Avg Response Time")}
                 </p>
-                <p className="text-2xl font-bold text-orange-600">2.3h</p>
+                <p className="text-[28px] font-semibold leading-8 tracking-[-0.02em] tabular-nums">2.3h</p>
               </div>
-              <Clock className="h-8 w-8 text-orange-500" />
+              <Clock className="hidden h-5 w-5 text-muted-foreground sm:block" aria-hidden="true" />
             </div>
           </CardContent>
         </Card>
@@ -1227,19 +1253,19 @@ const Messages = () => {
                   variant="outline"
                   size="sm"
                   onClick={() => setSortOrder(sortOrder === "asc" ? "desc" : "asc")}
+                  aria-label={sortOrder === "asc" ? "Sort descending" : "Sort ascending"}
+                  data-testid="sort-order-toggle"
                 >
                   {sortOrder === "asc" ? <SortAsc className="h-4 w-4" /> : <SortDesc className="h-4 w-4" />}
-                </Button>
-                <Button variant="outline" size="sm">
-                  <Filter className="h-4 w-4" />
                 </Button>
               </div>
             </div>
 
             {/* Search and filters */}
-            <div className={cn("flex items-center gap-2 mb-4", flexRowReverse())}>
-              <div className="relative flex-1">
-                <Search className={cn("absolute h-4 w-4 text-gray-400", isRTL ? "right-3 top-3" : "left-3 top-3")} />
+            {/* Phones: search takes its own row; beside two selects it shrank to an empty box */}
+            <div className={cn("flex flex-wrap items-center gap-2 mb-4", flexRowReverse())}>
+              <div className="relative basis-full sm:basis-auto sm:flex-1">
+                <Search className={cn("pointer-events-none absolute z-10 h-4 w-4 text-gray-400", isRTL ? "right-3 top-3" : "left-3 top-3")} aria-hidden="true" />
                 <Input
                   type="text"
                   placeholder={t("pages.messages.searchConversations", "Search conversations...")}
@@ -1250,7 +1276,7 @@ const Messages = () => {
                 />
               </div>
               <Select value={priorityFilter} onValueChange={(value: "all" | "active") => setPriorityFilter(value)}>
-                <SelectTrigger className="w-32">
+                <SelectTrigger className="w-32" aria-label={t("pages.messages.filterConversations", "Filter conversations")}>
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -1259,7 +1285,7 @@ const Messages = () => {
                 </SelectContent>
               </Select>
               <Select value={sortBy} onValueChange={(value: any) => setSortBy(value)}>
-                <SelectTrigger className="w-32">
+                <SelectTrigger className="w-32" aria-label={t("pages.messages.sortBy", "Sort by")}>
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -1277,7 +1303,7 @@ const Messages = () => {
                 {t("pages.messages.conversationsPerPage", "Conversations per page")}:
               </span>
               <Select value={itemsPerPage.toString()} onValueChange={(value: string) => setItemsPerPage(parseInt(value))}>
-                <SelectTrigger className="w-20">
+                <SelectTrigger className="w-20" aria-label={t("pages.messages.conversationsPerPage", "Conversations per page")}>
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -1318,7 +1344,13 @@ const Messages = () => {
           )}
 
           {/* Conversations List Content */}
-          <div className="flex-1 overflow-y-auto p-4" data-testid="conversations-list">
+          <div
+            className="flex-1 overflow-y-auto p-4"
+            data-testid="conversations-list"
+            tabIndex={0}
+            role="region"
+            aria-label={t("pages.messages.conversations", "Conversations")}
+          >
             <div className="space-y-3">
               {paginatedConversations.map((conversation) => (
                 <div
@@ -1475,15 +1507,16 @@ const Messages = () => {
               <div className="flex-shrink-0 p-4 border-b dark:border-slate-700" data-testid="conversation-header">
                   <div
                     className={cn(
-                      "flex justify-between items-center",
+                      // Wraps on phones: the contact line pushed the calendar actions off-screen
+                      "flex flex-wrap justify-between items-center gap-3",
                       flexRowReverse(),
                     )}
                   >
-                    <div className={cn("", textStart())}>
+                    <div className={cn("min-w-0", textStart())}>
                       <h3 className="text-lg font-semibold">
                         {formatLeadName(selectedConversation.lead)}
                       </h3>
-                      <div className="flex items-center gap-2 text-sm text-gray-500 dark:text-slate-400">
+                      <div className="flex flex-wrap items-center gap-2 text-sm text-gray-500 dark:text-slate-400">
                         <span>
                           {(selectedConversation.lead as any).email_address || (selectedConversation.lead as any).email || 
                             t("pages.messages.noEmail", "No email")}
@@ -1507,7 +1540,7 @@ const Messages = () => {
                       </div>
                       
                       {/* BANT & Heat Metrics Display */}
-                      <div className={cn("flex items-center gap-3 mt-2", flexRowReverse())}>
+                      <div className={cn("flex flex-wrap items-center gap-3 mt-2", flexRowReverse())}>
                         {/* BANT Status */}
                         <div className="flex items-center gap-1">
                           <span className="text-xs font-medium text-gray-600 dark:text-slate-400">BANT:</span>
@@ -1566,6 +1599,7 @@ const Messages = () => {
                             size="sm"
                             onClick={() => handleScheduleMeeting(selectedConversation.lead)}
                             className="flex items-center gap-2"
+                            aria-label={t("pages.messages.scheduleMeeting", "Schedule Meeting")}
                           >
                             <CalendarDays className="h-4 w-4" />
                             <span className="hidden sm:inline">
@@ -1577,6 +1611,7 @@ const Messages = () => {
                             size="sm"
                             onClick={() => handleShareMeetingLink(selectedConversation.lead)}
                             className="flex items-center gap-2"
+                            aria-label={t("pages.messages.shareLink", "Share Link")}
                           >
                             <ExternalLink className="h-4 w-4" />
                             <span className="hidden sm:inline">
@@ -1589,7 +1624,7 @@ const Messages = () => {
                           variant="outline"
                           size="sm"
                           onClick={() => window.location.href = "/settings?tab=integrations"}
-                          className="flex items-center gap-2 text-[#25D366]"
+                          className="flex items-center gap-2 text-whatsapp-accent"
                         >
                           <Calendar className="h-4 w-4" />
                           <span className="hidden sm:inline">
@@ -1630,7 +1665,7 @@ const Messages = () => {
                       {formatTimeAgo(selectedConversation.lastActive)}
                     </span>
                     {calendlyStatus.isConnected && (
-                      <span className="text-[#25D366] dark:text-[#25D366]">
+                      <span className="text-whatsapp-accent">
                         {t("pages.messages.meetingReady", "Meeting scheduling ready")}
                       </span>
                     )}
@@ -1684,7 +1719,7 @@ const Messages = () => {
                                     // Fix chat colors - different colors for inbound vs outbound
                                     message.direction === "inbound"
                                       ? "bg-gray-100 dark:bg-slate-700 text-gray-900 dark:text-slate-100"
-                                      : "bg-[#25D366] dark:bg-[#1eb85e] text-white",
+                                      : "bg-whatsapp-bubble text-whatsapp-bubble-foreground",
                                     textStart(),
                                   )}
                                 >
@@ -1784,6 +1819,7 @@ const Messages = () => {
                         disabled={!messageText.trim() || sendingMessage}
                         size="sm"
                         className="px-3"
+                        aria-label={t("pages.messages.send", "Send message")}
                       >
                         {sendingMessage ? (
                           <MessageLoading />
@@ -1818,7 +1854,7 @@ const Messages = () => {
                       ` (${t("pages.messages.page", "Page")} ${currentPage.toLocaleString(isRTL ? "he-IL" : "en-US")} ${t("pages.messages.of", "of")} ${totalPages.toLocaleString(isRTL ? "he-IL" : "en-US")})`}
                   </p>
                   {currentProject && (
-                    <p className="text-xs text-[#25D366] dark:text-[#25D366] mt-2">
+                    <p className="text-xs text-whatsapp-accent mt-2">
                       {t("pages.messages.project", "Project")}:{" "}
                       {currentProject.name}
                     </p>

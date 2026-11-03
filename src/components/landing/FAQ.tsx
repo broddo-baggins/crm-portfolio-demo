@@ -5,10 +5,13 @@ import { motion } from 'framer-motion';
 import { useLang } from '@/hooks/useLang';
 import { cn } from '@/lib/utils';
 
-const FAQ: React.FC = () => {
-  const { t, i18n } = useTranslation('landing');
-  const { isRTL, textStart } = useLang();
-  const isHebrew = i18n.language === 'he';
+const FAQ: React.FC<{ lang?: 'en' | 'he' }> = ({ lang }) => {
+  const { t: tDefault, i18n } = useTranslation('landing');
+  const { isRTL: isRTLGlobal, textStart: textStartGlobal } = useLang();
+  const t = lang && typeof i18n.getFixedT === 'function' ? i18n.getFixedT(lang, 'landing') : tDefault;
+  const isHebrew = lang ? lang === 'he' : i18n.language === 'he';
+  const isRTL = lang ? lang === 'he' : isRTLGlobal;
+  const textStart = () => (lang ? 'text-start' : textStartGlobal());
 
   // FAQ data using translation keys
   const faqData = [
@@ -44,95 +47,48 @@ const FAQ: React.FC = () => {
     }
   ];
 
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.1
-      }
-    }
-  };
-
-  const itemVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: { 
-      opacity: 1, 
-      y: 0,
-      transition: { duration: 0.5 }
-    }
-  };
-
   return (
-    <section 
-      className={cn("py-20 bg-gray-50 dark:bg-slate-900", isRTL && "font-hebrew")} 
+    <section
+      id="faq"
+      className={cn("scroll-mt-20 border-t border-border py-16 md:py-24", isRTL && "font-hebrew")}
       dir={isRTL ? 'rtl' : 'ltr'}
     >
-      <div className="container mx-auto px-4 max-w-4xl">
-        <motion.div
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: "-100px" }}
-          variants={containerVariants}
-          className="text-center mb-16"
-        >
-          <motion.h2 
-            variants={itemVariants}
-            className={cn(
-              "text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4",
-              textStart()
-            )}
-          >
+      <div className="mx-auto grid max-w-[1200px] gap-10 px-4 sm:px-8 lg:grid-cols-[minmax(0,4fr)_minmax(0,7fr)] lg:gap-16">
+        <div className={cn("lg:sticky lg:top-24 lg:self-start", textStart())}>
+          <h2 className="text-[28px] font-semibold leading-[34px] tracking-[-0.025em] text-foreground md:text-[36px] md:leading-[42px]">
             {t('faq.title', 'Frequently Asked Questions')}
-          </motion.h2>
-          <motion.p 
-            variants={itemVariants}
-            className={cn(
-              "text-lg text-gray-600 dark:text-slate-300 max-w-2xl mx-auto",
-              textStart()
-            )}
-          >
+          </h2>
+          <p className="mt-4 max-w-[40ch] text-[17px] leading-7 text-subtle">
             {t('faq.subtitle', 'Everything you need to know about CRM Demo and how it can transform your business')}
-          </motion.p>
-        </motion.div>
+          </p>
+        </div>
 
-        <motion.div
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: "-100px" }}
-          variants={containerVariants}
-        >
-          <Accordion type="single" collapsible className="space-y-4">
-            {faqData.map((item, index) => (
-              <motion.div key={item.id} variants={itemVariants}>
-                <AccordionItem 
-                  value={item.id}
-                  className={cn(
-                    "bg-white dark:bg-slate-800 rounded-lg shadow-sm border border-gray-200 dark:border-slate-700 px-6 py-2",
-                    isRTL && "text-right"
-                  )}
-                >
-                  <AccordionTrigger 
-                    className={cn(
-                      "hover:no-underline py-4 text-gray-900 dark:text-white font-semibold",
-                      textStart()
-                    )}
-                  >
-                    <span className={cn("flex-1", textStart())}>
-                      {item.question}
-                    </span>
-                  </AccordionTrigger>
-                  <AccordionContent className={cn(
-                    "pb-4 text-gray-600 dark:text-slate-300 leading-relaxed",
-                    textStart()
-                  )}>
-                    {item.answer}
-                  </AccordionContent>
-                </AccordionItem>
-              </motion.div>
-            ))}
-          </Accordion>
-        </motion.div>
+        <Accordion type="single" collapsible className="border-t border-border">
+          {faqData.map((item) => (
+            <AccordionItem
+              key={item.id}
+              value={item.id}
+              className="border-b border-border text-start"
+            >
+              <AccordionTrigger
+                className={cn(
+                  "py-5 text-start text-base font-medium text-foreground hover:no-underline [&[data-state=open]]:text-foreground",
+                  textStart()
+                )}
+              >
+                <span className={cn("flex-1 pe-4", textStart())}>
+                  {item.question}
+                </span>
+              </AccordionTrigger>
+              <AccordionContent className={cn(
+                "max-w-[62ch] pb-5 text-[15px] leading-7 text-subtle",
+                textStart()
+              )}>
+                {item.answer}
+              </AccordionContent>
+            </AccordionItem>
+          ))}
+        </Accordion>
       </div>
     </section>
   );

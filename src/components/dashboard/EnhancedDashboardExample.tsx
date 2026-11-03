@@ -48,7 +48,6 @@ import MobileOptimizedCharts from "./MobileOptimizedCharts";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Skeleton } from "@/components/ui/skeleton";
-import { debounce } from 'lodash';
 import { EnglishText } from '@/components/common/RTLProvider';
 
 // Import split components
@@ -57,6 +56,227 @@ import DashboardChartsSection from "./DashboardChartsSection";
 import DashboardInsightsSection from "./DashboardInsightsSection";
 import DashboardRecentActivity from "./DashboardRecentActivity";
 import EditablePerformanceTargets from "./EditablePerformanceTargets";
+
+// MetricCard component for real-time metrics
+interface MetricCardProps {
+  title: string;
+  value: number | string;
+  unit?: string;
+  trend?: number;
+  trendLabel?: string;
+  icon: React.ElementType;
+  color: "blue" | "green" | "orange" | "red" | "purple";
+  loading?: boolean;
+  subtitle?: string;
+}
+
+const MetricCard: React.FC<MetricCardProps> = ({
+  title,
+  value,
+  unit,
+  subtitle,
+  trend,
+  icon: Icon,
+  color,
+  loading,
+  trendLabel,
+}) => {
+  const { t } = useTranslation("widgets");
+  const { isRTL, textStart } = useLang();
+  // Thermal: every card is the same surface; the hue lives on the icon chip only.
+  // Hot leads are the one ember card, because heat is what ember means.
+  const iconColors = {
+    blue: "bg-steel-50 text-steel-600 dark:bg-steel-950 dark:text-steel-300",
+    green: "bg-moss-50 text-moss-600 dark:bg-moss-950 dark:text-moss-300",
+    orange: "bg-ember-50 text-ember-600 dark:bg-ember-950 dark:text-ember-300",
+    red: "bg-ember-50 text-ember-600 dark:bg-ember-950 dark:text-ember-300",
+    purple: "bg-steel-50 text-steel-600 dark:bg-steel-950 dark:text-steel-300",
+  };
+
+  if (loading) {
+    return (
+      <Card className="h-full bg-card dark:bg-card border-border dark:border-border" data-testid="metric-card-loading">
+        <CardHeader
+          className={cn(
+            "flex flex-row items-center justify-between space-y-0 pb-2",
+            isRTL ? "space-x-reverse" : "",
+          )}
+        >
+          <Skeleton className="h-4 w-32" />
+          <Skeleton className="h-4 w-4 rounded" />
+        </CardHeader>
+        <CardContent>
+          <Skeleton className="h-8 w-20 mb-2" />
+          <Skeleton className="h-3 w-28" />
+        </CardContent>
+      </Card>
+    );
+  }
+
+  const formatPercentage = (num: number): string => String(Math.round(num * 10) / 10);
+  const isPositiveTrend = trend !== undefined && trend >= 0;
+
+  return (
+    <Card
+      className="h-full bg-card transition-colors duration-[120ms] hover:border-ink-300 dark:hover:border-ink-600"
+      data-testid={`metric-card-${title.toLowerCase().replace(/\s+/g, '-')}`}
+    >
+      <CardHeader
+        className={cn(
+          "flex flex-row items-start justify-between gap-3 space-y-0 pb-1",
+          isRTL ? "space-x-reverse" : "",
+        )}
+      >
+        <CardTitle className={cn("text-sm font-medium leading-5 text-subtle", textStart())}>
+          {title}
+        </CardTitle>
+        <span className={cn("flex h-7 w-7 shrink-0 items-center justify-center rounded-md", iconColors[color])}>
+          <Icon className="h-4 w-4" aria-hidden="true" />
+        </span>
+      </CardHeader>
+      <CardContent className="pt-2 md:pt-2">
+        <div className={cn("text-[32px] font-semibold leading-9 tracking-[-0.02em] tabular-nums text-foreground metric", textStart())} data-testid={`metric-value-${title.toLowerCase().replace(/\s+/g, '-')}`}>
+          {value}
+          {unit && <span className="ms-1 text-base font-medium text-muted-foreground">{unit}</span>}
+        </div>
+        {subtitle && (
+          <p className={cn("text-xs text-muted-foreground mt-1", textStart())}>{subtitle}</p>
+        )}
+        {trend !== undefined && (
+          <p className={cn("text-xs text-muted-foreground mt-3 border-t border-border pt-3", textStart())}>
+            <span
+              className={cn(
+                "inline-flex items-center gap-1 tabular-nums",
+                isPositiveTrend
+                  ? "text-success"
+                  : "text-danger",
+              )}
+            >
+              <span className="font-medium">
+                {isPositiveTrend ? "+" : ""}
+                {formatPercentage(trend)}%
+              </span>
+            </span>{" "}
+            {trendLabel}
+          </p>
+        )}
+      </CardContent>
+    </Card>
+  );
+};
+
+// TemperatureDistribution component
+interface TemperatureDistributionProps {
+  distribution: {
+    cold: number;
+    warm: number;
+    hot: number;
+    burning: number;
+    total: number;
+  };
+  loading?: boolean;
+}
+
+const TemperatureDistribution: React.FC<TemperatureDistributionProps> = ({
+  distribution,
+  loading = false,
+}) => {
+  const { t } = useTranslation("widgets");
+  if (loading) {
+    return (
+      <Card className="h-full" data-testid="temperature-distribution-loading">
+        <CardHeader>
+          <Skeleton className="h-6 w-48" />
+          <Skeleton className="h-4 w-32" />
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-3">
+            {["Cold", "Warm", "Hot", "Burning"].map((temp) => (
+              <div key={temp} className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <Skeleton className="h-3 w-3 rounded-full" />
+                  <Skeleton className="h-4 w-16" />
+                </div>
+                <Skeleton className="h-4 w-8" />
+              </div>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  const temperatureData = [
+    {
+      name: "Cold",
+      value: distribution.cold,
+      color: "var(--heat-cold)",
+      percentage: distribution.total > 0 ? (distribution.cold / distribution.total) * 100 : 0,
+    },
+    {
+      name: "Warm",
+      value: distribution.warm,
+      color: "var(--heat-warm)",
+      percentage: distribution.total > 0 ? (distribution.warm / distribution.total) * 100 : 0,
+    },
+    {
+      name: "Hot",
+      value: distribution.hot,
+      color: "var(--ember-400)",
+      percentage: distribution.total > 0 ? (distribution.hot / distribution.total) * 100 : 0,
+    },
+    {
+      name: "Burning",
+      value: distribution.burning,
+      color: "var(--heat-hot)",
+      percentage: distribution.total > 0 ? (distribution.burning / distribution.total) * 100 : 0,
+    },
+  ];
+
+  return (
+    <Card className="h-full" data-testid="temperature-distribution-card">
+      <CardHeader>
+        <CardTitle className="text-lg font-semibold text-foreground dark:text-foreground">
+          {t("leadTemperature.distribution", "Lead Temperature Distribution")}
+        </CardTitle>
+        <p className="text-sm text-muted-foreground">
+          {t("leadTemperature.distributionDescription", "Current heat levels across your pipeline")}
+        </p>
+      </CardHeader>
+      <CardContent>
+        {/* One stacked bar on the heat ramp, then the legend with its figures */}
+        <div className="mb-4 flex h-2.5 overflow-hidden rounded-full bg-muted" aria-hidden="true">
+          {temperatureData.map((item) => (
+            <span key={item.name} style={{ width: `${item.percentage}%`, backgroundColor: item.color }} />
+          ))}
+        </div>
+        <div className="space-y-2.5">
+          {temperatureData.map((item) => (
+            <div key={item.name} className="flex items-center justify-between" data-testid={`temperature-${item.name.toLowerCase()}`}>
+              <div className="flex items-center gap-2.5">
+                <div
+                  className="h-2.5 w-2.5 rounded-sm"
+                  style={{ backgroundColor: item.color }}
+                />
+                <span className="text-sm font-medium text-foreground">
+                  {item.name}
+                </span>
+              </div>
+              <div className="flex items-center gap-3 tabular-nums">
+                <span className="text-sm text-muted-foreground">
+                  {item.percentage.toFixed(1)}%
+                </span>
+                <span className="w-8 text-end text-sm font-semibold text-foreground">
+                  {item.value}
+                </span>
+              </div>
+            </div>
+          ))}
+        </div>
+      </CardContent>
+    </Card>
+  );
+};
 
 const EnhancedDashboardExample: React.FC = () => {
   const { t } = useTranslation("widgets");
@@ -146,228 +366,6 @@ const EnhancedDashboardExample: React.FC = () => {
     return Number(value.toFixed(3)).toString();
   };
 
-  // MetricCard component for real-time metrics
-  interface MetricCardProps {
-    title: string;
-    value: number | string;
-    unit?: string;
-    trend?: number;
-    trendLabel?: string;
-    icon: React.ElementType;
-    color: "blue" | "green" | "orange" | "red" | "purple";
-    loading?: boolean;
-    subtitle?: string;
-  }
-
-  const MetricCard: React.FC<MetricCardProps> = ({
-    title,
-    value,
-    unit,
-    subtitle,
-    trend,
-    icon: Icon,
-    color,
-    loading,
-    trendLabel = t("dashboard.fromLastWeek", "from last week"),
-  }) => {
-    const { isRTL, textStart } = useLang();
-    const colorClasses = {
-      blue: "text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/50 border-blue-200 dark:border-blue-800",
-      green:
-        "text-green-600 dark:text-green-400 bg-green-50 dark:bg-green-950/50 border-green-200 dark:border-green-800",
-      orange:
-        "text-orange-600 dark:text-orange-400 bg-orange-50 dark:bg-orange-950/50 border-orange-200 dark:border-orange-800",
-      red: "text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-950/50 border-red-200 dark:border-red-800",
-      purple:
-        "text-purple-600 dark:text-purple-400 bg-purple-50 dark:bg-purple-950/50 border-purple-200 dark:border-purple-800",
-    };
-
-    const iconColors = {
-      blue: "text-blue-500 dark:text-blue-400",
-      green: "text-green-500 dark:text-green-400",
-      orange: "text-orange-500 dark:text-orange-400",
-      red: "text-red-500 dark:text-red-400",
-      purple: "text-purple-500 dark:text-purple-400",
-    };
-
-    if (loading) {
-      return (
-        <Card className="h-full bg-card dark:bg-card border-border dark:border-border" data-testid="metric-card-loading">
-          <CardHeader
-            className={cn(
-              "flex flex-row items-center justify-between space-y-0 pb-2",
-              isRTL ? "space-x-reverse" : "",
-            )}
-          >
-            <Skeleton className="h-4 w-32" />
-            <Skeleton className="h-4 w-4 rounded" />
-          </CardHeader>
-          <CardContent>
-            <Skeleton className="h-8 w-20 mb-2" />
-            <Skeleton className="h-3 w-28" />
-          </CardContent>
-        </Card>
-      );
-    }
-
-    const formatPercentage = (num: number): string => String(Math.round(num * 10) / 10);
-    const isPositiveTrend = trend !== undefined && trend >= 0;
-
-    return (
-      <Card 
-        className={cn(
-          "h-full bg-card dark:bg-card border-border dark:border-border transition-colors hover:shadow-md",
-          colorClasses[color],
-        )}
-        data-testid={`metric-card-${title.toLowerCase().replace(/\s+/g, '-')}`}
-      >
-        <CardHeader
-          className={cn(
-            "flex flex-row items-center justify-between space-y-0 pb-2",
-            isRTL ? "space-x-reverse" : "",
-          )}
-        >
-          <CardTitle className={cn("text-sm font-medium text-foreground dark:text-foreground", textStart())}>
-            {title}
-          </CardTitle>
-          <Icon className={cn("h-4 w-4", iconColors[color])} />
-        </CardHeader>
-        <CardContent>
-          <div className={cn("text-2xl font-bold text-foreground dark:text-foreground metric", textStart())} data-testid={`metric-value-${title.toLowerCase().replace(/\s+/g, '-')}`}>
-            {value}
-            {unit && <span className="text-sm font-normal ml-1">{unit}</span>}
-          </div>
-          {subtitle && (
-            <p className={cn("text-xs text-muted-foreground mt-1", textStart())}>{subtitle}</p>
-          )}
-          {trend !== undefined && (
-            <p className={cn("text-xs text-muted-foreground mt-1", textStart())}>
-              <span
-                className={cn(
-                  "inline-flex items-center gap-1",
-                  isPositiveTrend
-                    ? "text-green-600 dark:text-green-400"
-                    : "text-red-600 dark:text-red-400",
-                )}
-              >
-                <span className="font-medium">
-                  {isPositiveTrend ? "+" : ""}
-                  {formatPercentage(trend)}%
-                </span>
-              </span>{" "}
-              {trendLabel}
-            </p>
-          )}
-        </CardContent>
-      </Card>
-    );
-  };
-
-  // TemperatureDistribution component
-  interface TemperatureDistributionProps {
-    distribution: {
-      cold: number;
-      warm: number;
-      hot: number;
-      burning: number;
-      total: number;
-    };
-    loading?: boolean;
-  }
-
-  const TemperatureDistribution: React.FC<TemperatureDistributionProps> = ({
-    distribution,
-    loading = false,
-  }) => {
-    if (loading) {
-      return (
-        <Card className="h-full" data-testid="temperature-distribution-loading">
-          <CardHeader>
-            <Skeleton className="h-6 w-48" />
-            <Skeleton className="h-4 w-32" />
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-3">
-              {["Cold", "Warm", "Hot", "Burning"].map((temp) => (
-                <div key={temp} className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <Skeleton className="h-3 w-3 rounded-full" />
-                    <Skeleton className="h-4 w-16" />
-                  </div>
-                  <Skeleton className="h-4 w-8" />
-                </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
-      );
-    }
-
-    const temperatureData = [
-      {
-        name: "Cold",
-        value: distribution.cold,
-        color: "#8E9196",
-        percentage: distribution.total > 0 ? (distribution.cold / distribution.total) * 100 : 0,
-      },
-      {
-        name: "Warm",
-        value: distribution.warm,
-        color: "#D3E4FD",
-        percentage: distribution.total > 0 ? (distribution.warm / distribution.total) * 100 : 0,
-      },
-      {
-        name: "Hot",
-        value: distribution.hot,
-        color: "#FEC6A1",
-        percentage: distribution.total > 0 ? (distribution.hot / distribution.total) * 100 : 0,
-      },
-      {
-        name: "Burning",
-        value: distribution.burning,
-        color: "#ea384c",
-        percentage: distribution.total > 0 ? (distribution.burning / distribution.total) * 100 : 0,
-      },
-    ];
-
-    return (
-      <Card className="h-full" data-testid="temperature-distribution-card">
-        <CardHeader>
-          <CardTitle className="text-lg font-semibold text-foreground dark:text-foreground">
-            {t("leadTemperature.distribution", "Lead Temperature Distribution")}
-          </CardTitle>
-          <p className="text-sm text-muted-foreground">
-            {t("leadTemperature.distributionDescription", "Current heat levels across your pipeline")}
-          </p>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-4">
-            {temperatureData.map((item) => (
-              <div key={item.name} className="flex items-center justify-between" data-testid={`temperature-${item.name.toLowerCase()}`}>
-                <div className="flex items-center gap-3">
-                  <div
-                    className="w-3 h-3 rounded-full"
-                    style={{ backgroundColor: item.color }}
-                  />
-                  <span className="text-sm font-medium text-foreground dark:text-foreground">
-                    {item.name}
-                  </span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <span className="text-sm text-muted-foreground">
-                    {item.percentage.toFixed(1)}%
-                  </span>
-                  <span className="text-sm font-semibold text-foreground dark:text-foreground">
-                    {item.value}
-                  </span>
-                </div>
-              </div>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
-    );
-  };
 
   // The project change handling is now automatic via useProjectData hook
   // This effect is no longer needed but kept for any additional custom handling

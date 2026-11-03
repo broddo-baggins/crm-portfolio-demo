@@ -688,6 +688,6 @@ export const META_SUBMISSION_TEMPLATES = {
 
 // Template submission helper for Meta Business Manager
 export const TEMPLATE_SUBMISSION_DATA = {
-  businessAccountId: process.env.VITE_WHATSAPP_BUSINESS_ACCOUNT_ID,
+  businessAccountId: import.meta.env.VITE_WHATSAPP_BUSINESS_ACCOUNT_ID,
   templates: Object.values(META_SUBMISSION_TEMPLATES),
 };

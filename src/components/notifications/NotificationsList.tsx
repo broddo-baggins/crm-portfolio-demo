@@ -302,7 +302,7 @@ export const NotificationsList = () => {
                       {notification.title}
                     </h4>
                     {!notification.read && (
-                      <Badge variant="default" className="text-xs px-2 py-1 bg-primary/10 text-primary border-primary/20 flex-shrink-0">
+                      <Badge variant="default" className="text-xs px-2 py-1 bg-primary/10 text-ember-700 dark:text-primary border-primary/20 flex-shrink-0">
                         New
                       </Badge>
                     )}

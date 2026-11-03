@@ -32,7 +32,7 @@ try {
   // console.log('[Dashboard Context] Context created successfully');
 } catch (error) {
   console.error('[Dashboard Context] Failed to create context:', error);
-  throw new Error('Dashboard context creation failed - React may not be properly loaded');
+  throw new Error('Dashboard context creation failed - React may not be properly loaded', { cause: error });
 }
 
 // Prevent multiple provider instances
@@ -107,7 +107,7 @@ export const DashboardProvider: React.FC<{ children: ReactNode }> = ({ children 
   const [widgets, setWidgets] = useState<WidgetConfig[]>(() => {
     // Load initial state from localStorage if available (ONCE)
     const savedLayout = localStorage.getItem('dashboard-layout');
-    let loadedWidgets: WidgetConfig[] = defaultWidgets;
+    let loadedWidgets: WidgetConfig[];
     
     if (savedLayout) {
       try {
@@ -247,7 +247,7 @@ export const DashboardProvider: React.FC<{ children: ReactNode }> = ({ children 
     };
 
     try {
-      toast.loading("SAVE Saving dashboard layout...", { id: 'save-toast' });
+      toast.loading("Saving dashboard layout...", { id: 'save-toast' });
       
       const result = await dashboardPersistence.forceSaveToServer(layoutData);
       
@@ -256,16 +256,16 @@ export const DashboardProvider: React.FC<{ children: ReactNode }> = ({ children 
         initialWidgetsRef.current = JSON.stringify(widgets);
         
         if (result.savedToServer) {
-          toast.success("SAVE Dashboard saved to server!", { id: 'save-toast' });
+          toast.success("Dashboard saved to server!", { id: 'save-toast' });
         } else if (result.savedLocally) {
-          toast.success("SAVE Dashboard saved locally (server unavailable)", { id: 'save-toast' });
+          toast.success("Dashboard saved locally (server unavailable)", { id: 'save-toast' });
         }
       } else {
-        toast.error(`ERROR Save failed: ${result.error}`, { id: 'save-toast' });
+        toast.error(`Save failed: ${result.error}`, { id: 'save-toast' });
       }
     } catch (error) {
       console.error('[Dashboard Context] Manual save failed:', error);
-      toast.error("ERROR Failed to save dashboard", { id: 'save-toast' });
+      toast.error("Failed to save dashboard", { id: 'save-toast' });
     }
   }, [widgets]);
 

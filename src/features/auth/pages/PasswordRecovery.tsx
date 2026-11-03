@@ -6,9 +6,9 @@ import { toast } from 'sonner';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { AlertCircle, ArrowLeft } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
-import { Link } from 'react-router-dom';
+import { Link } from 'react-router';
 
-const PasswordRecovery = (): JSX.Element => {
+const PasswordRecovery = (): React.JSX.Element => {
   const [email, setEmail] = useState<string>('');
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [message, setMessage] = useState<string>('');
@@ -43,7 +43,7 @@ const PasswordRecovery = (): JSX.Element => {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-slate-100 to-slate-200 p-4">
+    <div className="flex min-h-screen items-center justify-center bg-background p-4">
       <Card className="w-full max-w-md">
         <CardHeader className="space-y-1">
           <CardTitle className="text-2xl font-bold text-center">Reset Your Password</CardTitle>
@@ -89,7 +89,7 @@ const PasswordRecovery = (): JSX.Element => {
             
             <div className="text-center">
               <Link 
-                to="/login" 
+                to="/auth/login"
                 className="flex items-center justify-center text-sm text-muted-foreground hover:text-primary gap-1"
               >
                 <ArrowLeft className="h-4 w-4" />

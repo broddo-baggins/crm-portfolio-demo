@@ -27,9 +27,9 @@ const mockData = {
   timeRange: "This Week",
   abandonmentRate: 48.1,
   stageBreakdown: [
-    { stage: "Initial", count: 67, percentage: 43, color: "#EF4444" },
+    { stage: "Initial", count: 67, percentage: 43, color: "#A5332D" },
     { stage: "Middle", count: 52, percentage: 33, color: "#F97316" },
-    { stage: "Final", count: 37, percentage: 24, color: "#EAB308" },
+    { stage: "Final", count: 37, percentage: 24, color: "#D69A2E" },
   ],
 };
 

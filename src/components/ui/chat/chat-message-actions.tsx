@@ -77,6 +77,7 @@ export const ChatMessageActions: React.FC<ChatMessageActionsProps> = ({
         size="sm"
         onClick={handleCopy}
         className="h-7 w-7 p-0"
+        aria-label="Copy message"
       >
         <Copy className="h-3 w-3" />
       </Button>
@@ -87,6 +88,7 @@ export const ChatMessageActions: React.FC<ChatMessageActionsProps> = ({
           size="sm"
           onClick={handleReply}
           className="h-7 w-7 p-0"
+          aria-label="Reply"
         >
           <Reply className="h-3 w-3" />
         </Button>
@@ -95,7 +97,7 @@ export const ChatMessageActions: React.FC<ChatMessageActionsProps> = ({
       {/* More Actions Dropdown */}
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button variant="ghost" size="sm" className="h-7 w-7 p-0">
+          <Button variant="ghost" size="sm" className="h-7 w-7 p-0" aria-label="More message actions">
             <MoreHorizontal className="h-3 w-3" />
           </Button>
         </DropdownMenuTrigger>

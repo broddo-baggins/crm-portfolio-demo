@@ -419,6 +419,12 @@ export class SimpleProjectService {
     projectId: string,
     updates: Partial<Project>,
   ): Promise<Project | null> {
+    // DEMO MODE: no projects table; apply the change to the mock project
+    if (import.meta.env.VITE_DEMO_MODE === 'true') {
+      const current = mockDataService.getMockProjects().find((p) => p.id === projectId);
+      return current ? ({ ...current, ...updates, updated_at: new Date().toISOString() } as Project) : null;
+    }
+
     try {
       const user = await authSync.ensureUser();
       if (!user) throw new Error("User not authenticated");
@@ -962,6 +968,11 @@ export class SimpleProjectService {
 
   // Get complete conversation with all messages by conversation UUID
   async getCompleteConversation(conversationId: string) {
+    // DEMO MODE: no conversations table; callers fall back to getLeadMessages()
+    if (import.meta.env.VITE_DEMO_MODE === 'true') {
+      return { conversation: null, lead: null, whatsappMessages: [] };
+    }
+
     try {
       const user = await authSync.ensureUser();
       if (!user) throw new Error("User not authenticated");
@@ -1404,6 +1415,22 @@ export class SimpleProjectService {
     page = 1,
     pageSize = 50,
   ): Promise<WhatsAppMessage[]> {
+    // DEMO MODE: serve the mock conversation for this lead, oldest first
+    if (import.meta.env.VITE_DEMO_MODE === 'true') {
+      return mockDataService
+        .getMockConversations()
+        .filter((msg) => msg.lead_id === leadId)
+        .map((msg) => ({
+          id: msg.id,
+          lead_id: msg.lead_id,
+          content: msg.message_content || "",
+          direction: msg.message_type === "outbound" ? "outbound" : "inbound",
+          message_type: "text",
+          wa_timestamp: msg.timestamp,
+          created_at: msg.created_at,
+        })) as unknown as WhatsAppMessage[];
+    }
+
     try {
       // Get conversations for this lead
       const { data: messages, error } = await supabase

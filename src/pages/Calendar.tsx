@@ -110,6 +110,15 @@ interface CalendlyUser {
   timezone: string;
 }
 
+
+/** Collapsible triggers rendered as <div>s still need Enter/Space like a native button. */
+const activateOnEnterOrSpace = (e: React.KeyboardEvent<HTMLElement>) => {
+  if (e.key === "Enter" || e.key === " ") {
+    e.preventDefault();
+    e.currentTarget.click();
+  }
+};
+
 const Calendar = () => {
   const { t } = useTranslation("pages");
   const { t: tCommon } = useTranslation("common");
@@ -624,7 +633,8 @@ const Calendar = () => {
         <div
           key={day}
           className={cn(
-            "h-32 p-3 border-r border-b border-border cursor-pointer hover:bg-gray-50 dark:hover:bg-slate-800 transition-colors",
+            // min-h, not h: with three meetings a fixed 8rem cell spilled its chips over the next row's date
+            "min-h-32 p-3 border-r border-b border-border cursor-pointer hover:bg-gray-50 dark:hover:bg-slate-800 transition-colors",
             isSelected && "bg-blue-100 dark:bg-blue-900",
             isToday && "bg-yellow-50 dark:bg-yellow-900/20 border-yellow-300"
           )}
@@ -683,7 +693,7 @@ const Calendar = () => {
 
   const onboardingSteps = [
     {
-      title: "CALENDAR Calendar Overview",
+      title: "Calendar Overview",
       description: "Your Calendly account is now connected! Here's what you can do:",
       content: [
         "View all your scheduled meetings in one place",
@@ -693,7 +703,7 @@ const Calendar = () => {
       ]
     },
     {
-      title: "LINK Share Your Booking Link", 
+      title: "Share Your Booking Link", 
       description: "Your personal scheduling link is ready to use:",
       content: [
         `Link: ${postConnectionData?.schedulingUrl || 'Loading...'}`,
@@ -703,7 +713,7 @@ const Calendar = () => {
       ]
     },
     {
-      title: "CHAT WhatsApp Integration",
+      title: "WhatsApp Integration",
       description: "Schedule meetings directly from message conversations:",
       content: [
         "Go to Messages page → Select a conversation",
@@ -713,7 +723,7 @@ const Calendar = () => {
       ]
     },
     {
-      title: "INIT Ready to Go!",
+      title: "Ready to Go!",
       description: "Your Calendly integration is fully set up:",
       content: [
         "Test the workflow by visiting Messages page",
@@ -768,13 +778,12 @@ const Calendar = () => {
       )}
 
       {/* Header with user info and booking link */}
-      <div className="flex justify-between items-start">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <h1 className="text-2xl font-bold mb-2 flex items-center gap-2">
-            <CalendarDays className="h-6 w-6 text-primary" />
+          <h1 className="text-2xl font-semibold leading-8 tracking-[-0.02em]">
             {t("calendar.title", "Calendar")}
           </h1>
-          <p className="text-muted-foreground">
+          <p className="mt-1 text-sm text-muted-foreground">
             {t(
               "calendar.subtitle",
               "Manage your calendar events from Calendly and Google Calendar",
@@ -782,7 +791,7 @@ const Calendar = () => {
             {meetingContext && ` • Context: ${meetingContext.lead_name}`}
           </p>
         </div>
-        <div className="flex gap-2">
+        <div className="flex flex-wrap gap-2">
           {meetingContext && (
             <Button onClick={handleScheduleForLead} variant="default">
               <CalendarDays className="h-4 w-4 mr-2" />
@@ -819,17 +828,17 @@ const Calendar = () => {
       {/* Calendar Navigation */}
       <Card>
         <CardHeader>
-          <div className="flex items-center justify-between">
-            <CardTitle className="flex items-center gap-2">
-              <CalendarDays className="h-5 w-5" />
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <CardTitle className="flex w-auto items-center gap-2">
+              <CalendarDays className="h-5 w-5 text-muted-foreground" aria-hidden="true" />
               {currentDate.toLocaleDateString("en-US", {
                 month: "long",
                 year: "numeric",
               })}
             </CardTitle>
-            <div className="flex items-center gap-4">
+            <div className="flex flex-wrap items-center gap-3">
               {/* Legend */}
-              <div className="flex items-center gap-4 text-sm">
+              <div className="flex flex-wrap items-center gap-3 text-sm">
                 <div className="flex items-center gap-1">
                   <div className="w-3 h-3 bg-blue-500 rounded-sm"></div>
                   <span>Calendly</span>
@@ -846,6 +855,7 @@ const Calendar = () => {
                   variant="outline"
                   size="sm"
                   onClick={() => prevMonth()}
+                  aria-label="Previous month"
                 >
                   <ChevronLeft className="h-4 w-4" />
                 </Button>
@@ -860,6 +870,7 @@ const Calendar = () => {
                   variant="outline"
                   size="sm"
                   onClick={() => nextMonth()}
+                  aria-label="Next month"
                 >
                   <ChevronRight className="h-4 w-4" />
                 </Button>
@@ -1088,7 +1099,12 @@ const Calendar = () => {
         <Card>
           <Collapsible>
             <CollapsibleTrigger asChild>
-              <CardHeader className="cursor-pointer hover:bg-muted/50 transition-colors">
+              <CardHeader
+                className="cursor-pointer hover:bg-muted/50 transition-colors"
+                role="button"
+                tabIndex={0}
+                onKeyDown={activateOnEnterOrSpace}
+              >
                 <CardTitle className="flex items-center justify-between gap-2">
                   <div className="flex items-center gap-2">
                     <CalendarDays className="h-5 w-5 text-blue-600" />
@@ -1165,7 +1181,12 @@ const Calendar = () => {
         <Card>
           <Collapsible>
             <CollapsibleTrigger asChild>
-              <CardHeader className="cursor-pointer hover:bg-muted/50 transition-colors">
+              <CardHeader
+                className="cursor-pointer hover:bg-muted/50 transition-colors"
+                role="button"
+                tabIndex={0}
+                onKeyDown={activateOnEnterOrSpace}
+              >
                 <CardTitle className="flex items-center justify-between gap-2">
                   <div className="flex items-center gap-2">
                     <CalendarDays className="h-5 w-5 text-red-600" />

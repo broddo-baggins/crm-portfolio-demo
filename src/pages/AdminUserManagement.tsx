@@ -26,6 +26,10 @@ import {
   AlertTriangle
 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
+import { getMockUsers } from '@/data/mockUsers';
+
+// The user-management edge function doesn't exist in the portfolio demo
+const isDemoMode = import.meta.env.VITE_DEMO_MODE === 'true';
 
 interface User {
   id: string;
@@ -103,6 +107,20 @@ const AdminUserManagement: React.FC = () => {
 
   // Fetch users
   const fetchUsers = async () => {
+    if (isDemoMode) {
+      setUsers(
+        getMockUsers().map((u) => ({
+          id: u.id,
+          email: u.email,
+          name: u.name ?? undefined,
+          role: u.role,
+          status: u.status,
+          created_at: '2024-01-01T00:00:00Z',
+        })),
+      );
+      return;
+    }
+
     setLoading(true);
     try {
       const response = await fetch('/functions/v1/user-management', {
@@ -135,6 +153,23 @@ const AdminUserManagement: React.FC = () => {
   const createUser = async () => {
     if (!createUserData.email) {
       toast.error('Email is required');
+      return;
+    }
+
+    if (isDemoMode) {
+      setUsers((prev) => [
+        {
+          id: `demo-${Date.now()}`,
+          email: createUserData.email,
+          name: createUserData.name || undefined,
+          role: createUserData.role,
+          status: 'ACTIVE',
+          created_at: new Date().toISOString(),
+        },
+        ...prev,
+      ]);
+      toast.success(`Demo mode: ${createUserData.email} added locally (no invitation sent)`);
+      setIsCreateDialogOpen(false);
       return;
     }
 
@@ -183,6 +218,12 @@ const AdminUserManagement: React.FC = () => {
   // Delete user
   const deleteUser = async (userId: string, email: string) => {
     if (!confirm(`Are you sure you want to delete user: ${email}?`)) {
+      return;
+    }
+
+    if (isDemoMode) {
+      setUsers((prev) => prev.filter((u) => u.id !== userId));
+      toast.success('Demo mode: user removed locally');
       return;
     }
 
@@ -509,14 +550,14 @@ const AdminUserManagement: React.FC = () => {
               {filteredUsers.map((user) => (
                 <div 
                   key={user.id} 
-                  className="flex items-center justify-between p-4 border rounded-lg hover:bg-muted/50"
+                  className="flex flex-wrap items-center justify-between gap-3 p-4 border rounded-lg hover:bg-muted/50"
                 >
-                  <div className="flex items-center gap-4">
-                    <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white font-semibold">
+                  <div className="flex min-w-0 items-center gap-4">
+                    <div className="w-10 h-10 shrink-0 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white font-semibold">
                       {(user.name || user.email).charAt(0).toUpperCase()}
                     </div>
-                    <div>
-                      <div className="flex items-center gap-2">
+                    <div className="min-w-0 break-words">
+                      <div className="flex flex-wrap items-center gap-2">
                         <p className="font-medium">{user.name || user.email.split('@')[0]}</p>
                         <Badge variant={
                           user.role === 'SUPER_ADMIN' ? 'destructive' : 
@@ -545,6 +586,7 @@ const AdminUserManagement: React.FC = () => {
                       onClick={() => deleteUser(user.id, user.email)}
                       disabled={deleteLoading === user.id}
                       title="Delete user"
+                      aria-label={`Delete ${user.email}`}
                     >
                       <Trash2 className="h-4 w-4" />
                     </Button>

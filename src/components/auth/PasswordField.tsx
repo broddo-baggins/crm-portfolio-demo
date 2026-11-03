@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Eye, EyeOff } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Link } from 'react-router';
 import PasswordStrengthIndicator from './PasswordStrengthIndicator';
 import { useTranslation } from 'react-i18next';
 import { useLang } from '@/hooks/useLang';
@@ -27,7 +27,7 @@ const PasswordField = ({
   autoComplete = "current-password",
   disabled,
   required
-}: PasswordFieldProps): JSX.Element => {
+}: PasswordFieldProps): React.JSX.Element => {
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const [passwordStrength, setPasswordStrength] = useState<number>(0);
   const { t } = useTranslation('common');

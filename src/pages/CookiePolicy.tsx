@@ -2,7 +2,8 @@ import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
-import { Cookie, Shield, Globe, Settings, MessageSquare, BarChart3 } from 'lucide-react';
+import { AlertTriangle, Cookie, Shield, Globe, Settings, MessageSquare, BarChart3 } from 'lucide-react';
+import { PublicPageShell } from '@/components/marketing/PublicPageShell';
 import { useTranslation } from 'react-i18next';
 import { useLang } from '@/hooks/useLang';
 import { cn } from '@/lib/utils';
@@ -13,23 +14,25 @@ const CookiePolicy: React.FC = () => {
   const lastUpdated = "December 2024";
   
   return (
-    <div className={cn("container mx-auto px-4 py-8 max-w-4xl", isRTL && "font-hebrew")} dir={isRTL ? "rtl" : "ltr"}>
+    <PublicPageShell dir={isRTL ? "rtl" : "ltr"}>
+    <div className={cn("mx-auto max-w-4xl px-4 py-10 sm:px-8 md:py-16", isRTL && "font-hebrew")}>
       {/* Header */}
-      <div className={cn("text-center mb-8", textStart())}>
-        <h1 className={cn("text-4xl font-bold text-gray-900 dark:text-white mb-4", textStart())}>
+      <div className={cn("mb-10", textStart())}>
+        <h1 className={cn("mb-3 text-[32px] font-semibold leading-[38px] tracking-[-0.025em] text-foreground md:text-[40px] md:leading-[46px]", textStart())}>
           {t('cookiePolicy.title', 'Cookie Policy')}
         </h1>
-        <p className={cn("text-xl text-gray-600 dark:text-gray-300 mb-2", textStart())}>
+        <p className={cn("mb-3 text-lg text-subtle", textStart())}>
           {t('cookiePolicy.subtitle', 'How we use cookies and similar technologies')}
         </p>
         <Badge variant="secondary" className="mb-4">
           Last updated: {lastUpdated}
         </Badge>
-        
+
         {/* Demo Notice */}
-        <div className="mt-6 p-4 bg-orange-50 dark:bg-orange-950/30 border border-orange-200 dark:border-orange-800 rounded-lg">
-          <p className="text-orange-900 dark:text-orange-200 font-semibold text-lg mb-2">
-            ⚠️ Portfolio Demo Application
+        <div className="mt-6 border-s-2 border-amber-400 bg-amber-50 p-4 dark:bg-amber-950/40">
+          <p className="mb-1 flex items-center gap-2 font-semibold text-amber-800 dark:text-amber-200">
+            <AlertTriangle className="h-4 w-4" aria-hidden="true" />
+            Portfolio Demo Application
           </p>
           <p className="text-orange-800 dark:text-orange-300 text-sm">
             This is a demonstration project by Amit Yogev with mock data. No real cookies are set for tracking purposes.
@@ -347,6 +350,7 @@ const CookiePolicy: React.FC = () => {
         </p>
       </div>
     </div>
+    </PublicPageShell>
   );
 };
 

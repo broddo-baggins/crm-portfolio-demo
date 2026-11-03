@@ -77,7 +77,7 @@ import {
   getLeadCompany, 
   getDisplayTemperature, 
   getTemperatureVariant,
-  getHeatLevelFromTemperature 
+  getHeatScaleLevel,
 } from "@/utils/leadUtils";
 import { type Lead } from "@/types";
 import { LeadProperties } from "./LeadProperties";
@@ -663,7 +663,7 @@ export const LeadManagementDashboard: React.FC = () => {
   useEffect(() => {
     const handleProjectChange = (event: CustomEvent) => {
       console.log(
-        "REFRESH LeadManagementDashboard: Project changed via event",
+        "LeadManagementDashboard: Project changed via event",
         event.detail,
       );
       loadingRef.current = false; // Reset loading state
@@ -787,6 +787,8 @@ export const LeadManagementDashboard: React.FC = () => {
       // Transform data to include full name and ensure type compatibility
       const transformedLeads = filteredLeads.map((lead) => ({
         ...lead,
+        // Demo and database rows carry first/last name only; the table and search read `name`
+        name: lead.name || getLeadName(lead),
         // Computed properties using utility functions
         displayName: getLeadName(lead),
         displayTemperature: getLeadTemperature(lead),
@@ -798,7 +800,7 @@ export const LeadManagementDashboard: React.FC = () => {
 
       const loadTime = Date.now() - loadStart;
       console.log(
-        `DATA Loaded ${transformedLeads.length} leads for project: ${currentProject?.name || "All"} (${loadTime}ms)`,
+        `Loaded ${transformedLeads.length} leads for project: ${currentProject?.name || "All"} (${loadTime}ms)`,
       );
       
       // Log performance for zero-data scenarios
@@ -823,7 +825,7 @@ export const LeadManagementDashboard: React.FC = () => {
     const now = new Date();
     const stats: DashboardStats = {
       totalLeads: leads.length,
-      newLeads: leads.filter((lead) => lead.state === "new_lead").length,
+      newLeads: leads.filter((lead) => lead.state === "new_lead" || lead.status === "new").length,
       hotLeads: 0, // Will calculate based on confidence score
       convertedLeads: leads.filter((lead) => 
         lead.state === "qualified" || lead.status === "purchase_ready"
@@ -1080,22 +1082,8 @@ export const LeadManagementDashboard: React.FC = () => {
     }
   };
 
-  // Convert numeric temperature (0-100) to string heat level
-  const getHeatLevelFromTemperature = (temperature: number | string | null): string => {
-    if (temperature === null || temperature === undefined) return 'FROZEN';
-    
-    const temp = typeof temperature === 'string' ? parseInt(temperature) : temperature;
-    if (isNaN(temp)) return 'FROZEN';
-    
-    if (temp <= 10) return 'FROZEN';
-    if (temp <= 20) return 'ICE_COLD';
-    if (temp <= 35) return 'COLD';
-    if (temp <= 50) return 'COOL';
-    if (temp <= 65) return 'WARM';
-    if (temp <= 80) return 'HOT';
-    if (temp <= 95) return 'BURNING';
-    return 'WHITE_HOT';
-  };
+  // Seven-step heat scale (FROZEN..WHITE_HOT) used by this table's filter and stats
+  const getHeatLevelFromTemperature = getHeatScaleLevel;
 
   const getDisplayTemperature = (heat: string | number | null) => {
     // Convert numeric temperature to string heat level if needed
@@ -1230,68 +1218,40 @@ export const LeadManagementDashboard: React.FC = () => {
       dir={isRTL ? "rtl" : "ltr"}
     >
       {/* Header */}
-      <div
-        className={cn("flex items-center justify-between", isRTL ? "flex-row-reverse" : "flex-row")}
-      >
+      <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
         <div className={textStart()}>
-          <h1
-            className={cn(
-              "text-3xl font-bold flex items-center gap-2",
-              isRTL ? "flex-row-reverse" : "flex-row",
-            )}
-          >
-            <Users className="h-8 w-8" />
+          <h1 className="text-2xl font-semibold leading-8 tracking-[-0.02em] text-foreground">
             {t("pages.leads.leadManagementDashboard", "Lead Management Dashboard")}
           </h1>
-          <div className="text-muted-foreground">
-            <p>
-              {t(
-                "pages.leads.manageAndTrackLeads",
-                "Manage and track your leads with real-time updates",
-              )}
-            </p>
-            {isRealTimeConnected && (
-              <div
-                className={cn("mt-1 flex items-center gap-2", isRTL ? "flex-row-reverse" : "flex-row")}
-              >
-                <Activity className="h-4 w-4 text-green-500" />
-                <span className="text-green-600">
-                  {t("dashboard.connection.connected", "Connected")}
-                </span>
-              </div>
+          <p className="mt-1 text-sm text-muted-foreground">
+            {t(
+              "pages.leads.manageAndTrackLeads",
+              "Manage and track your leads with real-time updates",
             )}
-            {!isRealTimeConnected && (
-              <div
-                className={cn("mt-1 flex items-center gap-2", isRTL ? "flex-row-reverse" : "flex-row")}
-              >
-                <XCircle className="h-4 w-4 text-red-500" />
-                <span className="text-red-600">
-                  {t("pages.leadManagement.offline", "Offline")}
-                </span>
-              </div>
-            )}
-          </div>
+          </p>
         </div>
 
-        <div className={cn("flex items-center gap-2", isRTL ? "flex-row-reverse" : "flex-row")}>
-          {/* Real-time Status */}
-          <Badge
-            variant={isRealTimeConnected ? "default" : "secondary"}
-            className={cn("gap-1", isRTL ? "flex-row-reverse" : "flex-row")}
+        <div className="flex flex-wrap items-center gap-2">
+          {/* Real-time status: one quiet pill, a dot only when live */}
+          <span
+            className="inline-flex h-8 items-center gap-1.5 rounded-full border border-border bg-surface px-3 text-xs font-medium text-subtle"
+            role="status"
           >
-            <Activity
-              className={cn("h-3 w-3", isRealTimeConnected && "animate-pulse")}
-            />
-            {isRealTimeConnected
-              ? t("leads.status.live", "Live")
-              : t("leads.status.offline", "Offline")}
-          </Badge>
-
-          {/* Last Updated */}
-          <Badge variant="outline" className={cn("gap-1", isRTL ? "flex-row-reverse" : "flex-row")}>
-            <Clock className="h-3 w-3" />
-            {formatDate(dashboardStats.lastUpdated)}
-          </Badge>
+            {isRealTimeConnected ? (
+              <>
+                <span className="h-1.5 w-1.5 rounded-full bg-moss-500" aria-hidden="true" />
+                {t("leads.status.live", "Live")}
+              </>
+            ) : (
+              <>
+                <XCircle className="h-3.5 w-3.5 text-muted-foreground" aria-hidden="true" />
+                {t("leads.status.offline", "Offline")}
+              </>
+            )}
+            <span className="text-muted-foreground">·</span>
+            <Clock className="h-3.5 w-3.5 text-muted-foreground" aria-hidden="true" />
+            <span className="tabular-nums">{formatDate(dashboardStats.lastUpdated)}</span>
+          </span>
 
           {/* Actions */}
           <Button
@@ -1299,6 +1259,7 @@ export const LeadManagementDashboard: React.FC = () => {
             size="sm"
             onClick={handleRefresh}
             disabled={isManualRefreshing || isAutoRefreshing}
+            aria-label={t("common.refresh", "Refresh")}
           >
             <RefreshCw
               className={cn("h-4 w-4", (isManualRefreshing || isAutoRefreshing) && "animate-spin")}
@@ -1311,101 +1272,59 @@ export const LeadManagementDashboard: React.FC = () => {
           </Button>
 
           <Button size="sm" onClick={() => setIsLeadFormOpen(true)}>
-            <Plus className={cn("h-4 w-4", isRTL ? "ml-2" : "mr-2")} />
+            <Plus className="h-4 w-4" />
             {t("pages.leadManagement.addLead", "Add Lead")}
           </Button>
         </div>
       </div>
 
-      {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <Card>
-          <CardContent className="p-6">
-            <div className={cn("flex items-center", isRTL ? "flex-row-reverse" : "flex-row")}>
-              <div className={cn("flex-1", textStart())}>
-                <p className="text-sm font-medium text-muted-foreground">
-                  {t("pages.leads.totalLeads", "Total Leads")}
-                </p>
-                <p className="text-2xl font-bold">
-                  {dashboardStats.totalLeads}
-                </p>
-                <p className="text-xs text-muted-foreground">
-                  {t(
-                    "pages.leadManagement.allLeadsInSystem",
-                    "All leads in the system",
-                  )}
-                </p>
+      {/* Stats: one row of figures, neutral surfaces, the hue only on the icon */}
+      <div className="grid grid-cols-2 gap-3 lg:grid-cols-4 lg:gap-4">
+        {[
+          {
+            label: t("pages.leads.totalLeads", "Total Leads"),
+            value: dashboardStats.totalLeads,
+            note: t("pages.leadManagement.allLeadsInSystem", "All leads in the system"),
+            icon: Users,
+            tone: "bg-muted text-subtle",
+          },
+          {
+            label: t("pages.leads.newLeads", "New Leads"),
+            value: dashboardStats.newLeads,
+            note: t("pages.leadManagement.requiresAttention", "Requires attention"),
+            icon: TrendingUp,
+            tone: "bg-steel-50 text-steel-600 dark:bg-steel-950 dark:text-steel-300",
+          },
+          {
+            label: t("pages.leads.hotLeads", "Hot Leads"),
+            value: dashboardStats.hotLeads,
+            note: t("pages.leadManagement.highPriorityLeads", "High priority leads"),
+            icon: Target,
+            tone: "bg-ember-50 text-ember-600 dark:bg-ember-950 dark:text-ember-300",
+          },
+          {
+            label: t("pages.leads.conversionRate", "Conversion Rate"),
+            value: `${dashboardStats.conversionRate.toFixed(1)}%`,
+            note: t("widgets.conversionsCompleted.conversionRate", "Conversion rate"),
+            icon: BarChart3,
+            tone: "bg-moss-50 text-moss-600 dark:bg-moss-950 dark:text-moss-300",
+          },
+        ].map(({ label, value, note, icon: Icon, tone }) => (
+          <Card key={label}>
+            <CardContent className="p-4 md:p-5">
+              <div className="flex items-start justify-between gap-3">
+                <p className={cn("text-sm font-medium text-subtle", textStart())}>{label}</p>
+                <span className={cn("flex h-7 w-7 shrink-0 items-center justify-center rounded-md", tone)}>
+                  <Icon className="h-4 w-4" aria-hidden="true" />
+                </span>
               </div>
-              <Users className="h-8 w-8 text-blue-500" />
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardContent className="p-6">
-            <div className={cn("flex items-center", isRTL ? "flex-row-reverse" : "flex-row")}>
-              <div className={cn("flex-1", textStart())}>
-                <p className="text-sm font-medium text-muted-foreground">
-                  {t("pages.leads.newLeads", "New Leads")}
-                </p>
-                <p className="text-2xl font-bold text-blue-600">
-                  {dashboardStats.newLeads}
-                </p>
-                <p className="text-xs text-muted-foreground">
-                  {t(
-                    "pages.leadManagement.requiresAttention",
-                    "Requires attention",
-                  )}
-                </p>
-              </div>
-              <TrendingUp className="h-8 w-8 text-blue-500" />
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardContent className="p-6">
-            <div className={cn("flex items-center", isRTL ? "flex-row-reverse" : "flex-row")}>
-              <div className={cn("flex-1", textStart())}>
-                <p className="text-sm font-medium text-muted-foreground">
-                  {t("pages.leads.hotLeads", "Hot Leads")}
-                </p>
-                <p className="text-2xl font-bold text-red-600">
-                  {dashboardStats.hotLeads}
-                </p>
-                <p className="text-xs text-muted-foreground">
-                  {t(
-                    "pages.leadManagement.highPriorityLeads",
-                    "High priority leads",
-                  )}
-                </p>
-              </div>
-              <Target className="h-8 w-8 text-red-500" />
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardContent className="p-6">
-            <div className={cn("flex items-center", isRTL ? "flex-row-reverse" : "flex-row")}>
-              <div className={cn("flex-1", textStart())}>
-                <p className="text-sm font-medium text-muted-foreground">
-                  {t("pages.leads.conversionRate", "Conversion Rate")}
-                </p>
-                <p className="text-2xl font-bold text-green-600">
-                  {dashboardStats.conversionRate.toFixed(1)}%
-                </p>
-                <p className="text-xs text-muted-foreground">
-                  {t(
-                    "widgets.conversionsCompleted.conversionRate",
-                    "Conversion rate",
-                  )}
-                </p>
-              </div>
-              <BarChart3 className="h-8 w-8 text-green-500" />
-            </div>
-          </CardContent>
-        </Card>
+              <p className="mt-2 text-[28px] font-semibold leading-8 tracking-[-0.02em] tabular-nums text-foreground md:text-[32px] md:leading-9">
+                {value}
+              </p>
+              <p className="mt-1 text-xs text-muted-foreground">{note}</p>
+            </CardContent>
+          </Card>
+        ))}
       </div>
 
       {/* Real-time Updates Feed */}
@@ -1500,7 +1419,7 @@ export const LeadManagementDashboard: React.FC = () => {
                     value={filters.state}
                     onValueChange={(value) => handleFilterChange("state", value)}
                   >
-                    <SelectTrigger>
+                    <SelectTrigger aria-label={t("pages.leads.status", "Status")}>
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
@@ -1521,7 +1440,7 @@ export const LeadManagementDashboard: React.FC = () => {
                     value={filters.heat}
                     onValueChange={(value) => handleFilterChange("heat", value)}
                   >
-                    <SelectTrigger>
+                    <SelectTrigger aria-label={t("pages.leads.heatLevel", "Heat Level")}>
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
@@ -1545,7 +1464,7 @@ export const LeadManagementDashboard: React.FC = () => {
                     value={filters.dateRange}
                     onValueChange={(value) => handleFilterChange("dateRange", value)}
                   >
-                    <SelectTrigger>
+                    <SelectTrigger aria-label={t("pages.leads.dateRange", "Date Range")}>
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
@@ -1656,7 +1575,9 @@ export const LeadManagementDashboard: React.FC = () => {
                   </Button>
                 </div>
               ) : (
-                <div className="overflow-x-auto">
+                <div className="relative overflow-x-auto">
+                  {/* relative: the header's sr-only labels are absolutely positioned and otherwise
+                      escape the scroller, widening the phone layout to 481 px */}
                   <table className="w-full" data-testid="leads-table">
                     <thead className="bg-muted/50">
                       <tr className="border-b">
@@ -1664,6 +1585,7 @@ export const LeadManagementDashboard: React.FC = () => {
                         <th className="p-3 w-12">
                           <Checkbox
                             size="table"
+                            aria-label="Select all leads"
                             checked={
                               bulkSelection.selectAllMode === 'filtered' ||
                               (filteredLeads.length > 0 && filteredLeads.every(lead => bulkSelection.selectedLeads.has(lead.id)))
@@ -1734,6 +1656,7 @@ export const LeadManagementDashboard: React.FC = () => {
                           <td className="p-2 sm:p-3 align-top">
                             <Checkbox
                               size="table"
+                              aria-label={`Select ${lead.name}`}
                               checked={bulkSelection.selectedLeads.has(lead.id)}
                               onCheckedChange={(checked) => handleLeadSelection(lead.id, !!checked)}
                             />
@@ -1757,18 +1680,21 @@ export const LeadManagementDashboard: React.FC = () => {
                               {/* Mobile: Show contact info below name */}
                               <div className="sm:hidden space-y-0.5">
                                 {lead.phone && (
-                                  <div className="text-xs text-muted-foreground">
-                                    CALL {lead.phone}
+                                  <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                                    <Phone className="h-3 w-3 shrink-0" aria-hidden="true" />
+                                    {lead.phone}
                                   </div>
                                 )}
                                 {lead.email && (
-                                  <div className="text-xs text-muted-foreground truncate">
-                                    ✉️ {lead.email}
+                                  <div className="flex min-w-0 items-center gap-1.5 text-xs text-muted-foreground">
+                                    <Mail className="h-3 w-3 shrink-0" aria-hidden="true" />
+                                    <span className="truncate">{lead.email}</span>
                                   </div>
                                 )}
                                 {lead.company && (
-                                  <div className="text-xs text-muted-foreground">
-                                    🏢 {lead.company}
+                                  <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                                    <Building className="h-3 w-3 shrink-0" aria-hidden="true" />
+                                    {lead.company}
                                   </div>
                                 )}
                               </div>

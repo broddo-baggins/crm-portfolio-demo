@@ -14,71 +14,76 @@ if (!isDemoMode && (!supabaseUrl || !supabaseAnonKey)) {
   throw new Error('Missing Supabase environment variables')
 }
 
+// DEMO MODE: the signed-in demo user. Matches DEMO_USER in ClientAuthContext, which
+// auto-authenticates every visitor, so services that ask Supabase for the user agree.
+const DEMO_AUTH_USER = {
+  id: 'demo-user-12345',
+  email: 'honored.guest@crm.demo',
+  aud: 'authenticated',
+  role: 'authenticated',
+  app_metadata: {},
+  user_metadata: { name: 'Honored Guest', full_name: 'Honored Guest', role: 'ADMIN', is_admin: true },
+  created_at: '2024-01-01T00:00:00Z',
+};
+const DEMO_SESSION = { user: DEMO_AUTH_USER, access_token: 'demo-token', token_type: 'bearer' };
+
+/**
+ * A query builder that accepts any chain (select/eq/order/maybeSingle/upsert/...)
+ * and resolves to an empty result, like a table with no rows.
+ */
+const createMockQuery = (): any => {
+  const result = { data: null, error: null, count: 0 };
+  const query: any = new Proxy(() => {}, {
+    get: (_target, prop) => {
+      if (prop === 'then') return (resolve: any, reject: any) => Promise.resolve(result).then(resolve, reject);
+      if (prop === 'single' || prop === 'maybeSingle') return () => Promise.resolve(result);
+      return () => query;
+    },
+  });
+  return query;
+};
+
 // DEMO MODE: Create mock client that doesn't make any real calls
 const createMockSupabaseClient = () => {
-  console.log('[DEMO MODE] Using mock Supabase client - NO real API calls will be made');
-  
   const mockAuth = {
-    getSession: async () => {
-      console.log('[DEMO MODE] Mock: This would fetch session from Supabase auth.sessions table');
-      return { data: { session: null }, error: null };
-    },
-    getUser: async () => {
-      console.log('[DEMO MODE] Mock: This would fetch user from Supabase auth.users table');
-      return { data: { user: null }, error: null };
-    },
-    onAuthStateChange: (callback: any) => {
-      console.log('[DEMO MODE] Mock: This would subscribe to Supabase auth state changes');
-      return { data: { subscription: { unsubscribe: () => {} } } };
-    },
-    signOut: async () => {
-      console.log('[DEMO MODE] Mock: This would sign out user via Supabase auth');
-      return { error: null };
-    },
-    signInWithPassword: async (credentials: any) => {
-      console.log('[DEMO MODE] Mock: This would authenticate via Supabase auth.users table');
-      return { data: null, error: { message: 'Demo mode - no real authentication' } };
-    }
+    getSession: async () => ({ data: { session: DEMO_SESSION }, error: null }),
+    getUser: async () => ({ data: { user: DEMO_AUTH_USER }, error: null }),
+    onAuthStateChange: (_callback: any) => ({ data: { subscription: { unsubscribe: () => {} } } }),
+    signOut: async () => ({ error: null }),
+    signInWithPassword: async (_credentials: any) => ({
+      data: null,
+      error: { message: 'Demo mode - no real authentication' },
+    }),
+    resetPasswordForEmail: async () => ({ data: {}, error: null }),
+    // Any recovery/magic-link token is accepted, so the reset-password page can be demoed
+    verifyOtp: async () => ({ data: { user: DEMO_AUTH_USER, session: DEMO_SESSION }, error: null }),
+    updateUser: async () => ({ data: { user: DEMO_AUTH_USER }, error: null }),
+    exchangeCodeForSession: async () => ({ data: { session: DEMO_SESSION }, error: null }),
+    setSession: async () => ({ data: { session: DEMO_SESSION }, error: null }),
   };
 
-  const mockFrom = (table: string) => {
-    return {
-      select: (...args: any[]) => {
-        console.log('[DEMO MODE] Mock: SELECT from "' + table + '" - This would query Supabase table');
-        return mockFrom(table);
-      },
-      insert: (data: any) => {
-        console.log('[DEMO MODE] Mock: INSERT into "' + table + '"', data, '- This would insert into Supabase table');
-        return mockFrom(table);
-      },
-      update: (data: any) => {
-        console.log('[DEMO MODE] Mock: UPDATE "' + table + '"', data, '- This would update Supabase table');
-        return mockFrom(table);
-      },
-      delete: () => {
-        console.log('[DEMO MODE] Mock: DELETE from "' + table + '" - This would delete from Supabase table');
-        return mockFrom(table);
-      },
-      eq: (...args: any[]) => mockFrom(table),
-      in: (...args: any[]) => mockFrom(table),
-      order: (...args: any[]) => mockFrom(table),
-      limit: (...args: any[]) => mockFrom(table),
-      single: () => ({ data: null, error: null }),
-      then: (resolve: any) => resolve({ data: null, error: null })
+  const mockChannel = () => {
+    const channel: any = {
+      on: () => channel,
+      subscribe: () => channel,
+      unsubscribe: () => {},
     };
+    return channel;
   };
 
   return {
     auth: mockAuth,
-    from: mockFrom,
-    channel: (name: string) => ({
-      on: () => ({ subscribe: () => ({ unsubscribe: () => {} }) }),
-      subscribe: () => ({ unsubscribe: () => {} })
-    }),
-    rpc: async (fn: string, params: any) => {
-      console.log('[DEMO MODE] Mock: RPC call to "' + fn + '"', params, '- This would call Supabase function');
-      return { data: null, error: null };
-    }
+    from: (_table: string) => createMockQuery(),
+    channel: (_name: string) => mockChannel(),
+    removeChannel: () => {},
+    rpc: async (_fn: string, _params: any) => ({ data: null, error: null }),
+    functions: { invoke: async () => ({ data: null, error: null }) },
+    storage: {
+      from: () => ({
+        upload: async () => ({ data: null, error: null }),
+        getPublicUrl: () => ({ data: { publicUrl: '' } }),
+      }),
+    },
   };
 };
 
@@ -687,7 +692,8 @@ export const authService = {
       }
 
       const { error } = await supabase.auth.resetPasswordForEmail(email, {
-        redirectTo: `${window.location.origin}/reset-password`,
+        // The route is /auth/reset-password; /reset-password is a 404
+        redirectTo: `${window.location.origin}/auth/reset-password`,
       });
 
       if (error) throw error;

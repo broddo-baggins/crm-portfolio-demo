@@ -19,6 +19,8 @@ import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { useLang } from '@/hooks/useLang';
 import { cn } from '@/lib/utils';
+import { Link } from 'react-router';
+import { BrandLockup } from '@/components/brand/BrandMark';
 
 interface MaintenancePageProps {
   maintenanceEnd?: Date;
@@ -115,36 +117,34 @@ const MaintenancePage: React.FC<MaintenancePageProps> = ({
   const StatusIcon = statusInfo.icon;
 
   return (
-    <div className={cn("min-h-screen bg-gradient-to-br from-background to-muted/20", isRTL && "rtl")} dir={isRTL ? 'rtl' : 'ltr'}>
-      <div className="container mx-auto px-4 py-16">
+    <div className={cn("min-h-screen bg-background", isRTL && "rtl")} dir={isRTL ? 'rtl' : 'ltr'}>
+      <header className="mx-auto flex h-[60px] max-w-4xl items-center px-4 sm:px-8">
+        <Link to="/" className="rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
+          <BrandLockup />
+        </Link>
+      </header>
+      <div className="container mx-auto px-4 py-10 md:py-16">
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
+          transition={{ duration: 0.4 }}
           className="max-w-4xl mx-auto"
         >
           {/* Header */}
-          <div className="text-center mb-12">
-            <motion.div
-              initial={{ scale: 0 }}
-              animate={{ scale: 1 }}
-              transition={{ duration: 0.5, delay: 0.2 }}
-              className="flex items-center justify-center mb-6"
-            >
-              <div className={cn("p-4 rounded-full", statusInfo.color)}>
-                <StatusIcon className="h-12 w-12 text-white" />
-              </div>
-            </motion.div>
-            
-            <h1 className="text-4xl md:text-5xl font-bold mb-4">
+          <div className="mb-10">
+            <span className="mb-5 flex h-10 w-10 items-center justify-center rounded-md border border-border bg-surface">
+              <StatusIcon className="h-5 w-5 text-foreground" aria-hidden="true" />
+            </span>
+
+            <h1 className="mb-3 text-[32px] font-semibold leading-[38px] tracking-[-0.025em] md:text-[40px] md:leading-[46px]">
               {t('pages:maintenance.title', 'System Maintenance')}
             </h1>
-            
-            <p className="text-xl text-muted-foreground mb-6">
+
+            <p className="mb-5 text-lg text-subtle">
               {t('pages:maintenance.subtitle', 'We are improving our services for you')}
             </p>
 
-            <Badge variant="secondary" className="text-lg px-4 py-2">
+            <Badge variant="secondary">
               {statusInfo.message}
             </Badge>
           </div>
@@ -198,7 +198,7 @@ const MaintenancePage: React.FC<MaintenancePageProps> = ({
                     </div>
                     <p className="text-sm text-muted-foreground">
                       {t('pages:maintenance.timer.expected', 'Expected completion: {{time}}', {
-                        time: maintenanceEnd.toLocaleString()
+                        time: stableMaintenanceEnd.toLocaleString()
                       })}
                     </p>
                   </div>
@@ -303,7 +303,7 @@ const MaintenancePage: React.FC<MaintenancePageProps> = ({
             transition={{ duration: 0.6, delay: 1.0 }}
             className="mt-12 text-center"
           >
-            <Card className="bg-gradient-to-r from-primary/5 to-primary/10 border-primary/20">
+            <Card className="bg-sunken">
               <CardContent className="p-6">
                 <h3 className="text-lg font-semibold mb-4">
                   {t('pages:maintenance.contact.title', 'Need Immediate Assistance?')}

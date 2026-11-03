@@ -1,7 +1,7 @@
 // @ts-nocheck
 // DataExport.tsx - User data export functionality
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link } from 'react-router';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -20,6 +20,7 @@ import {
   Info,
   Shield
 } from 'lucide-react';
+import { PublicPageShell } from '@/components/marketing/PublicPageShell';
 
 const DataExport = () => {
   const { user } = useAuth();
@@ -140,14 +141,15 @@ const DataExport = () => {
   ];
 
   return (
-    <div className="container mx-auto py-12 px-4">
+    <PublicPageShell>
+    <div className="mx-auto px-4 py-10 sm:px-8 md:py-16">
       <div className="max-w-4xl mx-auto">
-        <div className="text-center mb-12">
-          <div className="inline-flex items-center justify-center w-16 h-16 bg-blue-100 rounded-full mb-6">
-            <Download className="h-8 w-8 text-blue-600" />
-          </div>
-          <h1 className="text-4xl font-bold text-gray-900 mb-4">Export Your Data</h1>
-          <p className="text-muted-foreground max-w-2xl mx-auto">
+        <div className="mb-10">
+          <span className="mb-5 flex h-10 w-10 items-center justify-center rounded-md border border-border bg-surface">
+            <Download className="h-5 w-5 text-foreground" aria-hidden="true" />
+          </span>
+          <h1 className="mb-3 text-[32px] font-semibold leading-[38px] tracking-[-0.025em] text-foreground md:text-[40px] md:leading-[46px]">Export Your Data</h1>
+          <p className="max-w-[60ch] text-lg leading-8 text-subtle">
             Download a copy of your personal data stored in Lead-Reviver. 
             This includes your profile, leads, projects, and other information you've created.
           </p>
@@ -292,7 +294,7 @@ const DataExport = () => {
                   </p>
                   <p>
                     For questions about data export or privacy rights, contact us at{' '}
-                    <a href="mailto:privacy@crm-demo.com" className="text-primary hover:underline">
+                    <a href="mailto:privacy@crm-demo.com" className="text-primary underline">
                       privacy@crm-demo.com
                     </a>.
                   </p>
@@ -318,6 +320,7 @@ const DataExport = () => {
         </div>
       </div>
     </div>
+    </PublicPageShell>
   );
 };
 

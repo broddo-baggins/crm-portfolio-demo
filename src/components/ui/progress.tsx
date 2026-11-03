@@ -13,6 +13,8 @@ const Progress = React.forwardRef<
       "relative h-4 w-full overflow-hidden rounded-full bg-secondary",
       className
     )}
+    value={value}
+    aria-label={props["aria-label"] ?? (props["aria-labelledby"] ? undefined : "Progress")}
     {...props}
   >
     <ProgressPrimitive.Indicator

@@ -25,7 +25,7 @@ The CRM AI Assistant now has a robust three-tier fallback system that automatica
 ### Vercel (Production)
 Your Groq API key is already configured in Vercel:
 ```
-VITE_GROQ_API_KEY=gsk_YOUR_GROQ_API_KEY_HERE
+GROQ_API_KEY=gsk_YOUR_GROQ_API_KEY_HERE
 ```
 
 **✅ No action needed** - The fallback will automatically work in production when Gemini quota is exhausted.
@@ -35,7 +35,7 @@ VITE_GROQ_API_KEY=gsk_YOUR_GROQ_API_KEY_HERE
 If you want to test the Groq fallback locally, add to your `.env.local`:
 
 ```bash
-VITE_GROQ_API_KEY=gsk_YOUR_GROQ_API_KEY_HERE
+GROQ_API_KEY=gsk_YOUR_GROQ_API_KEY_HERE
 ```
 
 ## How It Works
@@ -92,24 +92,24 @@ You'll see these messages in the browser console:
 ### Test Scenario 1: Normal Operation (Gemini)
 ```bash
 # In Vercel or .env.local
-VITE_GEMINI_API_KEY=<valid_gemini_key>
-VITE_GROQ_API_KEY=<your_groq_key>
+GOOGLE_GENERATIVE_AI_API_KEY=<valid_gemini_key>
+GROQ_API_KEY=<your_groq_key>
 ```
 **Expected**: Uses Gemini, Groq stays ready as backup
 
 ### Test Scenario 2: Groq Fallback
 ```bash
 # Remove or use invalid Gemini key
-VITE_GEMINI_API_KEY=invalid_key_or_empty
-VITE_GROQ_API_KEY=gsk_YOUR_GROQ_API_KEY_HERE
+GOOGLE_GENERATIVE_AI_API_KEY=invalid_key_or_empty
+GROQ_API_KEY=gsk_YOUR_GROQ_API_KEY_HERE
 ```
 **Expected**: Skips Gemini, uses Groq successfully
 
 ### Test Scenario 3: Mock Responses
 ```bash
 # Remove both keys
-VITE_GEMINI_API_KEY=
-VITE_GROQ_API_KEY=
+GOOGLE_GENERATIVE_AI_API_KEY=
+GROQ_API_KEY=
 ```
 **Expected**: Uses intelligent mock responses based on question context
 
