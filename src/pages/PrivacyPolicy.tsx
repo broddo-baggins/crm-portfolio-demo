@@ -23,6 +23,7 @@ import {
 import { useTranslation } from "react-i18next";
 import { useLang } from "@/hooks/useLang";
 import { cn } from "@/lib/utils";
+import { LegalDocument } from "@/components/marketing/PublicPageShell";
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 
@@ -290,53 +291,18 @@ const PrivacyPolicy = () => {
   ];
 
   return (
-    <div
-      className={cn("container mx-auto py-12 px-4", isRTL && "rtl")}
+    <LegalDocument
+      title={t("privacy.title", "Privacy Policy")}
+      updated={formattedDate}
+      sections={sections}
       dir={isRTL ? "rtl" : "ltr"}
-    >
-      <div className="max-w-4xl mx-auto">
-        <div className="text-center mb-12">
-          <h1 className="text-4xl font-bold text-foreground mb-4">
-            {t("privacy.title", "Privacy Policy")}
-          </h1>
-          <p className="text-muted-foreground">Last updated: {formattedDate}</p>
-          <div className="flex justify-center mt-6">
-            <div className="h-1 w-20 bg-primary rounded"></div>
-          </div>
-        </div>
-
-        <div className="grid gap-8">
-          {sections.map((section, index) => (
-            <Card
-              key={section.id}
-              className="overflow-hidden transition-all hover:shadow-md"
-            >
-              <CardHeader className="bg-muted/50 flex flex-row items-center gap-4 pb-4">
-                <div className="p-2 bg-primary/10 rounded-full">
-                  {section.icon}
-                </div>
-                <CardTitle className="text-xl font-semibold">
-                  {index + 1}. {section.title}
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="pt-6">{section.content}</CardContent>
-            </Card>
-          ))}
-        </div>
-
-        <div className="mt-12 text-center">
-          <p className="text-muted-foreground text-sm">
-            By using our service, you acknowledge that you have read and
-            understand this Privacy Policy.
-          </p>
-          <div className="mt-6">
-            <Link to="/" className="text-primary hover:underline">
-              Return to Home
-            </Link>
-          </div>
-        </div>
-      </div>
-    </div>
+      closing={
+        <p>
+          By using our service, you acknowledge that you have read and
+          understand this Privacy Policy.
+        </p>
+      }
+    />
   );
 };
 

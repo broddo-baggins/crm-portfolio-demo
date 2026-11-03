@@ -26,6 +26,7 @@ import {
   Shield,
   Download,
 } from "lucide-react";
+import { PublicPageShell } from "@/components/marketing/PublicPageShell";
 
 const DataDeletion = () => {
   const { user } = useAuth();
@@ -153,19 +154,19 @@ const DataDeletion = () => {
   ];
 
   return (
+    <PublicPageShell dir={isRTL ? "rtl" : "ltr"}>
     <div
-      className={cn("container mx-auto py-12 px-4", isRTL && "rtl")}
-      dir={isRTL ? "rtl" : "ltr"}
+      className={cn("mx-auto px-4 py-10 sm:px-8 md:py-16", isRTL && "rtl")}
     >
       <div className="max-w-4xl mx-auto">
-        <div className="text-center mb-12">
-          <div className="inline-flex items-center justify-center w-16 h-16 bg-red-100 dark:bg-red-900 rounded-full mb-6">
-            <Trash2 className="h-8 w-8 text-red-600 dark:text-red-400" />
-          </div>
-          <h1 className="text-4xl font-bold text-foreground mb-4">
+        <div className="mb-10">
+          <span className="mb-5 flex h-10 w-10 items-center justify-center rounded-md border border-border bg-surface">
+            <Trash2 className="h-5 w-5 text-foreground" aria-hidden="true" />
+          </span>
+          <h1 className="mb-3 text-[32px] font-semibold leading-[38px] tracking-[-0.025em] text-foreground md:text-[40px] md:leading-[46px]">
             {t("dataDeletion.title", "Data Deletion Request")}
           </h1>
-          <p className="text-muted-foreground max-w-2xl mx-auto">
+          <p className="max-w-[60ch] text-lg leading-8 text-subtle">
             {t(
               "dataDeletion.description",
               "Request deletion of your personal data in compliance with privacy regulations. Choose between immediate self-service deletion or a manual review process.",
@@ -529,6 +530,7 @@ const DataDeletion = () => {
         </div>
       </div>
     </div>
+    </PublicPageShell>
   );
 };
 

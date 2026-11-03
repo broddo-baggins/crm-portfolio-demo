@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { AuthFrame } from './AuthFrame';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -32,9 +33,10 @@ export default function ChangeEmailForm() {
   };
 
   return (
-    <Card className="w-full max-w-md mx-auto">
+    <AuthFrame>
+    <Card className="w-full">
       <CardHeader>
-        <CardTitle className="text-2xl font-bold text-center">Change Email Address</CardTitle>
+        <CardTitle className="text-xl font-semibold">Change Email Address</CardTitle>
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -59,5 +61,6 @@ export default function ChangeEmailForm() {
         </form>
       </CardContent>
     </Card>
+    </AuthFrame>
   );
 } 

@@ -30,6 +30,8 @@ import { Progress } from '@/components/ui/progress';
 import { useLang } from '@/hooks/useLang';
 import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
+import { Link } from 'react-router-dom';
+import { BrandLockup } from '@/components/brand/BrandMark';
 
 interface ComingSoonPageProps {
   featureName?: string;
@@ -111,8 +113,13 @@ const ComingSoonPage: React.FC<ComingSoonPageProps> = ({
   const daysUntilRelease = Math.ceil((releaseDate.getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24));
 
   return (
-    <div className={cn("min-h-screen bg-gradient-to-br from-background via-primary/5 to-background", isRTL && "rtl")} dir={isRTL ? 'rtl' : 'ltr'}>
-      <div className="container mx-auto px-4 py-16">
+    <div className={cn("min-h-screen bg-background", isRTL && "rtl")} dir={isRTL ? 'rtl' : 'ltr'}>
+      <header className="mx-auto flex h-[60px] max-w-6xl items-center px-4 sm:px-8">
+        <Link to="/" className="rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
+          <BrandLockup />
+        </Link>
+      </header>
+      <div className="container mx-auto px-4 py-10 md:py-16">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -120,59 +127,38 @@ const ComingSoonPage: React.FC<ComingSoonPageProps> = ({
           className="max-w-6xl mx-auto"
         >
           {/* Header */}
-          <div className="text-center mb-16">
-            <motion.div
-              initial={{ scale: 0, rotate: -180 }}
-              animate={{ scale: 1, rotate: 0 }}
-              transition={{ duration: 0.8, delay: 0.2 }}
-              className="flex items-center justify-center mb-8"
-            >
-              <div className="relative">
-                <div className="p-4 bg-gradient-to-r from-primary to-primary/70 rounded-full">
-                  <Rocket className="h-16 w-16 text-white" />
-                </div>
-                <motion.div
-                  animate={{ rotate: 360 }}
-                  transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
-                  className="absolute -top-2 -right-2"
-                >
-                  <Sparkles className="h-8 w-8 text-primary" />
-                </motion.div>
-              </div>
-            </motion.div>
-            
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.4 }}
-            >
-              <Badge variant="secondary" className="mb-4 text-lg px-4 py-2">
+          <div className="mb-12 md:mb-16">
+            <div>
+              <span className="mb-5 flex h-10 w-10 items-center justify-center rounded-md border border-border bg-surface">
+                <Rocket className="h-5 w-5 text-foreground" aria-hidden="true" />
+              </span>
+              <Badge variant="secondary" className="mb-4">
                 {t('pages:comingSoon.badge', 'Coming Soon')}
               </Badge>
-              
-              <h1 className="text-5xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-primary via-primary/80 to-primary/60 bg-clip-text text-transparent">
+
+              <h1 className="mb-4 text-[36px] font-semibold leading-[42px] tracking-[-0.03em] text-foreground md:text-5xl md:leading-[56px]">
                 {featureName}
               </h1>
-              
-              <p className="text-xl md:text-2xl text-muted-foreground mb-8 max-w-3xl mx-auto leading-relaxed">
+
+              <p className="mb-8 max-w-[60ch] text-lg leading-8 text-subtle">
                 {t('pages:comingSoon.subtitle', 'Revolutionary features are on the way to transform your lead management experience')}
               </p>
 
-              <div className="flex items-center justify-center gap-6 text-center">
+              <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-sm">
                 <div className="flex items-center gap-2">
-                  <Calendar className="h-5 w-5 text-primary" />
-                  <span className="text-lg font-semibold">
+                  <Calendar className="h-4 w-4 text-muted-foreground" aria-hidden="true" />
+                  <span className="font-medium tabular-nums">
                     {t('pages:comingSoon.release.in', 'In {{days}} days', { days: daysUntilRelease })}
                   </span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <Gauge className="h-5 w-5 text-primary" />
-                  <span className="text-lg font-semibold">
+                  <Gauge className="h-4 w-4 text-muted-foreground" aria-hidden="true" />
+                  <span className="font-medium tabular-nums">
                     {completionPercentage}% {t('pages:comingSoon.release.complete', 'Complete')}
                   </span>
                 </div>
               </div>
-            </motion.div>
+            </div>
           </div>
 
           {/* Progress Section */}
@@ -182,7 +168,7 @@ const ComingSoonPage: React.FC<ComingSoonPageProps> = ({
             transition={{ duration: 0.6, delay: 0.6 }}
             className="mb-16"
           >
-            <Card className="bg-gradient-to-r from-card to-card/80 border-primary/20">
+            <Card>
               <CardContent className="p-8">
                 <div className="text-center mb-6">
                   <h2 className="text-2xl font-bold mb-2">
@@ -294,7 +280,7 @@ const ComingSoonPage: React.FC<ComingSoonPageProps> = ({
             transition={{ duration: 0.6, delay: 1.0 }}
             className="mb-12"
           >
-            <Card className="bg-gradient-to-r from-primary/10 via-primary/5 to-primary/10 border-primary/20">
+            <Card className="bg-sunken">
               <CardContent className="p-8 text-center">
                 <div className="max-w-2xl mx-auto">
                   <div className="flex items-center justify-center mb-6">

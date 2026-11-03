@@ -117,7 +117,7 @@ export default function CalendlyDemo() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="flex items-center gap-2">
           <RefreshCw className="h-5 w-5 animate-spin" />
           <span>Checking Calendly connection...</span>
@@ -127,7 +127,7 @@ export default function CalendlyDemo() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
+    <div className="min-h-screen bg-background py-8">
       <div className="max-w-4xl mx-auto px-4">
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-gray-900 mb-2">
@@ -144,7 +144,7 @@ export default function CalendlyDemo() {
             <Alert>
               <CheckCircle className="h-4 w-4" />
               <AlertDescription>
-                <strong>SUCCESS No Google/OAuth approval required!</strong> Connect instantly with your Calendly Personal Access Token.
+                <strong>No Google/OAuth approval required!</strong> Connect instantly with your Calendly Personal Access Token.
                 Takes only 2 minutes vs weeks of waiting for OAuth approval.
               </AlertDescription>
             </Alert>
@@ -163,7 +163,7 @@ export default function CalendlyDemo() {
               <CardContent>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <h3 className="font-semibold text-green-700">SUCCESS Personal Access Token</h3>
+                    <h3 className="font-semibold text-green-700">Personal Access Token</h3>
                     <ul className="text-sm space-y-1">
                       <li>• Setup time: 2 minutes</li>
                       <li>• No developer account needed</li>
@@ -173,7 +173,7 @@ export default function CalendlyDemo() {
                     </ul>
                   </div>
                   <div className="space-y-2">
-                    <h3 className="font-semibold text-red-700">ERROR OAuth Method</h3>
+                    <h3 className="font-semibold text-red-700">OAuth Method</h3>
                     <ul className="text-sm space-y-1">
                       <li>• Setup time: 30+ minutes</li>
                       <li>• Requires developer account</li>
