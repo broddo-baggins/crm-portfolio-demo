@@ -33,7 +33,7 @@ const CalendlyAuthCallback: React.FC = () => {
     const error = params.get('error');
 
     if (error) {
-      console.error('Calendly OAuth error:', error);
+      console.warn('Calendly OAuth error:', error);
       navigate('/calendar?auth_error=' + error, { replace: true });
       return;
     }

@@ -19,7 +19,7 @@ export default function ResetPassword() {
     const token = searchParams.get('token');
     if (!token) {
       toast.error('Invalid reset password link');
-      navigate('/login');
+      navigate('/auth/login');
       return;
     }
 
@@ -33,7 +33,7 @@ export default function ResetPassword() {
 
         if (error) {
           toast.error('Invalid or expired reset password link');
-          navigate('/login');
+          navigate('/auth/login');
           return;
         }
 
@@ -41,7 +41,7 @@ export default function ResetPassword() {
       } catch (error) {
         console.error('Error verifying token:', error);
         toast.error('Error verifying reset password link');
-        navigate('/login');
+        navigate('/auth/login');
       }
     };
 
@@ -73,7 +73,7 @@ export default function ResetPassword() {
       }
 
       toast.success('Password has been reset successfully');
-      navigate('/login');
+      navigate('/auth/login');
     } catch (error) {
       console.error('Error resetting password:', error);
       toast.error('Failed to reset password. Please try again.');

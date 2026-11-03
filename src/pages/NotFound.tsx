@@ -12,7 +12,7 @@ const NotFound = () => {
   const { isRTL } = useLang();
 
   useEffect(() => {
-    console.error(
+    console.warn(
       "404 Error: User attempted to access non-existent route:",
       location.pathname,
     );

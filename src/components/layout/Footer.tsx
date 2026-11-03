@@ -54,7 +54,7 @@ const Footer: React.FC = () => {
               {t('footer.cookiePolicy', 'Cookie Policy')}
             </Link>
             <Separator orientation="vertical" className="h-4 bg-gray-400 dark:bg-slate-600" />
-            <Link to="/accessibility" className="hover:text-primary transition-colors">
+            <Link to="/accessibility-declaration" className="hover:text-primary transition-colors">
               {t('footer.accessibility', 'Accessibility')}
             </Link>
           </div>

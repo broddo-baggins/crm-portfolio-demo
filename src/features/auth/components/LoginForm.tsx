@@ -123,7 +123,7 @@ const LoginForm: React.FC = () => {
 
         <div className="text-center">
           <Link 
-            to="/password-recovery" 
+            to="/auth/password-recovery" 
             className="text-sm text-primary hover:text-primary/80 hover:underline"
           >
             {t('auth.forgotPassword', 'Forgot your password?')}

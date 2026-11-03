@@ -198,7 +198,7 @@ const MaintenancePage: React.FC<MaintenancePageProps> = ({
                     </div>
                     <p className="text-sm text-muted-foreground">
                       {t('pages:maintenance.timer.expected', 'Expected completion: {{time}}', {
-                        time: maintenanceEnd.toLocaleString()
+                        time: stableMaintenanceEnd.toLocaleString()
                       })}
                     </p>
                   </div>

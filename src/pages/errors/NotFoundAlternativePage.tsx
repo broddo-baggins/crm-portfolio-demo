@@ -36,8 +36,8 @@ const NotFoundAlternativePage = () => {
 
   const handleSearch = () => {
     if (searchQuery.trim()) {
-      // Navigate to a search results page or perform search
-      navigate(`/search?q=${encodeURIComponent(searchQuery.trim())}`);
+      // There is no /search page; the help center's search covers the site
+      navigate(`/faq?q=${encodeURIComponent(searchQuery.trim())}`);
     }
   };
 
@@ -106,7 +106,7 @@ const NotFoundAlternativePage = () => {
                     className="flex-1 px-3 py-2 border border-border rounded-md bg-background focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
                     data-testid="search-input"
                   />
-                  <Button onClick={handleSearch} data-testid="search-button">
+                  <Button onClick={handleSearch} data-testid="search-button" aria-label="Search">
                     <Search className="h-4 w-4" />
                   </Button>
                 </div>

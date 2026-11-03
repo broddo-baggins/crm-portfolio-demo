@@ -45,7 +45,7 @@ const GoogleCalendarCallback = () => {
         }, 2000);
 
       } catch (error) {
-        console.error('Google Calendar OAuth callback error:', error);
+        console.warn('Google Calendar OAuth callback error:', error);
         const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
         setError(errorMessage);
         setStatus('error');

@@ -14,7 +14,7 @@ const InternalServerErrorPage = () => {
   const { isRTL } = useLang();
 
   useEffect(() => {
-    console.error(
+    console.warn(
       "500 Internal Server Error: Server error occurred at:",
       location.pathname,
     );

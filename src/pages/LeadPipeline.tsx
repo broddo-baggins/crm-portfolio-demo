@@ -10,9 +10,6 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import {
-  Plus,
-  Filter,
-  Download,
   MoreHorizontal,
   MessageSquare,
   Users,
@@ -224,6 +221,9 @@ const META_WHATSAPP_CONFIG = {
   PHONE_NUMBER_ID: env.WHATSAPP_PHONE_NUMBER_ID,
 };
 
+
+type PipelineTab = "pipeline" | "whatsapp" | "whatsapp-manager";
+
 const TemplateManagement: React.FC = () => {
   const { t } = useTranslation("pages");
   const { isRTL } = useLang();
@@ -238,7 +238,7 @@ const TemplateManagement: React.FC = () => {
   );
   const [isEditing, setIsEditing] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
-  const [activeTab, setActiveTab] = useState<"pipeline" | "whatsapp">("pipeline");
+  const [activeTab, setActiveTab] = useState<PipelineTab>("pipeline");
 
   // Calculate template metrics
   const totalTemplates = columns.reduce(
@@ -428,7 +428,7 @@ const TemplateManagement: React.FC = () => {
     >
       <div className="p-6 space-y-6">
         {/* Header */}
-        <div className="flex items-center justify-between">
+        <div className="flex flex-wrap items-center justify-between gap-4">
           <div>
             <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
               {t("templates.title", "Template Management")}
@@ -441,37 +441,22 @@ const TemplateManagement: React.FC = () => {
             </p>
             <div className="mt-3 flex items-center gap-2">
               <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
-                MOBILE Meta WhatsApp Business ID: 847392016254731
+                Meta WhatsApp Business ID: 847392016254731
               </Badge>
               <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200">
-                INIT Ready for Template Submission
+                Ready for Template Submission
               </Badge>
             </div>
           </div>
 
-          <div className="flex items-center gap-3">
-            <Button variant="outline" size="sm">
-              <Filter className="h-4 w-4 mr-2" />
-              {t("templates.filterTemplates", "Filter Templates")}
-            </Button>
-            <Button variant="outline" size="sm">
-              <Download className="h-4 w-4 mr-2" />
-              {t("templates.export", "Export")}
-            </Button>
-            <Button size="sm">
-              <Plus className="h-4 w-4 mr-2" />
-              {t("templates.newTemplate", "New Template")}
-            </Button>
-          </div>
         </div>
 
         {/* Template Management Tabs */}
-        <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as "pipeline" | "whatsapp")}>
-          <TabsList className="grid w-full grid-cols-4">
-            <TabsTrigger value="kanban">{t("leadPipeline.kanban", "Pipeline")}</TabsTrigger>
-            <TabsTrigger value="templates">{t("leadPipeline.templates", "Templates")}</TabsTrigger>
+        <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as PipelineTab)}>
+          <TabsList className="grid w-full grid-cols-3">
+            <TabsTrigger value="pipeline">{t("leadPipeline.kanban", "Pipeline")}</TabsTrigger>
+            <TabsTrigger value="whatsapp">{t("leadPipeline.templates", "Templates")}</TabsTrigger>
             <TabsTrigger value="whatsapp-manager">WhatsApp Manager</TabsTrigger>
-            <TabsTrigger value="integration">{t("leadPipeline.integration", "Integration")}</TabsTrigger>
           </TabsList>
 
           <TabsContent value="pipeline" className="space-y-6">

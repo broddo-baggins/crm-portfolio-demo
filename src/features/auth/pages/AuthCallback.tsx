@@ -57,11 +57,11 @@ const AuthCallback = () => {
         }
         
         // If no auth parameters found, redirect to login
-        navigate('/login', { replace: true });
+        navigate('/auth/login', { replace: true });
         
       } catch (err: any) {
         console.error('Auth callback error:', err);
-        navigate('/login?error=callback_failed', { replace: true });
+        navigate('/auth/login?error=callback_failed', { replace: true });
       }
     };
 

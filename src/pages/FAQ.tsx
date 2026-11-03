@@ -83,7 +83,8 @@ import { cn } from '@/lib/utils';
 const FAQ: React.FC = () => {
   const { t } = useTranslation(['pages', 'common']);
   const { isRTL } = useLang();
-  const [searchQuery, setSearchQuery] = useState('');
+  // ?q= pre-fills the search (the 404 page's search box sends visitors here)
+  const [searchQuery, setSearchQuery] = useState(() => new URLSearchParams(window.location.search).get('q') ?? '');
   const [activeCategory, setActiveCategory] = useState('all');
 
   // Enhanced FAQ Categories with more comprehensive coverage
@@ -1078,6 +1079,7 @@ const FAQ: React.FC = () => {
                         <TabsTrigger
                           key={category.id}
                           value={category.id}
+                          aria-controls="faq-content"
                           className={cn(
                             "w-full justify-start gap-2 p-3 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground",
                             isRTL ? "flex-row-reverse text-right" : "text-left"
@@ -1100,6 +1102,9 @@ const FAQ: React.FC = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.4 }}
             className="lg:col-span-3"
+            id="faq-content"
+            role="tabpanel"
+            aria-label={t('pages:faq.categories.title', 'Categories')}
           >
             {filteredFAQ.length === 0 ? (
               <Card>
