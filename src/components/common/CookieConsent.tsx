@@ -164,11 +164,11 @@ const CookieConsent = () => {
       ? 'right-4 left-4 sm:bottom-4 sm:left-4 sm:right-auto sm:max-w-sm'
       : 'left-4 right-4 sm:bottom-4 sm:right-4 sm:left-auto sm:max-w-sm'
     }`} data-testid="cookie-consent">
-      <Card className="shadow-xl border border-border/50 backdrop-blur-sm bg-background/95">
-        <CardContent className="p-4 sm:p-4">
+      <Card className="border border-border bg-popover shadow-float" role="region" aria-label={t('cookieConsent.title', 'Cookie Consent')}>
+        <CardContent className="p-4 md:p-4">
           <div className="flex items-start gap-3">
-            <div className="bg-primary/10 p-1.5 rounded-full shrink-0">
-              <Shield className="h-4 w-4 text-primary" />
+            <div className="hidden shrink-0 rounded-md bg-muted p-1.5 sm:block">
+              <Shield className="h-4 w-4 text-subtle" aria-hidden="true" />
             </div>
             <div className="flex-1 space-y-3">
               <h3 className="text-sm font-semibold">{t('cookieConsent.title', 'Cookie Consent')}</h3>
@@ -233,26 +233,26 @@ const CookieConsent = () => {
                 </div>
               )}
               
-              <div className="flex flex-col gap-3">
-                <div className="flex items-center justify-between text-xs">
+              <div className="flex flex-col gap-2">
+                <div className="flex items-center gap-4 text-xs">
                   <button
                     onClick={handleShowDetails}
-                    className="text-primary hover:underline flex items-center gap-1 min-h-[44px] sm:min-h-auto touch-manipulation"
+                    className="flex min-h-[32px] items-center gap-1 font-medium text-foreground underline decoration-line-strong underline-offset-4 hover:decoration-current touch-manipulation"
                     data-testid="cookie-details"
                   >
-                    <Info className="h-3 w-3" />
+                    <Info className="h-3 w-3" aria-hidden="true" />
                     {showDetails ? "Hide" : "Details"}
                   </button>
                   <Link
                     to="/privacy-policy#cookies-and-tracking"
-                    className="text-primary hover:underline min-h-[44px] sm:min-h-auto flex items-center touch-manipulation"
+                    className="flex min-h-[32px] items-center font-medium text-foreground underline decoration-line-strong underline-offset-4 hover:decoration-current touch-manipulation"
                     data-testid="cookie-learn-more"
                   >
                     Learn more
                   </Link>
                 </div>
-                
-                <div className="flex gap-2 flex-col sm:flex-row">
+
+                <div className="flex flex-row gap-2">
                   <Button
                     variant="outline"
                     onClick={handleDeclineAll}

@@ -5,26 +5,26 @@ import { cn } from "@/lib/utils"
 import { designTokens } from "@/config/design-system"
 
 const buttonVariants = cva(
-  // Base styles for all buttons with enhanced icon/text alignment
-  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 [&_svg]:flex-shrink-0",
+  // Thermal: radius 6, ui type (14/500), 120 ms colour change, 1 px press, ember focus ring.
+  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium leading-5 ring-offset-background transition-[color,background-color,border-color,transform] duration-[120ms] ease-out active:translate-y-px focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 [&_svg]:flex-shrink-0",
   {
     variants: {
       variant: {
-        default: "bg-primary-500 text-white hover:bg-primary-600 active:bg-primary-700 focus:ring-primary-500",
-        destructive: "bg-error-500 text-white hover:bg-error-600 active:bg-error-700 focus:ring-error-500",
-        success: "bg-success-500 text-white hover:bg-success-600 active:bg-success-700 focus:ring-success-500",
-        warning: "bg-warning-500 text-white hover:bg-warning-600 active:bg-warning-700 focus:ring-warning-500",
-        outline: "border border-gray-300 bg-transparent text-gray-900 hover:bg-gray-50 active:bg-gray-100 focus:ring-gray-500 dark:border-slate-600 dark:text-slate-100 dark:hover:bg-slate-800",
-        secondary: "bg-gray-100 text-gray-900 hover:bg-gray-200 active:bg-gray-300 focus:ring-gray-500 dark:bg-slate-800 dark:text-slate-100 dark:hover:bg-slate-700",
-        ghost: "text-gray-700 hover:bg-gray-100 active:bg-gray-200 focus:ring-gray-500 dark:text-slate-300 dark:hover:bg-slate-800",
-        link: "text-primary-500 underline-offset-4 hover:underline focus:ring-primary-500",
+        default: "bg-primary text-primary-foreground hover:bg-action-hover",
+        destructive: "bg-destructive text-destructive-foreground hover:bg-brick-700 dark:hover:bg-brick-300",
+        success: "bg-moss-600 text-white hover:bg-moss-700",
+        warning: "bg-amber-500 text-white hover:bg-amber-600",
+        outline: "border border-input bg-surface text-foreground hover:bg-accent hover:border-ink-400 dark:hover:border-ink-500",
+        secondary: "bg-secondary text-secondary-foreground hover:bg-ink-200 dark:hover:bg-ink-700",
+        ghost: "text-subtle hover:bg-accent hover:text-foreground",
+        link: "h-auto px-0 text-primary underline underline-offset-4 decoration-ember-200 hover:decoration-current",
       },
       size: {
-        default: "h-10 px-4 py-2 min-h-[44px]", // Enhanced minimum touch target
-        sm: "h-9 rounded-md px-3 text-xs min-h-[36px]",
-        lg: "h-11 rounded-md px-8 min-h-[44px]",
-        xl: "h-12 rounded-md px-10 text-base min-h-[48px]",
-        icon: "h-10 w-10 min-h-[44px] min-w-[44px]", // Enhanced touch targets
+        default: "h-10 px-4 min-h-[40px]",
+        sm: "h-8 px-3 text-[13px] min-h-[32px]",
+        lg: "h-11 px-5 text-[15px] min-h-[44px]",
+        xl: "h-12 px-6 text-base min-h-[48px]",
+        icon: "h-10 w-10 min-h-[40px] min-w-[40px]",
       },
     },
     defaultVariants: {
@@ -144,7 +144,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         
         {!iconOnly && (
           <span className={cn(
-            "flex items-center justify-center",
+            "flex items-center justify-center gap-2",
             loading && "opacity-70",
             // Ensure text doesn't break on mobile
             "whitespace-nowrap overflow-hidden text-ellipsis"

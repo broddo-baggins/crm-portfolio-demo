@@ -196,26 +196,25 @@ export const BasicProjectSelector: React.FC = () => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button
-          variant="outline"
+        <button
+          type="button"
+          aria-label={currentProject ? `Project: ${currentProject.name}` : "Select project"}
           className={cn(
-            "w-full justify-between",
+            "inline-flex h-9 w-full max-w-[200px] items-center gap-2 rounded-md border border-input bg-surface px-3 text-sm font-medium transition-colors duration-[120ms] hover:border-ink-400 hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring sm:max-w-[340px]",
             currentProject ? "text-foreground" : "text-muted-foreground"
           )}
         >
-          <div className="flex items-center gap-2">
-            <Folder className="h-4 w-4" />
-            <span className="truncate">
-              {currentProject?.name || "Select Project"}
-            </span>
-            {currentProject && (
-              <Badge variant="secondary" className="ml-auto">
-                {projects.find(p => p.id === currentProject.id)?.lead_count || 0} leads
-              </Badge>
-            )}
-          </div>
-          <ChevronDown className="h-4 w-4 opacity-50" />
-        </Button>
+          <Folder className="h-4 w-4 shrink-0 text-muted-foreground" aria-hidden="true" />
+          <span className="min-w-0 flex-1 truncate text-start">
+            {currentProject?.name || "Select Project"}
+          </span>
+          {currentProject && (
+            <Badge variant="secondary" className="hidden shrink-0 tabular-nums sm:inline-flex">
+              {projects.find(p => p.id === currentProject.id)?.lead_count || 0} leads
+            </Badge>
+          )}
+          <ChevronDown className="h-4 w-4 shrink-0 text-muted-foreground" aria-hidden="true" />
+        </button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-full min-w-[250px]">
         {projects.map((project) => (

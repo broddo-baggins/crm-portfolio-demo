@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button';
 import { useLang } from '@/hooks/useLang';
 import { useTranslation } from 'react-i18next';
 import { cn } from '@/lib/utils';
-import { ChevronDown } from 'lucide-react';
+import { ChevronDown, Globe } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -121,27 +121,24 @@ export const LanguageSelector: React.FC<LanguageSelectorProps> = ({
       <DropdownMenu modal={false}>
         <DropdownMenuTrigger asChild>
           <Button
-            variant="outline"
+            variant="ghost"
             size={size === 'md' ? 'default' : size as 'sm' | 'lg'}
             disabled={isChanging}
+            aria-label={t('language.selector', 'Language')}
             className={cn(
-              "justify-between min-w-[90px] sm:min-w-[120px] gap-1 sm:gap-2 touch-manipulation",
+              "h-9 min-h-[36px] gap-1.5 px-2.5 text-subtle hover:text-foreground touch-manipulation",
               textStart(),
-              isRTL && "flex-row-reverse",
               isChanging && "opacity-50 cursor-not-allowed",
-              // Ensure proper touch target size on mobile
-              "min-h-[44px]"
             )}
           >
-            <div className={cn("flex items-center gap-1 sm:gap-2", isRTL && "flex-row-reverse")}>
-              <span className={cn(
-                currentLanguage?.code === 'he' && "font-hebrew",
-                "text-xs sm:text-sm"
-              )}>
-                {isChanging ? '...' : currentLanguage?.nativeName}
-              </span>
-            </div>
-            <ChevronDown className="h-3 w-3 sm:h-4 sm:w-4 flex-shrink-0" />
+            <Globe className="h-4 w-4" aria-hidden="true" />
+            <span className={cn(
+              currentLanguage?.code === 'he' && "font-hebrew",
+              "text-[13px]"
+            )}>
+              {isChanging ? '...' : currentLanguage?.nativeName}
+            </span>
+            <ChevronDown className="h-3.5 w-3.5 flex-shrink-0 opacity-70" aria-hidden="true" />
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent 
