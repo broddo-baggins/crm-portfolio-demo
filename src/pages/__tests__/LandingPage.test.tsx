@@ -962,7 +962,8 @@ describe("LandingPage", () => {
       expect(screen.getByTestId("chat-mockup")).toBeInTheDocument();
     });
 
-    it("should render meteors effect", async () => {
+    // The redesign (DESIGN.md) replaced the decorative meteors with real captures of the app.
+    it("should render product screenshots of the running app", async () => {
       render(
         <TestWrapper>
           <LandingPage />
@@ -973,7 +974,11 @@ describe("LandingPage", () => {
         expect(screen.queryByText("Loading...")).not.toBeInTheDocument();
       });
 
-      expect(screen.getByTestId("meteors")).toBeInTheDocument();
+      const shots = screen
+        .getAllByRole("img")
+        .filter((img) => (img.getAttribute("src") || "").startsWith("/screens/"));
+      expect(shots.length).toBeGreaterThanOrEqual(3);
+      shots.forEach((img) => expect(img).toHaveAttribute("alt"));
     });
   });
 
