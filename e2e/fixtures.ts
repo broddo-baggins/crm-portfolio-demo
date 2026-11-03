@@ -80,23 +80,54 @@ export async function waitForApp(page: Page) {
   await page.waitForLoadState('networkidle');
 }
 
-/**
- * axe-core WCAG 2 A/AA scan. Color contrast is excluded: colours belong to the
- * redesign branch, and it's tracked there.
- */
+/** axe-core WCAG 2 A/AA scan, colour contrast included. */
 export async function axeViolations(page: Page) {
+  // Entrance fades would be measured half-way (an ember button at 60% reads as 3:1).
+  // Contrast is about the settled page: finish finite animations, then wait until
+  // opacity and colours stop changing. Infinite ones (spinners, pulses) are left alone.
+  await page.evaluate(async () => {
+    const looping = new Set<Element>();
+    for (const animation of document.getAnimations()) {
+      const effect = animation.effect as KeyframeEffect | null;
+      if (effect?.getComputedTiming().endTime === Infinity) {
+        if (effect.target) looping.add(effect.target);
+        continue;
+      }
+      try { animation.finish(); } catch { /* already finished or idle */ }
+    }
+    const snapshot = () => {
+      let s = '';
+      for (const el of document.querySelectorAll('body *')) {
+        if (looping.has(el)) continue;
+        const c = getComputedStyle(el);
+        s += `${c.opacity}${c.color}${c.backgroundColor};`;
+      }
+      return s;
+    };
+    let previous = snapshot();
+    for (let i = 0; i < 20; i++) {
+      await new Promise((r) => setTimeout(r, 150));
+      const current = snapshot();
+      if (current === previous) return;
+      previous = current;
+    }
+  });
   // evaluate() runs through the DevTools protocol, so the page's CSP doesn't block it
   await page.evaluate(AXE_SOURCE);
   const result = await page.evaluate(async () => {
     // @ts-expect-error injected global
     const r = await window.axe.run(document, {
       runOnly: { type: 'tag', values: ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa'] },
-      rules: { 'color-contrast': { enabled: false } },
     });
-    return r.violations.map((v: { id: string; impact: string; nodes: { target: string[] }[] }) => ({
+    type Node = { target: string[]; any: { data?: { fgColor?: string; bgColor?: string; contrastRatio?: number } }[] };
+    return r.violations.map((v: { id: string; impact: string; nodes: Node[] }) => ({
       id: v.id,
       impact: v.impact,
-      targets: v.nodes.slice(0, 5).map((n) => n.target.join(' ')),
+      targets: v.nodes.slice(0, 5).map((n) => {
+        // For contrast, say which colours failed so the report is actionable
+        const d = n.any[0]?.data;
+        return d?.contrastRatio ? `${n.target.join(' ')} (${d.fgColor} on ${d.bgColor}, ${d.contrastRatio}:1)` : n.target.join(' ');
+      }),
     }));
   });
   return result as Array<{ id: string; impact: string; targets: string[] }>;

@@ -633,7 +633,8 @@ const Calendar = () => {
         <div
           key={day}
           className={cn(
-            "h-32 p-3 border-r border-b border-border cursor-pointer hover:bg-gray-50 dark:hover:bg-slate-800 transition-colors",
+            // min-h, not h: with three meetings a fixed 8rem cell spilled its chips over the next row's date
+            "min-h-32 p-3 border-r border-b border-border cursor-pointer hover:bg-gray-50 dark:hover:bg-slate-800 transition-colors",
             isSelected && "bg-blue-100 dark:bg-blue-900",
             isToday && "bg-yellow-50 dark:bg-yellow-900/20 border-yellow-300"
           )}

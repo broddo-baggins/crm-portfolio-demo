@@ -357,10 +357,11 @@ const OptimizedMessages = () => {
                         >
                           <p className="text-sm whitespace-pre-wrap">{message.content}</p>
                           <div className="flex justify-between items-center mt-1">
-                            <p className="text-xs opacity-70">
+                            {/* 90%: at 70% white on the steel bubble was 3.7:1 */}
+                            <p className="text-xs opacity-90">
                               {formatTimeAgo(message.wa_timestamp || message.created_at)}
                             </p>
-                            <p className="text-xs opacity-60 ml-2">
+                            <p className="text-xs opacity-90 ml-2">
                               {getMessageTypeIcon(message.message_type || 'text', message.direction)}
                             </p>
                           </div>

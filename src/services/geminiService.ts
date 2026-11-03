@@ -316,7 +316,9 @@ export async function queryAgent(
 
     if (relevantDocs.length > 0) {
       const poweredBy = provider === 'groq' ? '\n\n*⚡ Powered by Groq (Gemini fallback)*' : '';
-      return `${text}\n\n---\n\n<small>📚 **Sources consulted:**\n${sources}${poweredBy}</small>`;
+      // </small> on its own line: at the end of the last "- source" line it closed inside
+      // that <li>, and the parser re-nested a <small> straight into the <ul> (invalid list)
+      return `${text}\n\n---\n\n<small>📚 **Sources consulted:**\n${sources}${poweredBy}\n</small>`;
     }
     return text;
   } catch (error) {

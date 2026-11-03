@@ -124,7 +124,7 @@ export const LanguageSelector: React.FC<LanguageSelectorProps> = ({
             variant="ghost"
             size={size === 'md' ? 'default' : size as 'sm' | 'lg'}
             disabled={isChanging}
-            aria-label={t('language.selector', 'Language')}
+            title={t('language.selector', 'Language')}
             className={cn(
               "h-9 min-h-[36px] gap-1.5 px-2.5 text-subtle hover:text-foreground touch-manipulation",
               textStart(),

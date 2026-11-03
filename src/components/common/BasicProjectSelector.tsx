@@ -198,7 +198,7 @@ export const BasicProjectSelector: React.FC = () => {
       <DropdownMenuTrigger asChild>
         <button
           type="button"
-          aria-label={currentProject ? `Project: ${currentProject.name}` : "Select project"}
+          title={currentProject ? `Project: ${currentProject.name}` : "Select project"}
           className={cn(
             "inline-flex h-9 w-full max-w-[200px] items-center gap-2 rounded-md border border-input bg-surface px-3 text-sm font-medium transition-colors duration-[120ms] hover:border-ink-400 hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring sm:max-w-[340px]",
             currentProject ? "text-foreground" : "text-muted-foreground"

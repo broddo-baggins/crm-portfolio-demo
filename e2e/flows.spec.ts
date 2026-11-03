@@ -1,3 +1,4 @@
+import type { Page } from '@playwright/test';
 import { test, expect, waitForApp, acceptCookies, axeViolations, AI_REPLY } from './fixtures';
 
 const isMobile = (name: string) => name === 'mobile';
@@ -72,8 +73,20 @@ test.describe('auth', () => {
     await expect(page).toHaveURL(/\/auth\/login$/);
   });
 
-  test('reset-password without a token sends the visitor to /auth/login (was a 404)', async ({ page }) => {
+  test('reset-password without a token sends the visitor to request a new link (was a 404)', async ({ page }) => {
     await page.goto('/auth/reset-password');
+    await expect(page).toHaveURL(/\/auth\/password-recovery$/);
+    await expect(page.getByRole('heading', { name: 'Reset Your Password' })).toBeVisible();
+    await expect(page.getByText('Page not found')).toHaveCount(0);
+  });
+
+  test('reset-password with a token sets a new password and returns to sign in', async ({ page }) => {
+    await page.goto('/auth/reset-password?token=e2e-recovery-token');
+    await expect(page.getByRole('heading', { name: 'Choose a new password' })).toBeVisible();
+    expect(await axeViolations(page)).toEqual([]);
+    await page.getByLabel('New Password').fill('a-new-password');
+    await page.getByLabel('Confirm Password').fill('a-new-password');
+    await page.getByRole('button', { name: 'Reset Password' }).click();
     await expect(page).toHaveURL(/\/auth\/login$/);
     await expect(page.getByText('Page not found')).toHaveCount(0);
   });
@@ -124,22 +137,34 @@ test.describe('app shell', () => {
     await expect(page.getByTestId('navigation-drawer')).toHaveCount(0);
   });
 
-  test('dark mode toggles and survives a reload', async ({ page }) => {
+  // On phones the theme and language controls live in the navigation drawer
+  async function shellControls(page: Page, project: string) {
+    if (!isMobile(project)) return page.getByRole('banner');
+    await page.getByRole('button', { name: 'Open navigation' }).click();
+    return page.getByTestId('navigation-drawer');
+  }
+
+  test('dark mode toggles and survives a reload', async ({ page }, info) => {
     await page.goto('/dashboard');
     await waitForApp(page);
-    await page.getByRole('checkbox', { name: 'Dark mode' }).check();
+    let controls = await shellControls(page, info.project.name);
+    // The checkbox is drawn as an icon button: click what the user sees
+    await controls.getByTestId('theme-controller').click();
+    await expect(controls.getByRole('checkbox', { name: 'Dark mode' })).toBeChecked();
     await expect(page.locator('html')).toHaveClass(/dark/);
     await page.reload();
     await waitForApp(page);
     await expect(page.locator('html')).toHaveClass(/dark/);
-    await page.getByRole('checkbox', { name: 'Dark mode' }).uncheck();
+    controls = await shellControls(page, info.project.name);
+    await controls.getByTestId('theme-controller').click();
     await expect(page.locator('html')).not.toHaveClass(/dark/);
   });
 
-  test('switching the app to Hebrew flips it right-to-left', async ({ page }) => {
+  test('switching the app to Hebrew flips it right-to-left', async ({ page }, info) => {
     await page.goto('/dashboard');
     await waitForApp(page);
-    await page.getByRole('button', { name: 'English' }).click();
+    const controls = await shellControls(page, info.project.name);
+    await controls.getByRole('button', { name: 'English' }).click();
     await page.getByRole('menuitem', { name: /עברית/ }).click();
     await expect(page.locator('html')).toHaveAttribute('dir', 'rtl');
   });
