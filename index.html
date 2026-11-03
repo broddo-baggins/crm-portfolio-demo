@@ -19,50 +19,7 @@
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
     
-    <!-- jQuery for Nagish accessibility plugin - loaded synchronously -->
-    <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
-
-    <!-- Ensure jQuery is available globally for Nagish -->
-    <script>
-      // Make sure jQuery is available globally
-      window.jQuery = window.$ = jQuery;
-      
-      // Console cleanup - suppress nagishli debug messages only
-      const originalConsole = {
-        warn: console.warn,
-        log: console.log,
-        error: console.error
-      };
-      
-      // Only suppress nagishli-specific messages
-      console.warn = function(...args) {
-        const message = args[0];
-        if (typeof message === 'string' && 
-            (message.includes('נגיש לי') || 
-             message.includes('NagishLi') || 
-             message.includes('jQuery not loaded yet for Nagish'))) {
-          return; // Suppress nagishli warnings
-        }
-        originalConsole.warn.apply(console, args);
-      };
-    </script>
-
-    <!-- Load nagishli only in production -->
-    <script>
-      // Simple, safe nagishli loading - NO INFINITE LOOPS
-      if (location.hostname !== 'localhost' && location.hostname !== '127.0.0.1') {
-        // Only load in production
-        const script = document.createElement('script');
-        script.src = '/nagishli/nagishli_beta.js?v=3.0b';
-        script.charset = 'utf-8';
-        script.async = true; // Load asynchronously to prevent blocking
-        script.onerror = function() {
-          console.error('Failed to load NAGISHLI accessibility plugin');
-        };
-        document.head.appendChild(script);
-      } else {
-        console.log('🔧 Development mode: NAGISHLI accessibility plugin disabled');
-      }
-    </script>
+    <!-- NagishLi accessibility plugin (and its jQuery), deployed hosts only -->
+    <script src="/nagishli-loader.js" defer></script>
   </body>
 </html> 
