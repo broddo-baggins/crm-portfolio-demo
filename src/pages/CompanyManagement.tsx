@@ -402,12 +402,13 @@ const CompanyManagement: React.FC = () => {
                   ) : (
                     <div className="space-y-4">
                       {companyUsers.map((user) => (
-                        <div key={user.id} className="flex items-center justify-between p-4 border rounded-lg">
-                          <div className="flex items-center gap-4">
-                            <div className="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center">
+                        <div key={user.id} className="flex flex-wrap items-center justify-between gap-3 p-4 border rounded-lg">
+                          {/* Wraps on phones: the long email pushed the role buttons off-screen */}
+                          <div className="flex min-w-0 items-center gap-4">
+                            <div className="w-10 h-10 shrink-0 bg-gray-100 rounded-full flex items-center justify-center">
                               <Users className="h-5 w-5 text-gray-500" />
                             </div>
-                            <div>
+                            <div className="min-w-0 break-words">
                               <h3 className="font-semibold">{user.full_name || user.email}</h3>
                               <p className="text-sm text-muted-foreground">{user.email}</p>
                               <div className="flex items-center gap-2 mt-1">

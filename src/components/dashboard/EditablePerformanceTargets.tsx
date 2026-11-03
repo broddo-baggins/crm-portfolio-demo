@@ -271,7 +271,8 @@ const EditablePerformanceTargets: React.FC<EditablePerformanceTargetsProps> = ({
   return (
     <Card className={cn("w-full", className)} dir="ltr">
       <CardHeader>
-        <div className="flex items-center justify-between">
+        {/* Wraps on phones: in one row "Edit Targets" ended past the screen edge */}
+        <div className="flex flex-wrap items-center justify-between gap-3">
           <div className="flex items-center gap-3">
             <div className="p-2 bg-blue-100 dark:bg-blue-900/50 rounded-lg">
               <Target className="h-6 w-6 text-blue-600 dark:text-blue-400" />

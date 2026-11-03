@@ -1262,9 +1262,10 @@ const Messages = () => {
             </div>
 
             {/* Search and filters */}
-            <div className={cn("flex items-center gap-2 mb-4", flexRowReverse())}>
-              <div className="relative flex-1">
-                <Search className={cn("absolute h-4 w-4 text-gray-400", isRTL ? "right-3 top-3" : "left-3 top-3")} />
+            {/* Phones: search takes its own row; beside two selects it shrank to an empty box */}
+            <div className={cn("flex flex-wrap items-center gap-2 mb-4", flexRowReverse())}>
+              <div className="relative basis-full sm:basis-auto sm:flex-1">
+                <Search className={cn("pointer-events-none absolute z-10 h-4 w-4 text-gray-400", isRTL ? "right-3 top-3" : "left-3 top-3")} aria-hidden="true" />
                 <Input
                   type="text"
                   placeholder={t("pages.messages.searchConversations", "Search conversations...")}
@@ -1506,15 +1507,16 @@ const Messages = () => {
               <div className="flex-shrink-0 p-4 border-b dark:border-slate-700" data-testid="conversation-header">
                   <div
                     className={cn(
-                      "flex justify-between items-center",
+                      // Wraps on phones: the contact line pushed the calendar actions off-screen
+                      "flex flex-wrap justify-between items-center gap-3",
                       flexRowReverse(),
                     )}
                   >
-                    <div className={cn("", textStart())}>
+                    <div className={cn("min-w-0", textStart())}>
                       <h3 className="text-lg font-semibold">
                         {formatLeadName(selectedConversation.lead)}
                       </h3>
-                      <div className="flex items-center gap-2 text-sm text-gray-500 dark:text-slate-400">
+                      <div className="flex flex-wrap items-center gap-2 text-sm text-gray-500 dark:text-slate-400">
                         <span>
                           {(selectedConversation.lead as any).email_address || (selectedConversation.lead as any).email || 
                             t("pages.messages.noEmail", "No email")}
@@ -1538,7 +1540,7 @@ const Messages = () => {
                       </div>
                       
                       {/* BANT & Heat Metrics Display */}
-                      <div className={cn("flex items-center gap-3 mt-2", flexRowReverse())}>
+                      <div className={cn("flex flex-wrap items-center gap-3 mt-2", flexRowReverse())}>
                         {/* BANT Status */}
                         <div className="flex items-center gap-1">
                           <span className="text-xs font-medium text-gray-600 dark:text-slate-400">BANT:</span>
