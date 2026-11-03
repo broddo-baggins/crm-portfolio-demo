@@ -14,7 +14,6 @@ import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/react";
 import { ThemeProvider } from "@/components/theme-provider";
 import Layout from "./components/layout/Layout";
-import AppLayout from "./components/layout/AppLayout.tsx";
 import { RequireAuth } from "./components/auth/RequireAuth";
 import { useTranslation } from "react-i18next";
 import { useEffect, lazy, Suspense, useState } from "react";
@@ -430,16 +429,6 @@ function App() {
                               {/* Unknown paths match the "/*" layout first, so catch them here */}
                               <Route path="*" element={<NotFound />} />
                             </Route>
-
-                            {/* Admin Routes with AppLayout */}
-                            <Route 
-                              path="/admin/app-layout" 
-                              element={
-                                <RequireAuth>
-                                  <AppLayout />
-                                </RequireAuth>
-                              } 
-                            />
 
                             {/* Error Pages */}
                             <Route path="/unauthorized" element={<UnauthorizedPage />} />
