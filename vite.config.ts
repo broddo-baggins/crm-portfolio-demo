@@ -213,6 +213,7 @@ export default defineConfig(({ mode }) => {
       
       // Coverage settings - text output only
       coverage: {
+        provider: 'v8',
         reporter: ['text', 'json-summary'],
         exclude: [
           'node_modules/',
