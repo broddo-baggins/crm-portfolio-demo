@@ -150,8 +150,10 @@ export const useLang = () => {
   const textStart = () => isRTL ? 'text-right' : 'text-left';
   const textEnd = () => isRTL ? 'text-left' : 'text-right';
   
-  // Flex utilities
-  const flexRowReverse = () => isRTL ? 'flex-row' : 'flex-row-reverse';
+  // Flex utilities. Containers carry dir="rtl" in Hebrew, which already mirrors a plain
+  // flex row, so the "RTL-aware" row is flex-row in both directions (it used to return
+  // flex-row-reverse in English, which mirrored every English layout that called it).
+  const flexRowReverse = () => 'flex-row';
   
   // Position utilities
   const left = () => isRTL ? 'right' : 'left';

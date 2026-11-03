@@ -2,13 +2,13 @@ import React, { useState, useEffect } from "react";
 import { NavLink } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
+import { BrandMark } from "@/components/brand/BrandMark";
+import { LanguageSelector } from "@/components/common/LanguageSelector";
+import { DaisyUIThemeController } from "@/components/ui/daisyui-theme-controller";
 import {
   LogOut,
   MessageSquare,
   Activity,
-  Clock,
   Users,
   TrendingUp,
   Loader2,
@@ -21,7 +21,12 @@ import { getNavItems } from "@/utils/navigation";
 import { simpleProjectService } from "@/services/simpleProjectService";
 import { useAdminAccess } from "@/hooks/useAdminAccess";
 
-const Sidebar = () => {
+interface SidebarProps {
+  /** Set when the sidebar lives in the mobile drawer: called after a nav link is followed. */
+  onNavigate?: () => void;
+}
+
+const Sidebar = ({ onNavigate }: SidebarProps = {}) => {
   const { logout, user, loading } = useAuth();
   const { currentProject } = useProject();
   const { t } = useTranslation("common");
@@ -223,153 +228,151 @@ const Sidebar = () => {
   return (
     <div
       className={cn(
-        "h-full w-64 bg-sidebar border-sidebar-border flex flex-col",
-        isRTL ? "border-l" : "border-r",
+        "flex h-full w-[248px] flex-col bg-sidebar text-sidebar-foreground",
+        !onNavigate && (isRTL ? "border-l border-sidebar-border" : "border-r border-sidebar-border"),
       )}
       data-testid="main-sidebar"
-      style={{ minWidth: "256px", maxWidth: "256px" }}
     >
       {/* Header */}
-      <div
-        className="p-4 border-b border-sidebar-border"
-        data-testid="sidebar-header"
-      >
-        <h2 className="text-lg font-semibold text-sidebar-foreground">
-          {t("appName", "CRM Demo")}
-        </h2>
+      <div className="flex h-[60px] shrink-0 items-center px-5" data-testid="sidebar-header">
+        <NavLink
+          to="/dashboard"
+          onClick={onNavigate}
+          className="rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+          aria-label={t("appName", "CRM Demo")}
+        >
+          <span className="inline-flex items-center gap-2">
+            <BrandMark />
+            <span className="text-[15px] font-semibold tracking-[-0.01em] text-foreground">
+              {t("appName", "CRM Demo")}
+            </span>
+          </span>
+        </NavLink>
       </div>
 
       {/* Navigation Menu */}
-      <div className="flex-1 p-4" data-testid="sidebar-content">
-        <nav className="space-y-2" data-testid="sidebar-menu">
+      <div className="flex-1 overflow-y-auto px-3 pb-4" data-testid="sidebar-content">
+        <nav className="space-y-0.5" data-testid="sidebar-menu" aria-label="Main">
           {navItems.length === 0 && (
             <div
               data-testid="sidebar-empty"
-              className="p-4 text-center text-muted-foreground"
+              className="px-3 py-4 text-sm text-muted-foreground"
             >
               No navigation items available
             </div>
           )}
-          {navItems.map((item, index) => {
+          {navItems.map((item) => {
             const IconComponent = item.icon;
             // Generate testid from item name (convert to lowercase and replace spaces with hyphens)
             const testId = item.name.toLowerCase().replace(/\s+/g, "-");
-            // console.log(`LINK Rendering nav item ${index + 1}:`, {
-            //   path: item.path,
-            //   name: item.name,
-            //   testId: `nav-link-${testId}`,
-            // });
             return (
               <NavLink
                 key={item.path}
                 to={item.path}
+                onClick={onNavigate}
                 data-testid={`nav-link-${testId}`}
                 className={({ isActive }) =>
                   cn(
-                    "flex items-center gap-3 px-3 py-2 rounded-md transition-colors duration-200 w-full text-left",
-                    "hover:bg-sidebar-accent hover:text-sidebar-accent-foreground",
-                    "text-sidebar-foreground",
+                    "group relative flex h-9 w-full items-center gap-3 rounded-md px-3 text-sm font-medium transition-colors duration-[120ms]",
+                    "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
                     isActive
-                      ? "bg-sidebar-accent text-sidebar-accent-foreground font-medium border-l-4 border-primary"
-                      : "hover:bg-sidebar-accent/50",
+                      ? "bg-sidebar-accent text-sidebar-accent-foreground"
+                      : "text-sidebar-foreground hover:bg-accent hover:text-foreground",
                   )
                 }
-                style={{
-                  display: "flex",
-                  width: "100%",
-                  textDecoration: "none",
-                }}
               >
-                <IconComponent className="h-5 w-5 flex-shrink-0" />
-                <span className="truncate">{item.name}</span>
+                {({ isActive }) => (
+                  <>
+                    {isActive && (
+                      <span
+                        aria-hidden="true"
+                        className="absolute inset-y-2 start-0 w-[3px] rounded-full bg-primary"
+                      />
+                    )}
+                    <IconComponent
+                      className={cn("h-[18px] w-[18px] shrink-0", isActive ? "text-primary" : "text-muted-foreground group-hover:text-foreground")}
+                      strokeWidth={1.75}
+                      aria-hidden="true"
+                    />
+                    <span className="truncate">{item.name}</span>
+                  </>
+                )}
               </NavLink>
             );
           })}
         </nav>
 
         {/* Stats Section */}
-        <div className="mt-8">
-          <Card className="bg-sidebar-accent/30">
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium flex items-center gap-2 text-sidebar-foreground">
-                <Activity className="h-4 w-4" />
-                {t("quickStats", "Quick Stats")}
-                {currentProject && (
-                  <span className="text-xs text-primary font-normal">
-                    ({currentProject.name})
-                  </span>
-                )}
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="pt-0">
-              <div className="space-y-2">
-                <div className="flex items-center justify-between text-sm">
-                  <span className="text-muted-foreground flex items-center gap-1">
-                    <Users className="h-3 w-3" />
-                    {t("sidebarLeadsCount", "Leads Count")}
-                  </span>
+        <section className="mt-6 border-t border-sidebar-border pt-5" aria-labelledby="sidebar-stats-title">
+          <div className="mb-3 px-3">
+            <h2 id="sidebar-stats-title" className="flex items-center gap-2 text-xs font-medium text-muted-foreground">
+              <Activity className="h-3.5 w-3.5" aria-hidden="true" />
+              {t("quickStats", "Quick Stats")}
+            </h2>
+            {currentProject && (
+              <p className="mt-1 truncate text-xs text-muted-foreground" title={currentProject.name}>
+                {currentProject.name}
+              </p>
+            )}
+          </div>
+          <dl className="space-y-0.5">
+            {[
+              { icon: Users, label: t("sidebarLeadsCount", "Leads Count"), value: stats.leadsCount },
+              { icon: MessageSquare, label: t("activeChats", "Active Chats"), value: stats.activeChats },
+              { icon: TrendingUp, label: t("conversionRate", "Conversion"), value: `${stats.conversionRate}%` },
+            ].map(({ icon: Icon, label, value }) => (
+              <div key={label} className="flex h-8 items-center justify-between rounded-md px-3 text-sm">
+                <dt className="flex items-center gap-2 text-sidebar-foreground">
+                  <Icon className="h-3.5 w-3.5 text-muted-foreground" aria-hidden="true" />
+                  {label}
+                </dt>
+                <dd className="font-medium tabular-nums text-foreground">
                   {stats.loading ? (
-                    <Loader2 className="h-3 w-3 animate-spin" />
+                    <Loader2 className="h-3.5 w-3.5 animate-spin text-muted-foreground" aria-label="Loading" />
                   ) : (
-                    <Badge variant="secondary">{stats.leadsCount}</Badge>
+                    value
                   )}
-                </div>
-                <div className="flex items-center justify-between text-sm">
-                  <span className="text-muted-foreground flex items-center gap-1">
-                    <MessageSquare className="h-3 w-3" />
-                    {t("activeChats", "Active Chats")}
-                  </span>
-                  {stats.loading ? (
-                    <Loader2 className="h-3 w-3 animate-spin" />
-                  ) : (
-                    <Badge variant="secondary">{stats.activeChats}</Badge>
-                  )}
-                </div>
-                <div className="flex items-center justify-between text-sm">
-                  <span className="text-muted-foreground flex items-center gap-1">
-                    <TrendingUp className="h-3 w-3" />
-                    {t("conversionRate", "Conversion")}
-                  </span>
-                  {stats.loading ? (
-                    <Loader2 className="h-3 w-3 animate-spin" />
-                  ) : (
-                    <Badge variant="secondary">{stats.conversionRate}%</Badge>
-                  )}
-                </div>
+                </dd>
               </div>
-            </CardContent>
-          </Card>
-        </div>
+            ))}
+          </dl>
+        </section>
       </div>
 
       {/* Footer */}
       <div
-        className="p-4 border-t border-sidebar-border mt-auto"
+        className="mt-auto border-t border-sidebar-border p-3"
         data-testid="sidebar-footer"
       >
-        <div className="flex items-center gap-3 mb-3">
-          <div className="w-8 h-8 bg-primary rounded-full flex items-center justify-center text-primary-foreground text-sm font-medium">
+        {onNavigate && (
+          <div className="mb-2 flex items-center justify-between gap-2 px-2 sm:hidden">
+            <DaisyUIThemeController />
+            <LanguageSelector variant="dropdown" size="sm" />
+          </div>
+        )}
+        <div className="flex items-center gap-3 px-2 py-1.5">
+          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-ink-800 text-sm font-medium text-ink-50 dark:bg-ink-200 dark:text-ink-900">
             {userName.charAt(0).toUpperCase()}
           </div>
-          <div className="flex-1 min-w-0">
-            <p className="text-sm font-medium text-sidebar-foreground truncate">
+          <div className="min-w-0 flex-1">
+            <p className="truncate text-sm font-medium text-foreground">
               {userName}
             </p>
             {userEmail && (
-              <p className="text-xs text-muted-foreground truncate">
+              <p className="truncate text-xs text-muted-foreground">
                 {userEmail}
               </p>
             )}
           </div>
         </div>
         <Button
-          variant="outline"
+          variant="ghost"
           size="sm"
           onClick={handleLogout}
-          className="w-full"
+          className="mt-1 w-full justify-start px-2"
           data-testid="logout-button"
         >
-          <LogOut className="h-4 w-4 mr-2" />
+          <LogOut className="h-4 w-4" aria-hidden="true" />
           {t("logout", "Logout")}
         </Button>
       </div>
