@@ -636,7 +636,8 @@ export const ChatMockup: React.FC = () => {
   }
 
   return (
-    <div className="relative">
+    // light-island: WhatsApp's own light chrome in both themes; the dark remap stays out of it.
+    <div className="relative light-island">
       {/* Chat Container - Reduced by 10% to prevent excessive scrolling */}
       <div className="bg-white rounded-xl shadow-[0_4px_16px_rgba(0,0,0,0.12)] overflow-hidden w-full max-w-[432px] mx-auto border border-gray-200 flex flex-col" style={{ height: '605px' /* 672px * 0.9 = 605px */ }}>
         {/* WhatsApp-style Header - Fixed for mobile alignment and centering */}
@@ -690,7 +691,7 @@ export const ChatMockup: React.FC = () => {
                     animate={{ opacity: 1 }}
                     className="flex justify-center my-2"
                   >
-                    <div className="bg-black/10 px-3 py-1 rounded-full text-xs text-gray-600 font-medium">
+                    <div className="bg-black/10 px-3 py-1 rounded-full text-xs text-gray-700 font-medium">
                       {formatDateSeparator(message.timestamp)}
                     </div>
                   </motion.div>
@@ -790,7 +791,7 @@ export const ChatMockup: React.FC = () => {
             >
               <div 
                 className={`flex-1 text-sm overflow-y-auto ${
-                  inputText ? 'text-gray-800' : 'text-[#5E6975]'
+                  inputText ? 'text-gray-800' : 'text-muted-foreground'
                 }`}
                 style={{ 
                   direction: isHebrew ? 'rtl' : 'ltr',

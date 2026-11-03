@@ -91,6 +91,14 @@ for (const x of t.color.tokens) lines.push(`  --${x.name}: ${x.dark};`);
 for (const [k, val] of Object.entries(semantic("dark"))) lines.push(`  --${k}: ${hsl(val)};`);
 lines.push("}");
 lines.push("");
+// A light island: markup that keeps its own light chrome in both themes (the WhatsApp mock on
+// the landing page). Inside it the light values come back and the dark remap below is skipped.
+lines.push(".dark .light-island {");
+lines.push("  color-scheme: light;");
+for (const x of t.color.tokens) lines.push(`  --${x.name}: ${x.light};`);
+for (const [k, val] of Object.entries(semantic("light"))) lines.push(`  --${k}: ${hsl(val)};`);
+lines.push("}");
+lines.push("");
 
 // Dark-mode safety net for legacy markup that has no dark: variant.
 // Text in a dark shade becomes the family's light step; light tinted grounds become the
@@ -105,6 +113,7 @@ const families = {
   ink: ["ink", "gray", "slate", "zinc", "neutral", "stone"],
 };
 const esc = (s) => s.replace(/\//g, "\\/");
+const isl = (sel) => `${sel}:not(.light-island *)`;
 lines.push("/* Dark-mode remap for legacy colour classes (generated). */");
 for (const [scaleName, aliases] of Object.entries(families)) {
   const textSel = [], bgSel = [], borderSel = [];
@@ -116,19 +125,19 @@ for (const [scaleName, aliases] of Object.entries(families)) {
     }
   }
   const light = scaleName === "ink" ? S.ink["200"] : S[scaleName]["300"];
-  lines.push(`${textSel.join(",\n")} {\n  color: ${light};\n}`);
-  lines.push(`${bgSel.join(",\n")} {\n  background-color: ${scaleName === "ink" ? "#1E252D" : esc(S[scaleName]["950"])};\n}`);
-  lines.push(`${[...new Set(borderSel)].join(",\n")} {\n  border-color: #3B4652;\n}`);
+  lines.push(`${textSel.map(isl).join(",\n")} {\n  color: ${light};\n}`);
+  lines.push(`${bgSel.map(isl).join(",\n")} {\n  background-color: ${scaleName === "ink" ? "#1E252D" : esc(S[scaleName]["950"])};\n}`);
+  lines.push(`${[...new Set(borderSel)].map(isl).join(",\n")} {\n  border-color: #3B4652;\n}`);
 }
 // Explicit `dark:text-gray-400`-style variants pick a light-mode step (ink-400 on the dark
 // surface is 3.6:1). `:root.dark` (0,3,0) outranks Tailwind's `.dark\:x:is(.dark *)` (0,2,0).
 const mutedDark = t.color.tokens.find((x) => x.name === "text-muted").dark;
 // Pale greys (400/500) stay the muted step in dark too, so captions keep their rank.
-lines.push(`${families.ink.flatMap((a) => [`.dark .text-${a}-400`, `.dark .text-${a}-500`]).join(",\n")} {\n  color: ${mutedDark};\n}`);
+lines.push(`${families.ink.flatMap((a) => [`.dark .text-${a}-400`, `.dark .text-${a}-500`]).map(isl).join(",\n")} {\n  color: ${mutedDark};\n}`);
 for (const [scaleName, aliases] of Object.entries(families)) {
   // 400-600 only: a deliberate `dark:text-ink-900` on a pale dark-mode fill is left alone.
   const sel = aliases.flatMap((a) => ["400", "500", "600"].map((s) => `:root.dark .dark\\:text-${a}-${s}`));
-  lines.push(`${sel.join(",\n")} {\n  color: ${scaleName === "ink" ? mutedDark : S[scaleName]["300"]};\n}`);
+  lines.push(`${sel.map(isl).join(",\n")} {\n  color: ${scaleName === "ink" ? mutedDark : S[scaleName]["300"]};\n}`);
 }
 // A Button or Badge recoloured with a mid fill (`bg-red-600`) keeps the theme's on-primary text,
 // which in dark is ink-950 (2.7:1 on brick-600). Those fills are the same in both themes, so
@@ -136,8 +145,8 @@ for (const [scaleName, aliases] of Object.entries(families)) {
 const fillSel = Object.values(families).flat().filter((a) => a !== "primary").flatMap((a) =>
   ["500", "600", "700"].flatMap((s) => [`:root.dark .bg-${a}-${s}.text-primary-foreground`, `:root.dark .bg-${a}-${s}.text-destructive-foreground`]));
 lines.push(`${fillSel.join(",\n")} {\n  color: #FFFFFF;\n}`);
-lines.push(`.dark .bg-white {\n  background-color: #171D24;\n}`);
-lines.push(`.dark .text-black {\n  color: ${S.ink["100"]};\n}`);
+lines.push(`${isl(".dark .bg-white")} {\n  background-color: #171D24;\n}`);
+lines.push(`${isl(".dark .text-black")} {\n  color: ${S.ink["100"]};\n}`);
 lines.push("");
 
 writeFileSync(join(root, "src/styles/tokens.css"), lines.join("\n"));
