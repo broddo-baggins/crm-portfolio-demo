@@ -46,8 +46,9 @@ export default function WhatsAppTroubleshoot() {
               <div className="p-4 border rounded-lg">
                 <div className="flex items-center justify-between">
                   <span className="text-sm font-medium">API Credentials</span>
-                  <Badge variant={import.meta.env.VITE_WHATSAPP_ACCESS_TOKEN ? "default" : "destructive"}>
-                    {import.meta.env.VITE_WHATSAPP_ACCESS_TOKEN ? "Configured" : "Missing"}
+                  {/* The access token is server-only, so the browser can't see it */}
+                  <Badge variant="secondary">
+                    Server-side
                   </Badge>
                 </div>
               </div>

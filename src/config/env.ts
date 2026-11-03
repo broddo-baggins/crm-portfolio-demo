@@ -31,16 +31,19 @@ export const env = {
   ALLOW_REGISTRATION: import.meta.env.VITE_ALLOW_REGISTRATION || "true",
 
   // WhatsApp Business API Configuration - Production Ready
-  WHATSAPP_ACCESS_TOKEN: import.meta.env.VITE_WHATSAPP_ACCESS_TOKEN || "",
+  // Secrets (access token, app/webhook secrets, OAuth client secrets, AI keys) are
+  // deliberately NOT read from VITE_* vars: Vite inlines those into the public bundle.
+  // They live server-side only (process.env in /api functions).
+  WHATSAPP_ACCESS_TOKEN: "",
   WHATSAPP_PHONE_NUMBER_ID: import.meta.env.VITE_WHATSAPP_PHONE_NUMBER_ID || "",
   WHATSAPP_BUSINESS_ID: import.meta.env.VITE_WHATSAPP_BUSINESS_ID || "",
   WHATSAPP_BUSINESS_ACCOUNT_ID: import.meta.env.VITE_WHATSAPP_BUSINESS_ACCOUNT_ID || "",
   WHATSAPP_APP_ID: import.meta.env.VITE_WHATSAPP_APP_ID || "",
-  WHATSAPP_APP_SECRET: import.meta.env.VITE_WHATSAPP_APP_SECRET || "",
+  WHATSAPP_APP_SECRET: "",
   WHATSAPP_WEBHOOK_VERIFY_TOKEN:
     import.meta.env.VITE_WHATSAPP_WEBHOOK_VERIFY_TOKEN ||
     "crm-demo-secure-webhook-2024",
-  WHATSAPP_WEBHOOK_SECRET: import.meta.env.VITE_WHATSAPP_WEBHOOK_SECRET || "",
+  WHATSAPP_WEBHOOK_SECRET: "",
   WHATSAPP_WEBHOOK_URL: import.meta.env.VITE_WHATSAPP_WEBHOOK_URL || "",
   
   // Meta App Configuration - Required for app review
@@ -49,7 +52,7 @@ export const env = {
 
   // Calendly OAuth Configuration
   CALENDLY_CLIENT_ID: import.meta.env.VITE_CALENDLY_CLIENT_ID || "",
-  CALENDLY_CLIENT_SECRET: import.meta.env.VITE_CALENDLY_CLIENT_SECRET || "",
+  CALENDLY_CLIENT_SECRET: "",
   CALENDLY_REDIRECT_URI:
     import.meta.env.VITE_CALENDLY_REDIRECT_URI ||
     (import.meta.env.PROD
@@ -58,16 +61,16 @@ export const env = {
 
   // Google OAuth Configuration
   GOOGLE_CLIENT_ID: import.meta.env.VITE_GOOGLE_CLIENT_ID || "",
-  GOOGLE_CLIENT_SECRET: import.meta.env.VITE_GOOGLE_CLIENT_SECRET || "",
+  GOOGLE_CLIENT_SECRET: "",
   GOOGLE_REDIRECT_URI:
     import.meta.env.VITE_GOOGLE_REDIRECT_URI ||
     (import.meta.env.PROD
       ? "https://crm-portfolio-demo.vercel.app/auth/google/callback"
       : "http://localhost:3000/auth/google/callback"),
 
-  // AI Configuration
-  GEMINI_API_KEY: import.meta.env.VITE_GEMINI_API_KEY || "",
-  GROQ_API_KEY: import.meta.env.VITE_GROQ_API_KEY || "",
+  // AI Configuration: keys live in the /api/ai-assistant function (GOOGLE_GENERATIVE_AI_API_KEY, GROQ_API_KEY)
+  GEMINI_API_KEY: "",
+  GROQ_API_KEY: "",
 
   // Development flags
   IS_DEV: import.meta.env.DEV,

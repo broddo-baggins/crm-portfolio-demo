@@ -23,9 +23,10 @@ export const getCalendlyRedirectUri = (): string => {
 export const getCalendlyConfig = () => {
   return {
     clientId: import.meta.env.VITE_CALENDLY_CLIENT_ID,
-    clientSecret: import.meta.env.VITE_CALENDLY_CLIENT_SECRET,
+    // Client/webhook secrets are server-only; never read them from VITE_* vars
+    clientSecret: undefined as string | undefined,
     redirectUri: getCalendlyRedirectUri(),
-    webhookSecret: import.meta.env.VITE_CALENDLY_WEBHOOK_SECRET,
+    webhookSecret: undefined as string | undefined,
     apiBaseUrl: import.meta.env.VITE_CALENDLY_API_BASE_URL || 'https://api.calendly.com'
   };
 };

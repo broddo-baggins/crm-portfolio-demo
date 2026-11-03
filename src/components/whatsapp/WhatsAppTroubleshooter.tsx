@@ -36,7 +36,8 @@ export function WhatsAppTroubleshooter() {
     const diagnosticResults: DiagnosticResult[] = [];
 
     // Test 1: Environment Variables
-    const accessToken = import.meta.env.VITE_WHATSAPP_ACCESS_TOKEN;
+    // The access token is server-only (never a VITE_* var, which would ship it to the browser)
+    const accessToken = "";
     const phoneNumberId = import.meta.env.VITE_WHATSAPP_PHONE_NUMBER_ID;
     
     if (!accessToken || !phoneNumberId) {

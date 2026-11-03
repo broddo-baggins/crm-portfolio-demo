@@ -110,11 +110,12 @@ export async function handleVerification(request: Request): Promise<Response> {
     });
 
     // Verify the webhook with Meta's expected token
-    const VERIFY_TOKEN = import.meta.env.VITE_WHATSAPP_VERIFY_TOKEN;
+    // Server-only env name: never read secrets via VITE_* (Vite inlines those into the browser bundle)
+    const VERIFY_TOKEN = process.env.WHATSAPP_VERIFY_TOKEN;
 
     if (!VERIFY_TOKEN) {
       logger.critical(
-        "Missing VITE_WHATSAPP_VERIFY_TOKEN environment variable",
+        "Missing WHATSAPP_VERIFY_TOKEN environment variable",
         context,
       );
       throw new AuthenticationError("Webhook verification configuration error");
@@ -321,10 +322,10 @@ function verifyWhatsAppSignature(
     return false;
   }
 
-  const APP_SECRET = import.meta.env.VITE_WHATSAPP_APP_SECRET;
+  const APP_SECRET = process.env.WHATSAPP_APP_SECRET;
   if (!APP_SECRET) {
     logger.critical(
-      "Missing VITE_WHATSAPP_APP_SECRET environment variable",
+      "Missing WHATSAPP_APP_SECRET environment variable",
       context,
     );
     return false;
@@ -757,7 +758,7 @@ async function storeIncomingMessage(
     // Import supabase dynamically to avoid build issues
     const { createClient } = await import('@supabase/supabase-js');
     const supabaseUrl = process.env.VITE_SUPABASE_URL || import.meta.env.VITE_SUPABASE_URL;
-    const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || import.meta.env.VITE_SUPABASE_SERVICE_ROLE_KEY;
+    const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
     
     if (!supabaseUrl || !supabaseKey) {
       logger.warn('Missing Supabase credentials for message storage', context);
@@ -859,7 +860,7 @@ async function sendWhatsAppMessage(
   healthMonitor.incrementMessagesSent();
 
   // PRODUCTION: Real WhatsApp API implementation for Meta review
-  const ACCESS_TOKEN = process.env.WHATSAPP_ACCESS_TOKEN || import.meta.env.VITE_WHATSAPP_ACCESS_TOKEN;
+  const ACCESS_TOKEN = process.env.WHATSAPP_ACCESS_TOKEN;
   const PHONE_NUMBER_ID = process.env.WHATSAPP_PHONE_NUMBER_ID || import.meta.env.VITE_WHATSAPP_PHONE_NUMBER_ID;
 
   if (!ACCESS_TOKEN || !PHONE_NUMBER_ID) {
@@ -918,7 +919,7 @@ async function updateMessageStatus(
     // Import supabase dynamically to avoid build issues
     const { createClient } = await import('@supabase/supabase-js');
     const supabaseUrl = process.env.VITE_SUPABASE_URL || import.meta.env.VITE_SUPABASE_URL;
-    const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || import.meta.env.VITE_SUPABASE_SERVICE_ROLE_KEY;
+    const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
     
     if (!supabaseUrl || !supabaseKey) {
       logger.warn('Missing Supabase credentials for status update', context);
@@ -963,7 +964,7 @@ async function updateConversationState(
     // Import supabase dynamically to avoid build issues
     const { createClient } = await import('@supabase/supabase-js');
     const supabaseUrl = process.env.VITE_SUPABASE_URL || import.meta.env.VITE_SUPABASE_URL;
-    const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || import.meta.env.VITE_SUPABASE_SERVICE_ROLE_KEY;
+    const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
     
     if (!supabaseUrl || !supabaseKey) {
       logger.warn('Missing Supabase credentials for conversation state update', context);
