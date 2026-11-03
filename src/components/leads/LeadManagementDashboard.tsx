@@ -1230,68 +1230,40 @@ export const LeadManagementDashboard: React.FC = () => {
       dir={isRTL ? "rtl" : "ltr"}
     >
       {/* Header */}
-      <div
-        className={cn("flex items-center justify-between", isRTL ? "flex-row-reverse" : "flex-row")}
-      >
+      <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
         <div className={textStart()}>
-          <h1
-            className={cn(
-              "text-3xl font-bold flex items-center gap-2",
-              isRTL ? "flex-row-reverse" : "flex-row",
-            )}
-          >
-            <Users className="h-8 w-8" />
+          <h1 className="text-2xl font-semibold leading-8 tracking-[-0.02em] text-foreground">
             {t("pages.leads.leadManagementDashboard", "Lead Management Dashboard")}
           </h1>
-          <div className="text-muted-foreground">
-            <p>
-              {t(
-                "pages.leads.manageAndTrackLeads",
-                "Manage and track your leads with real-time updates",
-              )}
-            </p>
-            {isRealTimeConnected && (
-              <div
-                className={cn("mt-1 flex items-center gap-2", isRTL ? "flex-row-reverse" : "flex-row")}
-              >
-                <Activity className="h-4 w-4 text-green-500" />
-                <span className="text-green-600">
-                  {t("dashboard.connection.connected", "Connected")}
-                </span>
-              </div>
+          <p className="mt-1 text-sm text-muted-foreground">
+            {t(
+              "pages.leads.manageAndTrackLeads",
+              "Manage and track your leads with real-time updates",
             )}
-            {!isRealTimeConnected && (
-              <div
-                className={cn("mt-1 flex items-center gap-2", isRTL ? "flex-row-reverse" : "flex-row")}
-              >
-                <XCircle className="h-4 w-4 text-red-500" />
-                <span className="text-red-600">
-                  {t("pages.leadManagement.offline", "Offline")}
-                </span>
-              </div>
-            )}
-          </div>
+          </p>
         </div>
 
-        <div className={cn("flex items-center gap-2", isRTL ? "flex-row-reverse" : "flex-row")}>
-          {/* Real-time Status */}
-          <Badge
-            variant={isRealTimeConnected ? "default" : "secondary"}
-            className={cn("gap-1", isRTL ? "flex-row-reverse" : "flex-row")}
+        <div className="flex flex-wrap items-center gap-2">
+          {/* Real-time status: one quiet pill, a dot only when live */}
+          <span
+            className="inline-flex h-8 items-center gap-1.5 rounded-full border border-border bg-surface px-3 text-xs font-medium text-subtle"
+            role="status"
           >
-            <Activity
-              className={cn("h-3 w-3", isRealTimeConnected && "animate-pulse")}
-            />
-            {isRealTimeConnected
-              ? t("leads.status.live", "Live")
-              : t("leads.status.offline", "Offline")}
-          </Badge>
-
-          {/* Last Updated */}
-          <Badge variant="outline" className={cn("gap-1", isRTL ? "flex-row-reverse" : "flex-row")}>
-            <Clock className="h-3 w-3" />
-            {formatDate(dashboardStats.lastUpdated)}
-          </Badge>
+            {isRealTimeConnected ? (
+              <>
+                <span className="h-1.5 w-1.5 rounded-full bg-moss-500" aria-hidden="true" />
+                {t("leads.status.live", "Live")}
+              </>
+            ) : (
+              <>
+                <XCircle className="h-3.5 w-3.5 text-muted-foreground" aria-hidden="true" />
+                {t("leads.status.offline", "Offline")}
+              </>
+            )}
+            <span className="text-muted-foreground">·</span>
+            <Clock className="h-3.5 w-3.5 text-muted-foreground" aria-hidden="true" />
+            <span className="tabular-nums">{formatDate(dashboardStats.lastUpdated)}</span>
+          </span>
 
           {/* Actions */}
           <Button
@@ -1299,6 +1271,7 @@ export const LeadManagementDashboard: React.FC = () => {
             size="sm"
             onClick={handleRefresh}
             disabled={isManualRefreshing || isAutoRefreshing}
+            aria-label={t("common.refresh", "Refresh")}
           >
             <RefreshCw
               className={cn("h-4 w-4", (isManualRefreshing || isAutoRefreshing) && "animate-spin")}
@@ -1311,101 +1284,59 @@ export const LeadManagementDashboard: React.FC = () => {
           </Button>
 
           <Button size="sm" onClick={() => setIsLeadFormOpen(true)}>
-            <Plus className={cn("h-4 w-4", isRTL ? "ml-2" : "mr-2")} />
+            <Plus className="h-4 w-4" />
             {t("pages.leadManagement.addLead", "Add Lead")}
           </Button>
         </div>
       </div>
 
-      {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <Card>
-          <CardContent className="p-6">
-            <div className={cn("flex items-center", isRTL ? "flex-row-reverse" : "flex-row")}>
-              <div className={cn("flex-1", textStart())}>
-                <p className="text-sm font-medium text-muted-foreground">
-                  {t("pages.leads.totalLeads", "Total Leads")}
-                </p>
-                <p className="text-2xl font-bold">
-                  {dashboardStats.totalLeads}
-                </p>
-                <p className="text-xs text-muted-foreground">
-                  {t(
-                    "pages.leadManagement.allLeadsInSystem",
-                    "All leads in the system",
-                  )}
-                </p>
+      {/* Stats: one row of figures, neutral surfaces, the hue only on the icon */}
+      <div className="grid grid-cols-2 gap-3 lg:grid-cols-4 lg:gap-4">
+        {[
+          {
+            label: t("pages.leads.totalLeads", "Total Leads"),
+            value: dashboardStats.totalLeads,
+            note: t("pages.leadManagement.allLeadsInSystem", "All leads in the system"),
+            icon: Users,
+            tone: "bg-muted text-subtle",
+          },
+          {
+            label: t("pages.leads.newLeads", "New Leads"),
+            value: dashboardStats.newLeads,
+            note: t("pages.leadManagement.requiresAttention", "Requires attention"),
+            icon: TrendingUp,
+            tone: "bg-steel-50 text-steel-600 dark:bg-steel-950 dark:text-steel-300",
+          },
+          {
+            label: t("pages.leads.hotLeads", "Hot Leads"),
+            value: dashboardStats.hotLeads,
+            note: t("pages.leadManagement.highPriorityLeads", "High priority leads"),
+            icon: Target,
+            tone: "bg-ember-50 text-ember-600 dark:bg-ember-950 dark:text-ember-300",
+          },
+          {
+            label: t("pages.leads.conversionRate", "Conversion Rate"),
+            value: `${dashboardStats.conversionRate.toFixed(1)}%`,
+            note: t("widgets.conversionsCompleted.conversionRate", "Conversion rate"),
+            icon: BarChart3,
+            tone: "bg-moss-50 text-moss-600 dark:bg-moss-950 dark:text-moss-300",
+          },
+        ].map(({ label, value, note, icon: Icon, tone }) => (
+          <Card key={label}>
+            <CardContent className="p-4 md:p-5">
+              <div className="flex items-start justify-between gap-3">
+                <p className={cn("text-sm font-medium text-subtle", textStart())}>{label}</p>
+                <span className={cn("flex h-7 w-7 shrink-0 items-center justify-center rounded-md", tone)}>
+                  <Icon className="h-4 w-4" aria-hidden="true" />
+                </span>
               </div>
-              <Users className="h-8 w-8 text-blue-500" />
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardContent className="p-6">
-            <div className={cn("flex items-center", isRTL ? "flex-row-reverse" : "flex-row")}>
-              <div className={cn("flex-1", textStart())}>
-                <p className="text-sm font-medium text-muted-foreground">
-                  {t("pages.leads.newLeads", "New Leads")}
-                </p>
-                <p className="text-2xl font-bold text-blue-600">
-                  {dashboardStats.newLeads}
-                </p>
-                <p className="text-xs text-muted-foreground">
-                  {t(
-                    "pages.leadManagement.requiresAttention",
-                    "Requires attention",
-                  )}
-                </p>
-              </div>
-              <TrendingUp className="h-8 w-8 text-blue-500" />
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardContent className="p-6">
-            <div className={cn("flex items-center", isRTL ? "flex-row-reverse" : "flex-row")}>
-              <div className={cn("flex-1", textStart())}>
-                <p className="text-sm font-medium text-muted-foreground">
-                  {t("pages.leads.hotLeads", "Hot Leads")}
-                </p>
-                <p className="text-2xl font-bold text-red-600">
-                  {dashboardStats.hotLeads}
-                </p>
-                <p className="text-xs text-muted-foreground">
-                  {t(
-                    "pages.leadManagement.highPriorityLeads",
-                    "High priority leads",
-                  )}
-                </p>
-              </div>
-              <Target className="h-8 w-8 text-red-500" />
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardContent className="p-6">
-            <div className={cn("flex items-center", isRTL ? "flex-row-reverse" : "flex-row")}>
-              <div className={cn("flex-1", textStart())}>
-                <p className="text-sm font-medium text-muted-foreground">
-                  {t("pages.leads.conversionRate", "Conversion Rate")}
-                </p>
-                <p className="text-2xl font-bold text-green-600">
-                  {dashboardStats.conversionRate.toFixed(1)}%
-                </p>
-                <p className="text-xs text-muted-foreground">
-                  {t(
-                    "widgets.conversionsCompleted.conversionRate",
-                    "Conversion rate",
-                  )}
-                </p>
-              </div>
-              <BarChart3 className="h-8 w-8 text-green-500" />
-            </div>
-          </CardContent>
-        </Card>
+              <p className="mt-2 text-[28px] font-semibold leading-8 tracking-[-0.02em] tabular-nums text-foreground md:text-[32px] md:leading-9">
+                {value}
+              </p>
+              <p className="mt-1 text-xs text-muted-foreground">{note}</p>
+            </CardContent>
+          </Card>
+        ))}
       </div>
 
       {/* Real-time Updates Feed */}

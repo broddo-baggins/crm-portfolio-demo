@@ -100,7 +100,7 @@ export const MobileChart: React.FC<MobileChartProps> = ({
               />
               <Bar 
                 dataKey={config?.yAxis || "value"} 
-                fill="#3b82f6"
+                fill="#C24816"
                 radius={[4, 4, 0, 0]}
               />
             </BarChart>
@@ -129,10 +129,10 @@ export const MobileChart: React.FC<MobileChartProps> = ({
               <Line 
                 type="monotone" 
                 dataKey={config?.yAxis || "value"} 
-                stroke="#3b82f6"
+                stroke="#C24816"
                 strokeWidth={2}
-                dot={{ fill: "#3b82f6", strokeWidth: 2, r: 4 }}
-                activeDot={{ r: 6, fill: "#3b82f6" }}
+                dot={{ fill: "#C24816", strokeWidth: 2, r: 4 }}
+                activeDot={{ r: 6, fill: "#C24816" }}
               />
             </LineChart>
           </ResponsiveContainer>
@@ -149,7 +149,7 @@ export const MobileChart: React.FC<MobileChartProps> = ({
                 labelLine={false}
                 label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
                 outerRadius={chartHeight / 3}
-                fill="#8884d8"
+                fill="#3E5F77"
                 dataKey={config?.valueKey || "value"}
               >
                 {data.map((entry, index) => (

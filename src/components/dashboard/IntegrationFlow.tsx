@@ -96,7 +96,7 @@ const IntegrationFlow: React.FC = () => {
             containerRef={containerRef}
             fromRef={whatsappRef}
             toRef={crmRef}
-            gradientStartColor="#10b981"
+            gradientStartColor="#367E50"
             gradientStopColor="#059669"
             duration={3}
           />
@@ -105,8 +105,8 @@ const IntegrationFlow: React.FC = () => {
             containerRef={containerRef}
             fromRef={crmRef}
             toRef={crmRef}
-            gradientStartColor="#3b82f6"
-            gradientStopColor="#1d4ed8"
+            gradientStartColor="#C24816"
+            gradientStopColor="#A93D10"
             duration={3.5}
             delay={0.5}
           />
@@ -115,8 +115,8 @@ const IntegrationFlow: React.FC = () => {
             containerRef={containerRef}
             fromRef={crmRef}
             toRef={analyticsRef}
-            gradientStartColor="#8b5cf6"
-            gradientStopColor="#7c3aed"
+            gradientStartColor="#3E5F77"
+            gradientStopColor="#344E62"
             duration={4}
             delay={1}
           />
@@ -125,7 +125,7 @@ const IntegrationFlow: React.FC = () => {
             containerRef={containerRef}
             fromRef={crmRef}
             toRef={calendarRef}
-            gradientStartColor="#6366f1"
+            gradientStartColor="#3E5F77"
             gradientStopColor="#4f46e5"
             duration={3.2}
             delay={1.5}
@@ -136,8 +136,8 @@ const IntegrationFlow: React.FC = () => {
             containerRef={containerRef}
             fromRef={crmRef}
             toRef={crmRef}
-            gradientStartColor="#1d4ed8"
-            gradientStopColor="#3b82f6"
+            gradientStartColor="#A93D10"
+            gradientStopColor="#C24816"
             duration={4.5}
             delay={2}
             reverse

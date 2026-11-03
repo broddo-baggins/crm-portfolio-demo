@@ -95,9 +95,9 @@ const HourLine = ({
               <Line
                 type="monotone"
                 dataKey="messages"
-                stroke="#1976d2"
+                stroke="#C24816"
                 strokeWidth={2}
-                dot={{ stroke: '#1976d2', strokeWidth: 2, r: 2 }}
+                dot={{ stroke: '#C24816', strokeWidth: 2, r: 2 }}
                 activeDot={{ r: 5 }}
               />
             </LineChart>

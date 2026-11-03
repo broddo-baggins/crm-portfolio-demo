@@ -30,7 +30,7 @@ const defaultData: FunnelData[] = [
   { name: "Contacted", count: 95, color: "#D3E4FD" },   // Light blue
   { name: "Interested", count: 68, color: "#FEC6A1" },  // Orange
   { name: "Meeting", count: 42, color: "#ea384c" },     // Red
-  { name: "Closed", count: 18, color: "#4CAF50" },      // Green
+  { name: "Closed", count: 18, color: "#367E50" },      // Green
 ];
 
 /**

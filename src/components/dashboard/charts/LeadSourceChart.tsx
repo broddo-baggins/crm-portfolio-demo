@@ -37,12 +37,12 @@ const LeadSourceChart: React.FC<LeadSourceChartProps> = ({
 
   // Generate colors for pie chart segments
   const COLORS = [
-    "#3B82F6",
-    "#10B981",
-    "#8B5CF6",
-    "#F59E0B",
-    "#EF4444",
-    "#06B6D4",
+    "#C24816",
+    "#367E50",
+    "#3E5F77",
+    "#D69A2E",
+    "#A5332D",
+    "#6E91AA",
   ];
 
   const chartDataWithColors = chartData.map((item, index) => ({
@@ -105,7 +105,7 @@ const LeadSourceChart: React.FC<LeadSourceChartProps> = ({
                   labelLine={false}
                   label={renderCustomizedLabel}
                   outerRadius={80}
-                  fill="#8884d8"
+                  fill="#3E5F77"
                   dataKey="leads"
                 >
                   {chartDataWithColors.map((entry, index) => (

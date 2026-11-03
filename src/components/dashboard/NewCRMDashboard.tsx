@@ -172,7 +172,7 @@ const generateLeadSourceData = (leads: any[]) => {
 };
 
 // Color palette for charts
-const PIE_CHART_COLORS = ["#3B82F6", "#10B981", "#8B5CF6", "#F59E0B"];
+const PIE_CHART_COLORS = ["#C24816", "#367E50", "#3E5F77", "#D69A2E"];
 
 const NewCRMDashboard: React.FC = () => {
   const { t } = useTranslation("common");
@@ -186,15 +186,15 @@ const NewCRMDashboard: React.FC = () => {
   const chartConfigs = useMemo(
     () => ({
       salesLeads: {
-        sales: { label: "Sales", color: "#3B82F6" },
-        leads: { label: "Leads", color: "#10B981" },
+        sales: { label: "Sales", color: "#C24816" },
+        leads: { label: "Leads", color: "#367E50" },
       },
       leadSources: {
-        value: { label: "Value", color: "#3B82F6" },
+        value: { label: "Value", color: "#C24816" },
       },
       monthlyOverview: {
-        sales: { label: "Sales", color: "#8B5CF6" },
-        projects: { label: "Projects", color: "#F59E0B" },
+        sales: { label: "Sales", color: "#3E5F77" },
+        projects: { label: "Projects", color: "#D69A2E" },
       },
     }),
     [],

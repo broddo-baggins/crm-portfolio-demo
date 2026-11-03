@@ -25,8 +25,8 @@ const colorMap = {
     iconBg: "bg-blue-100 dark:bg-blue-950/50",
     iconColor: "text-blue-600 dark:text-blue-400",
     trend: "text-blue-600 dark:text-blue-400",
-    gradientFrom: "#3B82F6",
-    gradientTo: "#60A5FA"
+    gradientFrom: "#C24816",
+    gradientTo: "#EC9772"
   },
   green: {
     bg: "bg-green-50 dark:bg-green-950/30",
@@ -34,8 +34,8 @@ const colorMap = {
     iconBg: "bg-green-100 dark:bg-green-950/50",
     iconColor: "text-green-600 dark:text-green-400",
     trend: "text-green-600 dark:text-green-400",
-    gradientFrom: "#10B981",
-    gradientTo: "#34D399"
+    gradientFrom: "#367E50",
+    gradientTo: "#7FB991"
   },
   purple: {
     bg: "bg-purple-50 dark:bg-purple-950/30",
@@ -43,8 +43,8 @@ const colorMap = {
     iconBg: "bg-purple-100 dark:bg-purple-950/50",
     iconColor: "text-purple-600 dark:text-purple-400",
     trend: "text-purple-600 dark:text-purple-400",
-    gradientFrom: "#8B5CF6",
-    gradientTo: "#A78BFA"
+    gradientFrom: "#3E5F77",
+    gradientTo: "#97B2C6"
   },
   orange: {
     bg: "bg-orange-50 dark:bg-orange-950/30",
@@ -61,8 +61,8 @@ const colorMap = {
     iconBg: "bg-red-100 dark:bg-red-950/50",
     iconColor: "text-red-600 dark:text-red-400",
     trend: "text-red-600 dark:text-red-400",
-    gradientFrom: "#EF4444",
-    gradientTo: "#F87171"
+    gradientFrom: "#A5332D",
+    gradientTo: "#E68D84"
   },
 };
 

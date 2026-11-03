@@ -48,8 +48,8 @@ const GeographicAnalytics: React.FC = () => {
         <div className="relative h-64 w-full">
           <Globe
             data={globeData}
-            globeColor="#1d4ed8"
-            pointColor="#3b82f6"
+            globeColor="#A93D10"
+            pointColor="#C24816"
             backgroundColor="#f8fafc"
             className="w-full h-full"
           />

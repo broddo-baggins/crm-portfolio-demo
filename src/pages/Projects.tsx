@@ -80,7 +80,7 @@ const getStaticProjectsData = (): ProjectWithStats[] => {
       last_activity: now.toISOString(),
       priority: 'high',
       tags: ['Enterprise', 'CRM', 'Priority'],
-      color: '#3B82F6',
+      color: '#C24816',
     },
     {
       id: 'demo-proj-2',
@@ -96,7 +96,7 @@ const getStaticProjectsData = (): ProjectWithStats[] => {
       last_activity: now.toISOString(),
       priority: 'high',
       tags: ['Digital', 'Automation', 'WhatsApp'],
-      color: '#10B981',
+      color: '#367E50',
     },
     {
       id: 'demo-proj-3',
@@ -112,7 +112,7 @@ const getStaticProjectsData = (): ProjectWithStats[] => {
       last_activity: now.toISOString(),
       priority: 'medium',
       tags: ['Sales', 'Optimization'],
-      color: '#F59E0B',
+      color: '#D69A2E',
     },
   ];
 };
@@ -173,7 +173,7 @@ const Projects: React.FC = () => {
     description: "",
     status: "active",
     priority: "medium",
-    color: "#3B82F6",
+    color: "#C24816",
   });
 
   // Auto-switch to list view on mobile for better UX and ensure mobile optimization
@@ -232,7 +232,7 @@ const Projects: React.FC = () => {
                 last_activity: project.updated_at || project.created_at,
                 priority: (project as any).priority || "medium",
                 tags: (project as any).tags || ["General"],
-                color: (project as any).color || "#3B82F6",
+                color: (project as any).color || "#C24816",
               } as ProjectWithStats;
             }
             
@@ -278,7 +278,7 @@ const Projects: React.FC = () => {
               last_activity: project.updated_at || project.created_at,
               priority: (project as any).priority || "medium",
               tags: (project as any).tags || ["General"],
-              color: (project as any).color || "#3B82F6",
+              color: (project as any).color || "#C24816",
             };
           } catch (error) {
             console.error(
@@ -295,7 +295,7 @@ const Projects: React.FC = () => {
               last_activity: project.updated_at || project.created_at,
               priority: "medium" as const,
               tags: ["General"],
-              color: "#3B82F6",
+              color: "#C24816",
             };
           }
         }),
@@ -341,7 +341,7 @@ const Projects: React.FC = () => {
           description: "",
           status: "active",
           priority: "medium",
-          color: "#3B82F6",
+          color: "#C24816",
         });
         loadProjects();
       }
@@ -413,7 +413,7 @@ const Projects: React.FC = () => {
       description: project.description || "",
       status: project.status,
       priority: project.priority,
-      color: project.color || "#3B82F6",
+      color: project.color || "#C24816",
     });
     setIsEditModalOpen(true);
     console.log("SUCCESS Edit modal should open"); // Debug log
@@ -441,7 +441,7 @@ const Projects: React.FC = () => {
         description: "",
         status: "active",
         priority: "medium",
-        color: "#3B82F6",
+        color: "#C24816",
       });
       loadProjects();
     } catch (error) {

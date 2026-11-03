@@ -159,13 +159,13 @@ const LeadsConversionsChart: React.FC<LeadsConversionsChartProps> = ({
                 <Line
                   type="monotone"
                   dataKey="leads"
-                  stroke="#3B82F6"
+                  stroke="#C24816"
                   strokeWidth={3}
                   name="🔵 New Leads"
-                  dot={{ fill: "#3B82F6", strokeWidth: 2, r: 5 }}
+                  dot={{ fill: "#C24816", strokeWidth: 2, r: 5 }}
                   activeDot={{
                     r: 7,
-                    fill: "#3B82F6",
+                    fill: "#C24816",
                     strokeWidth: 2,
                     stroke: "#fff",
                   }}
@@ -173,13 +173,13 @@ const LeadsConversionsChart: React.FC<LeadsConversionsChartProps> = ({
                 <Line
                   type="monotone"
                   dataKey="conversions"
-                  stroke="#10B981"
+                  stroke="#367E50"
                   strokeWidth={3}
                   name="🟢 Conversions"
-                  dot={{ fill: "#10B981", strokeWidth: 2, r: 5 }}
+                  dot={{ fill: "#367E50", strokeWidth: 2, r: 5 }}
                   activeDot={{
                     r: 7,
-                    fill: "#10B981",
+                    fill: "#367E50",
                     strokeWidth: 2,
                     stroke: "#fff",
                   }}

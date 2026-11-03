@@ -351,14 +351,14 @@ const EnhancedDashboard: React.FC<EnhancedDashboardProps> = ({
               <Line
                 type="monotone"
                 dataKey="leads"
-                stroke="#3B82F6"
+                stroke="#C24816"
                 strokeWidth={2}
                 name="New Leads"
               />
               <Line
                 type="monotone"
                 dataKey="conversions"
-                stroke="#10B981"
+                stroke="#367E50"
                 strokeWidth={2}
                 name="Conversions"
               />
@@ -428,7 +428,7 @@ const EnhancedDashboard: React.FC<EnhancedDashboardProps> = ({
                   `${source} ${(percent * 100).toFixed(0)}%`
                 }
                 outerRadius={60}
-                fill="#8884d8"
+                fill="#3E5F77"
                 dataKey="leads"
               >
                 {leadSourceData.map((entry, index) => (

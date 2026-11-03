@@ -66,7 +66,7 @@ const initialTemplateColumns: KanbanColumn[] = [
   {
     id: "active",
     title: "Active Templates (1-3)",
-    color: "#10b981",
+    color: "#367E50",
     limit: 3,
     items: [
       {

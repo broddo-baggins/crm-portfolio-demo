@@ -22,8 +22,8 @@ export function Globe({
   className,
   data = [],
   showGlobe = true,
-  globeColor = "#1d4ed8",
-  pointColor = "#3b82f6",
+  globeColor = "#A93D10",
+  pointColor = "#C24816",
   backgroundColor = "#000014",
 }: GlobeProps) {
   const mountRef = useRef<HTMLDivElement>(null);

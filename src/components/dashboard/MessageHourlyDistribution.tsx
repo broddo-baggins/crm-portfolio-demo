@@ -63,7 +63,7 @@ const MessageHourlyDistribution = ({ data = mockData }: MessageHourlyDistributio
           />
           <Bar 
             dataKey="messages" 
-            fill="#2563eb" 
+            fill="#C24816" 
             radius={[2, 2, 0, 0]}
             maxBarSize={20}
           />

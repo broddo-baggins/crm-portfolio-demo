@@ -62,9 +62,9 @@ const HourlyActivity = ({ data = mockData }: HourlyActivityProps) => {
           <Line 
             type="monotone" 
             dataKey="messages" 
-            stroke="#2563eb" 
+            stroke="#C24816" 
             strokeWidth={2}
-            dot={{ fill: '#2563eb', strokeWidth: 2, r: 4 }}
+            dot={{ fill: '#C24816', strokeWidth: 2, r: 4 }}
             activeDot={{ r: 6 }}
           />
         </LineChart>

@@ -1103,10 +1103,10 @@ const Messages = () => {
       {/* Header Section */}
       <div className={cn("flex items-center justify-between", flexRowReverse())}>
         <div className={textStart()}>
-          <h1 className="text-3xl font-bold">
+          <h1 className="text-2xl font-semibold leading-8 tracking-[-0.02em]">
             {t("pages.messages.messagesAndConversations", "Messages & Conversations")}
           </h1>
-          <p className="text-muted-foreground">
+          <p className="mt-1 text-sm text-muted-foreground">
             {t(
               "pages.messages.manageWhatsAppConversations",
               "Manage WhatsApp conversations and automate responses",
@@ -1149,7 +1149,7 @@ const Messages = () => {
       </div>
 
       {/* Quick Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div className="grid grid-cols-2 gap-3 lg:grid-cols-4 lg:gap-4">
         <Card data-testid="message-stats-total">
           <CardContent className="p-6">
             <div className={cn("flex items-center", flexRowReverse())}>
@@ -1157,7 +1157,7 @@ const Messages = () => {
                 <p className="text-sm font-medium text-muted-foreground">
                   {t("pages.messages.totalConversations", "Total Conversations")}
                 </p>
-                <p className="text-2xl font-bold">
+                <p className="text-[28px] font-semibold leading-8 tracking-[-0.02em] tabular-nums">
                   {filteredConversations.length}
                 </p>
               </div>
@@ -1173,7 +1173,7 @@ const Messages = () => {
                 <p className="text-sm font-medium text-muted-foreground">
                   {t("pages.messages.activeChatToday", "Active Chat Today")}
                 </p>
-                <p className="text-2xl font-bold text-green-600">
+                <p className="text-[28px] font-semibold leading-8 tracking-[-0.02em] tabular-nums">
                   {stats.activeConversations}
                 </p>
               </div>
@@ -1189,7 +1189,7 @@ const Messages = () => {
                 <p className="text-sm font-medium text-muted-foreground">
                   {t("pages.messages.messagesSent", "Messages Sent")}
                 </p>
-                <p className="text-2xl font-bold text-blue-600">
+                <p className="text-[28px] font-semibold leading-8 tracking-[-0.02em] tabular-nums">
                   {stats.totalMessages}
                 </p>
               </div>
@@ -1205,7 +1205,7 @@ const Messages = () => {
                 <p className="text-sm font-medium text-muted-foreground">
                   {t("pages.messages.avgResponseTime", "Avg Response Time")}
                 </p>
-                <p className="text-2xl font-bold text-orange-600">2.3h</p>
+                <p className="text-[28px] font-semibold leading-8 tracking-[-0.02em] tabular-nums">2.3h</p>
               </div>
               <Clock className="h-8 w-8 text-orange-500" />
             </div>

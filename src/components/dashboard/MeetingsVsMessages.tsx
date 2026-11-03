@@ -132,7 +132,7 @@ const MeetingsVsMessages = ({ title, data }: MeetingsVsMessagesProps) => {
                   name === 'rate' ? 'Conversion Rate' : name === 'meetings' ? 'Meetings' : 'Messages'
                 ]}
               />
-              <Bar dataKey="rate" fill="#10B981" />
+              <Bar dataKey="rate" fill="#367E50" />
             </BarChart>
           </ResponsiveContainer>
         </div>
