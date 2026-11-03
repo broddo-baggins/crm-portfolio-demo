@@ -2,7 +2,7 @@ import { Bell, Search, UserPlus, FolderOpen, Sparkles } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/context/ClientAuthContext";
-import { Link } from "react-router-dom";
+import { Link } from "react-router";
 import { useSidebar } from "@/components/ui/sidebar";
 import { cn } from "@/lib/utils";
 import { BasicProjectSelector } from "@/components/common/BasicProjectSelector";

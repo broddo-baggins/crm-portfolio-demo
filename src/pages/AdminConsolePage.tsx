@@ -1,5 +1,5 @@
 import React from 'react';
-import { Navigate } from 'react-router-dom';
+import { Navigate } from 'react-router';
 import SystemAdminConsole from '@/components/admin/SystemAdminConsole';
 import { useAuth } from '@/context/ClientAuthContext';
 import { useAdminAccess } from '@/hooks/useAdminAccess';

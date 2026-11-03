@@ -5,7 +5,7 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
 import { WhatsAppTroubleshooter } from '@/components/whatsapp/WhatsAppTroubleshooter';
 import { ArrowLeft, MessageSquare, Settings, AlertTriangle } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router';
 
 export default function WhatsAppTroubleshoot() {
   const navigate = useNavigate();

@@ -5,7 +5,7 @@
  */
 
 import React, { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router';
 import { Loader2 } from 'lucide-react';
 
 const CalendlyAuthCallback: React.FC = () => {

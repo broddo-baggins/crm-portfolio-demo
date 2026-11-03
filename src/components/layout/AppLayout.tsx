@@ -1,5 +1,5 @@
 import React, { Suspense, Component, ErrorInfo, ReactNode } from 'react';
-import { Outlet } from 'react-router-dom';
+import { Outlet } from 'react-router';
 import { cn } from '@/lib/utils';
 import { useLang } from '@/hooks/useLang';
 import { useMobileInfo, useMobileLoading } from '@/hooks/use-mobile';

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
-// import { useLocation } from 'react-router-dom'; // TODO: Use for page-specific logic if needed
-import { Outlet } from "react-router-dom";
+// import { useLocation } from 'react-router'; // TODO: Use for page-specific logic if needed
+import { Outlet } from "react-router";
 import Sidebar from "./Sidebar";
 import TopBar from "./TopBar";
 import Footer from "./Footer";

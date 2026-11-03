@@ -6,7 +6,7 @@ import { toast } from 'sonner';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { AlertCircle, ArrowLeft } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
-import { Link } from 'react-router-dom';
+import { Link } from 'react-router';
 
 const PasswordRecovery = (): JSX.Element => {
   const [email, setEmail] = useState<string>('');

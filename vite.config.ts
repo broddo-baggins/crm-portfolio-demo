@@ -158,7 +158,7 @@ export default defineConfig(({ mode }) => {
         "react",
         "react-dom",
         "react/jsx-runtime",
-        "react-router-dom",
+        "react-router",
         "lucide-react",
         "recharts",
         "lodash-es",

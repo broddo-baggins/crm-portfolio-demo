@@ -324,7 +324,7 @@ vi.mock("@/integrations/supabase/client", () => ({
 }));
 
 // Mock router
-vi.mock("react-router-dom", () => ({
+vi.mock("react-router", () => ({
   useNavigate: () => vi.fn(),
   useLocation: () => ({ pathname: "/", search: "", hash: "", state: null }),
   Link: ({ children, to }: { children: React.ReactNode; to: string }) => {

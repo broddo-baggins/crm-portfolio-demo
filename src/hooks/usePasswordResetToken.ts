@@ -1,6 +1,6 @@
 
 import { useState, useEffect } from 'react';
-import { useLocation, useSearchParams } from 'react-router-dom';
+import { useLocation, useSearchParams } from 'react-router';
 import { supabase } from '@/integrations/supabase/client';
 // import { debug } from '@/utils/debug';
 

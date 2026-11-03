@@ -3,7 +3,7 @@ import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Menu, X, Home, Users, FolderOpen, Calendar, MessageSquare, BarChart3, Settings, LogOut } from 'lucide-react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation } from 'react-router';
 import { useAuth } from '@/context/ClientAuthContext';
 import { cn } from '@/lib/utils';
 import { useTranslation } from 'react-i18next';

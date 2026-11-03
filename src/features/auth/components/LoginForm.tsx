@@ -8,7 +8,7 @@
  * @returns {JSX.Element} The rendered login form
  */
 import React, { useState, useEffect } from 'react';
-import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router';
 import { Button } from '@/components/ui/button';
 import { CardContent, CardFooter } from '@/components/ui/card';
 import { useAuth } from '@/context/ClientAuthContext';

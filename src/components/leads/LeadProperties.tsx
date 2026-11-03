@@ -20,7 +20,7 @@ import { Separator } from "@/components/ui/separator";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { useTranslation } from "react-i18next";
 import { useLang } from "@/hooks/useLang";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router";
 import { cn } from "@/lib/utils";
 import { LeadStatusBadge } from "./LeadStatusBadge";
 import { LeadTemperatureBadge } from "./LeadTemperatureBadge";
