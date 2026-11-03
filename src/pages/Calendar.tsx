@@ -110,6 +110,15 @@ interface CalendlyUser {
   timezone: string;
 }
 
+
+/** Collapsible triggers rendered as <div>s still need Enter/Space like a native button. */
+const activateOnEnterOrSpace = (e: React.KeyboardEvent<HTMLElement>) => {
+  if (e.key === "Enter" || e.key === " ") {
+    e.preventDefault();
+    e.currentTarget.click();
+  }
+};
+
 const Calendar = () => {
   const { t } = useTranslation("pages");
   const { t: tCommon } = useTranslation("common");
@@ -846,6 +855,7 @@ const Calendar = () => {
                   variant="outline"
                   size="sm"
                   onClick={() => prevMonth()}
+                  aria-label="Previous month"
                 >
                   <ChevronLeft className="h-4 w-4" />
                 </Button>
@@ -860,6 +870,7 @@ const Calendar = () => {
                   variant="outline"
                   size="sm"
                   onClick={() => nextMonth()}
+                  aria-label="Next month"
                 >
                   <ChevronRight className="h-4 w-4" />
                 </Button>
@@ -1088,7 +1099,12 @@ const Calendar = () => {
         <Card>
           <Collapsible>
             <CollapsibleTrigger asChild>
-              <CardHeader className="cursor-pointer hover:bg-muted/50 transition-colors">
+              <CardHeader
+                className="cursor-pointer hover:bg-muted/50 transition-colors"
+                role="button"
+                tabIndex={0}
+                onKeyDown={activateOnEnterOrSpace}
+              >
                 <CardTitle className="flex items-center justify-between gap-2">
                   <div className="flex items-center gap-2">
                     <CalendarDays className="h-5 w-5 text-blue-600" />
@@ -1165,7 +1181,12 @@ const Calendar = () => {
         <Card>
           <Collapsible>
             <CollapsibleTrigger asChild>
-              <CardHeader className="cursor-pointer hover:bg-muted/50 transition-colors">
+              <CardHeader
+                className="cursor-pointer hover:bg-muted/50 transition-colors"
+                role="button"
+                tabIndex={0}
+                onKeyDown={activateOnEnterOrSpace}
+              >
                 <CardTitle className="flex items-center justify-between gap-2">
                   <div className="flex items-center gap-2">
                     <CalendarDays className="h-5 w-5 text-red-600" />

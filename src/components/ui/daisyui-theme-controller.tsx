@@ -25,6 +25,7 @@ export function DaisyUIThemeController() {
     >
       {/* Sun Icon */}
       <svg 
+        aria-hidden="true"
         className={`sun-icon transition-all duration-300 ${
           isDark ? 'opacity-40 scale-75' : 'opacity-100 scale-100 text-yellow-500'
         }`} 
@@ -46,12 +47,14 @@ export function DaisyUIThemeController() {
         type="checkbox" 
         className="toggle toggle-primary theme-controller transition-all duration-300" 
         data-testid="dark-mode-toggle"
+        aria-label="Dark mode"
         checked={isDark}
         onChange={(e) => handleToggle(e.target.checked)}
       />
       
       {/* Moon Icon */}
       <svg 
+        aria-hidden="true"
         className={`moon-icon transition-all duration-300 ${
           isDark ? 'opacity-100 scale-100 text-blue-400' : 'opacity-40 scale-75'
         }`} 

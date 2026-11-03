@@ -219,7 +219,7 @@ export function QueueEditableDataTable({
               value={editingCell.value} 
               onValueChange={(value) => setEditingCell({...editingCell, value})}
             >
-              <SelectTrigger className="w-24">
+              <SelectTrigger className="w-24" aria-label="Priority">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -229,10 +229,10 @@ export function QueueEditableDataTable({
                 <SelectItem value="urgent">Urgent</SelectItem>
               </SelectContent>
             </Select>
-            <Button size="sm" onClick={handleCellSave}>
+            <Button size="sm" onClick={handleCellSave} aria-label="Save">
               <Save className="h-3 w-3" />
             </Button>
-            <Button size="sm" variant="ghost" onClick={handleCellCancel}>
+            <Button size="sm" variant="ghost" onClick={handleCellCancel} aria-label="Cancel">
               <X className="h-3 w-3" />
             </Button>
           </div>
@@ -244,7 +244,7 @@ export function QueueEditableDataTable({
               value={editingCell.value} 
               onValueChange={(value) => setEditingCell({...editingCell, value})}
             >
-              <SelectTrigger className="w-32">
+              <SelectTrigger className="w-32" aria-label="Queue status">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -255,10 +255,10 @@ export function QueueEditableDataTable({
                 <SelectItem value="failed">Failed</SelectItem>
               </SelectContent>
             </Select>
-            <Button size="sm" onClick={handleCellSave}>
+            <Button size="sm" onClick={handleCellSave} aria-label="Save">
               <Save className="h-3 w-3" />
             </Button>
-            <Button size="sm" variant="ghost" onClick={handleCellCancel}>
+            <Button size="sm" variant="ghost" onClick={handleCellCancel} aria-label="Cancel">
               <X className="h-3 w-3" />
             </Button>
           </div>
@@ -272,10 +272,10 @@ export function QueueEditableDataTable({
               onChange={(e) => setEditingCell({...editingCell, value: e.target.value})}
               className="w-48"
             />
-            <Button size="sm" onClick={handleCellSave}>
+            <Button size="sm" onClick={handleCellSave} aria-label="Save">
               <Save className="h-3 w-3" />
             </Button>
-            <Button size="sm" variant="ghost" onClick={handleCellCancel}>
+            <Button size="sm" variant="ghost" onClick={handleCellCancel} aria-label="Cancel">
               <X className="h-3 w-3" />
             </Button>
           </div>
@@ -288,10 +288,10 @@ export function QueueEditableDataTable({
               onChange={(e) => setEditingCell({...editingCell, value: e.target.value})}
               className="w-32"
             />
-            <Button size="sm" onClick={handleCellSave}>
+            <Button size="sm" onClick={handleCellSave} aria-label="Save">
               <Save className="h-3 w-3" />
             </Button>
-            <Button size="sm" variant="ghost" onClick={handleCellCancel}>
+            <Button size="sm" variant="ghost" onClick={handleCellCancel} aria-label="Cancel">
               <X className="h-3 w-3" />
             </Button>
           </div>
@@ -355,7 +355,7 @@ export function QueueEditableDataTable({
           </div>
           
           <Select value={statusFilter} onValueChange={setStatusFilter}>
-            <SelectTrigger className="w-32">
+            <SelectTrigger className="w-32" aria-label="Filter by status">
               <SelectValue placeholder="Status" />
             </SelectTrigger>
             <SelectContent>
@@ -369,7 +369,7 @@ export function QueueEditableDataTable({
           </Select>
 
           <Select value={priorityFilter} onValueChange={setPriorityFilter}>
-            <SelectTrigger className="w-32">
+            <SelectTrigger className="w-32" aria-label="Filter by priority">
               <SelectValue placeholder="Priority" />
             </SelectTrigger>
             <SelectContent>
@@ -426,6 +426,7 @@ export function QueueEditableDataTable({
             <TableRow>
               <TableHead className="w-12">
                 <Checkbox
+                  aria-label="Select all queued leads"
                   checked={selectedLeads.size === filteredData.length && filteredData.length > 0}
                   onCheckedChange={handleSelectAll}
                 />
@@ -446,6 +447,7 @@ export function QueueEditableDataTable({
               <TableRow key={lead.id}>
                                  <TableCell>
                    <Checkbox
+                     aria-label={`Select ${lead.full_name}`}
                      checked={selectedLeads.has(lead.id)}
                      onCheckedChange={(checked) => handleSelectLead(lead.id, checked as boolean)}
                    />
@@ -458,6 +460,7 @@ export function QueueEditableDataTable({
                         size="sm"
                         variant="ghost"
                         onClick={() => handleMoveUp(lead.id)}
+                        aria-label="Move up in queue"
                         disabled={lead.queue_position <= 1}
                         className="h-4 w-4 p-0"
                       >
@@ -467,6 +470,7 @@ export function QueueEditableDataTable({
                         size="sm"
                         variant="ghost"
                         onClick={() => handleMoveDown(lead.id)}
+                        aria-label="Move down in queue"
                         disabled={lead.queue_position >= Math.max(...data.map(l => l.queue_position))}
                         className="h-4 w-4 p-0"
                       >
@@ -509,7 +513,7 @@ export function QueueEditableDataTable({
                 <TableCell>
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                      <Button variant="ghost" size="sm">
+                      <Button variant="ghost" size="sm" aria-label={`Actions for ${lead.full_name}`}>
                         <MoreVertical className="h-4 w-4" />
                       </Button>
                     </DropdownMenuTrigger>

@@ -499,7 +499,7 @@ const DataDeletion = () => {
                     legitimate business interests as outlined in our{" "}
                     <Link
                       to="/privacy-policy"
-                      className="text-primary hover:underline"
+                      className="text-primary underline"
                     >
                       Privacy Policy
                     </Link>
@@ -509,14 +509,14 @@ const DataDeletion = () => {
                     For more information about your privacy rights, visit our{" "}
                     <Link
                       to="/privacy-policy#your-rights"
-                      className="text-primary hover:underline"
+                      className="text-primary underline"
                     >
                       Privacy Policy
                     </Link>{" "}
                     or contact us at{" "}
                     <a
                       href="mailto:privacy@crm-demo.com"
-                      className="text-primary hover:underline"
+                      className="text-primary underline"
                     >
                       privacy@crm-demo.com
                     </a>

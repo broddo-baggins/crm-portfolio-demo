@@ -174,7 +174,7 @@ export const MockIntegrationsDisplay: React.FC = () => {
                   )}
                 </Button>
                 {integration.status === 'connected' && (
-                  <Button size="sm" variant="ghost" disabled>
+                  <Button size="sm" variant="ghost" disabled aria-label={`Sync ${integration.name}`}>
                     <RefreshCw className="h-3 w-3" />
                   </Button>
                 )}

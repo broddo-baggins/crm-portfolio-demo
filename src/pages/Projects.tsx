@@ -30,7 +30,6 @@ import {
   Plus,
   Search,
   Filter,
-  MoreHorizontal,
   FolderOpen,
   Users,
   MessageSquare,
@@ -578,6 +577,8 @@ const Projects: React.FC = () => {
                 size="sm"
                 onClick={() => setViewMode("grid")}
                 className="p-2"
+                aria-label="Grid view"
+                aria-pressed={viewMode === "grid"}
               >
                 <Grid3X3 className="h-4 w-4" />
               </Button>
@@ -586,6 +587,8 @@ const Projects: React.FC = () => {
                 size="sm"
                 onClick={() => setViewMode("list")}
                 className="p-2"
+                aria-label="List view"
+                aria-pressed={viewMode === "list"}
               >
                 <List className="h-4 w-4" />
               </Button>
@@ -681,7 +684,7 @@ const Projects: React.FC = () => {
           {/* Filters - stacked on mobile */}
           <div className="flex gap-2 sm:gap-3">
             <Select value={filterStatus} onValueChange={setFilterStatus}>
-              <SelectTrigger className="w-full sm:w-32">
+              <SelectTrigger className="w-full sm:w-32" aria-label={t("projects.filterByStatus", "Filter by status")}>
                 <Filter className="h-4 w-4 mr-1 sm:hidden" />
                 <SelectValue />
               </SelectTrigger>
@@ -705,7 +708,7 @@ const Projects: React.FC = () => {
             </Select>
 
             <Select value={sortBy} onValueChange={setSortBy}>
-              <SelectTrigger className="w-full sm:w-36">
+              <SelectTrigger className="w-full sm:w-36" aria-label={t("projects.sortBy", "Sort by")}>
                 <SortAsc className="h-4 w-4 mr-1 sm:hidden" />
                 <SelectValue />
               </SelectTrigger>
@@ -780,13 +783,6 @@ const Projects: React.FC = () => {
                     </div>
                   </div>
 
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="opacity-0 group-hover:opacity-100 transition-opacity shrink-0"
-                  >
-                    <MoreHorizontal className="h-4 w-4" />
-                  </Button>
                 </div>
 
                 {project.description && (

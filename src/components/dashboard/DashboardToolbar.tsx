@@ -122,6 +122,7 @@ const DashboardToolbar: React.FC<DashboardToolbarProps> = ({
                       size="sm"
                       onClick={onAutoResize}
                       className="h-8 px-2 text-gray-600 hover:text-gray-800"
+                      aria-label="Auto-resize widgets"
                     >
                       <Maximize2 className="h-4 w-4" />
                     </Button>

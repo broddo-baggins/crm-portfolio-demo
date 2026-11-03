@@ -295,6 +295,7 @@ const EditablePerformanceTargets: React.FC<EditablePerformanceTargetsProps> = ({
               size="sm"
               onClick={loadPerformanceData}
               disabled={loading}
+              aria-label="Refresh performance targets"
             >
               <RefreshCw className={cn("h-4 w-4", loading && "animate-spin")} />
             </Button>

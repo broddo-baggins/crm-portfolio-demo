@@ -270,6 +270,8 @@ const MobileChart = memo<{
                 size="sm"
                 onClick={() => setIsExpanded(!isExpanded)}
                 className="h-8 w-8 p-0"
+                aria-label={isExpanded ? "Collapse chart" : "Expand chart"}
+                aria-expanded={isExpanded}
               >
                 {isExpanded ? (
                   <Minimize2 className="h-4 w-4" />
