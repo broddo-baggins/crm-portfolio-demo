@@ -1290,7 +1290,8 @@ For detailed analysis, please access the dashboard at: ${window.location.origin}
             {/* Date Range Selector - Mobile optimized */}
             <div className="w-full sm:w-auto">
               <Select value={dateRange} onValueChange={setDateRange}>
-                <SelectTrigger className="w-full sm:w-[120px] h-10">
+                {/* 148 px: at 120 "Last 30 days" wrapped and its second line was clipped */}
+                <SelectTrigger className="w-full sm:w-[148px] h-10">
                   <Calendar className="h-4 w-4 mr-2 sm:hidden" />
                   <SelectValue placeholder="Period" />
                 </SelectTrigger>

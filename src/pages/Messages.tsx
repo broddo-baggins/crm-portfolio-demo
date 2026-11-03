@@ -1589,7 +1589,7 @@ const Messages = () => {
                           variant="outline"
                           size="sm"
                           onClick={() => window.location.href = "/settings?tab=integrations"}
-                          className="flex items-center gap-2 text-[#25D366]"
+                          className="flex items-center gap-2 text-whatsapp-accent"
                         >
                           <Calendar className="h-4 w-4" />
                           <span className="hidden sm:inline">
@@ -1630,7 +1630,7 @@ const Messages = () => {
                       {formatTimeAgo(selectedConversation.lastActive)}
                     </span>
                     {calendlyStatus.isConnected && (
-                      <span className="text-[#25D366] dark:text-[#25D366]">
+                      <span className="text-whatsapp-accent">
                         {t("pages.messages.meetingReady", "Meeting scheduling ready")}
                       </span>
                     )}
@@ -1684,7 +1684,7 @@ const Messages = () => {
                                     // Fix chat colors - different colors for inbound vs outbound
                                     message.direction === "inbound"
                                       ? "bg-gray-100 dark:bg-slate-700 text-gray-900 dark:text-slate-100"
-                                      : "bg-[#25D366] dark:bg-[#1eb85e] text-white",
+                                      : "bg-whatsapp-bubble text-whatsapp-bubble-foreground",
                                     textStart(),
                                   )}
                                 >
@@ -1818,7 +1818,7 @@ const Messages = () => {
                       ` (${t("pages.messages.page", "Page")} ${currentPage.toLocaleString(isRTL ? "he-IL" : "en-US")} ${t("pages.messages.of", "of")} ${totalPages.toLocaleString(isRTL ? "he-IL" : "en-US")})`}
                   </p>
                   {currentProject && (
-                    <p className="text-xs text-[#25D366] dark:text-[#25D366] mt-2">
+                    <p className="text-xs text-whatsapp-accent mt-2">
                       {t("pages.messages.project", "Project")}:{" "}
                       {currentProject.name}
                     </p>

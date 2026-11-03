@@ -520,6 +520,15 @@
   animation-delay: 120ms;
 }
 
+/* Chart text on the tokens, for every recharts chart, inside ChartContainer or not.
+   Recharts' own defaults (#666 ticks, #808080 axis titles, legend text in the series hue)
+   were 3.0-4.0:1, and the series hue is already on the legend swatch. */
+.recharts-cartesian-axis-tick-value,
+.recharts-label,
+.recharts-polar-angle-axis-tick-value,
+.recharts-polar-radius-axis-tick-value { fill: var(--text-muted); }
+.recharts-legend-item-text { color: var(--text-secondary) !important; }
+
 /* Legal and help prose (LegalDocument): body role, 68ch, real lists and links */
 .legal-prose {
   font-size: 15px;
@@ -531,8 +540,10 @@
 .legal-prose ul { list-style: disc; padding-inline-start: 1.25rem; }
 .legal-prose ol { list-style: decimal; padding-inline-start: 1.25rem; }
 .legal-prose li + li { margin-top: 0.375rem; }
-.legal-prose a { color: var(--text); text-decoration: underline; text-underline-offset: 3px; text-decoration-color: var(--line-strong); }
-.legal-prose a:hover { text-decoration-color: currentColor; }
+/* Bare links only, at zero specificity: a link styled as a button keeps its own colours
+   (the ink link colour on the steel "Export My Data" button was 2.5:1). */
+:where(.legal-prose) a:not([class]) { color: var(--text); text-decoration: underline; text-underline-offset: 3px; text-decoration-color: var(--line-strong); }
+:where(.legal-prose) a:not([class]):hover { text-decoration-color: currentColor; }
 .legal-prose strong { color: var(--text); font-weight: 600; }
 
 /* Every app page has one title in the page-title role (DESIGN.md, "Type"),

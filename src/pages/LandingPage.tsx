@@ -627,7 +627,8 @@ const LandingPage = ({ lang }: LandingPageProps = {}) => {
           <FAQ lang={lang} />
 
           {/* Closing call to action */}
-          <section className="border-t border-border bg-ink-900 py-16 text-ink-100 md:py-20">
+          {/* An ink band in both themes, so it takes the dark-theme tokens (action #E8784C, ink-950 on it). */}
+          <section className="dark border-t border-border bg-ink-900 py-16 text-ink-100 md:py-20">
             <div className={cn(container, "flex flex-col gap-8 md:flex-row md:items-end md:justify-between")}>
               <div>
                 <h2 className="text-[28px] font-semibold leading-[34px] tracking-[-0.025em] text-white md:text-[36px] md:leading-[42px]">
@@ -638,7 +639,7 @@ const LandingPage = ({ lang }: LandingPageProps = {}) => {
               <div className="flex flex-wrap gap-3">
                 <Button
                   size="lg"
-                  className="bg-[#E8784C] text-ink-950 hover:bg-[#F08C63] focus-visible:ring-offset-ink-900"
+                  className="focus-visible:ring-offset-ink-900"
                   onClick={() => navigate("/auth/login")}
                 >
                   {L("Get Started", "התחילו עכשיו")}

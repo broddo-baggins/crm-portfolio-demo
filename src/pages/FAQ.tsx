@@ -1128,7 +1128,8 @@ const FAQ: React.FC = () => {
                       key={faq.id}
                       initial={{ opacity: 0, y: 10 }}
                       animate={{ opacity: 1, y: 0 }}
-                      transition={{ duration: 0.3, delay: index * 0.1 }}
+                      // Capped stagger: an uncapped index * 0.1 s left the 20th question pale for 2 s.
+                      transition={{ duration: 0.3, delay: Math.min(index, 5) * 0.05 }}
                     >
                       <AccordionItem value={faq.id} className="border border-muted rounded-lg">
                         <AccordionTrigger className={cn("px-6 py-4 hover:no-underline", isRTL ? "text-right" : "text-left")}>
