@@ -1,4 +1,5 @@
-@import url("https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap");
+/* Thermal design system: tokens first (generated from design/tokens.json). */
+@import "./styles/tokens.css";
 @import "./styles/whatsapp.css";
 @import "./styles/mobile-touch.css";
 
@@ -23,13 +24,13 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Agent Button Animations */
+/* Agent button onboarding ring (ember, the one accent) */
 @keyframes pulse-glow {
   0%, 100% {
-    box-shadow: 0 0 0 0 rgba(168, 85, 247, 0.6);
+    box-shadow: 0 0 0 0 rgb(194 72 22 / 0.45);
   }
   50% {
-    box-shadow: 0 0 0 10px rgba(168, 85, 247, 0);
+    box-shadow: 0 0 0 8px rgb(194 72 22 / 0);
   }
 }
 
@@ -63,163 +64,23 @@
     visibility: visible;
   }
 
+  /* Colours, type, space, radius, motion: src/styles/tokens.css.
+     Only layout variables stay here. */
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
-
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
-
-    --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
-
-    --primary: 221.2 83.2% 53.3%;
-    --primary-foreground: 210 40% 98%;
-
-    --secondary: 210 40% 96%;
-    --secondary-foreground: 222.2 84% 4.9%;
-
-    --muted: 210 40% 96%;
-    --muted-foreground: 215.4 16.3% 46.9%;
-
-    --accent: 210 40% 96%;
-    --accent-foreground: 222.2 84% 4.9%;
-
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
-
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 221.2 83.2% 53.3%;
-
-    --radius: 0.5rem;
-
-    --sidebar: 0 0% 98%;
-    --sidebar-foreground: 240 5.3% 26.1%;
-    --sidebar-primary: 240 5.9% 10%;
-    --sidebar-primary-foreground: 0 0% 98%;
-    --sidebar-accent: 240 4.8% 95.9%;
-    --sidebar-accent-foreground: 240 5.9% 10%;
-    --sidebar-border: 220 13% 91%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
-
-    /* Enhanced chart colors - ensuring proper color definition */
-    --chart-1: 220 70% 50%; /* Blue */
-    --chart-2: 160 84% 39%; /* Green */
-    --chart-3: 30 80% 55%; /* Orange */
-    --chart-4: 280 65% 60%; /* Purple */
-    --chart-5: 340 75% 55%; /* Pink/Red */
-
-    /* Additional chart colors for more variety */
-    --color-chrome: #3b82f6; /* Blue */
-    --color-safari: #10b981; /* Green */
-    --color-firefox: #f59e0b; /* Orange */
-    --color-edge: #8b5cf6; /* Purple */
-    --color-other: #ef4444; /* Red */
-    --color-january: #3b82f6; /* Blue */
-    --color-february: #10b981; /* Green */
-    --color-march: #f59e0b; /* Orange */
-    --color-april: #8b5cf6; /* Purple */
-    --color-may: #ef4444; /* Red */
-
-    /* Sidebar variables - Enhanced for responsiveness */
-    --sidebar-background: 0 0% 98%;
-    --sidebar-foreground: 240 5.3% 26.1%;
-    --sidebar-primary: 240 5.9% 10%;
-    --sidebar-primary-foreground: 0 0% 98%;
-    --sidebar-accent: 240 4.8% 95.9%;
-    --sidebar-accent-foreground: 240 5.9% 10%;
-    --sidebar-border: 220 13% 91%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
-
-    /* Enhanced sidebar width variables for better responsiveness */
-    --sidebar-width: 16rem;
+    --sidebar-width: 15.5rem;
     --sidebar-width-mobile: 18rem;
     --sidebar-width-icon: 4rem;
     --sidebar-width-collapsed: 4rem;
-
-    /* Breakpoint-specific sidebar widths */
     --sidebar-width-sm: 14rem;
-    --sidebar-width-md: 16rem;
-    --sidebar-width-lg: 18rem;
-    --sidebar-width-xl: 20rem;
+    --sidebar-width-md: 15.5rem;
+    --sidebar-width-lg: 15.5rem;
+    --sidebar-width-xl: 15.5rem;
   }
 
-  .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
-
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
-
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
-
-    --primary: 217.2 91.2% 59.8%;
-    --primary-foreground: 222.2 84% 4.9%;
-
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
-
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
-
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
-
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
-
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 224.3 76.3% 94.1%;
-
-    --sidebar: 224 71% 4%;
-    --sidebar-foreground: 213 31% 91%;
-    --sidebar-primary: 224 76% 94%;
-    --sidebar-primary-foreground: 229 84% 5%;
-    --sidebar-accent: 216 34% 17%;
-    --sidebar-accent-foreground: 210 40% 98%;
-    --sidebar-border: 216 34% 17%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
-
-    /* Dark mode chart colors - enhanced visibility */
-    --chart-1: 220 70% 60%; /* Lighter blue for dark mode */
-    --chart-2: 160 70% 50%; /* Lighter green for dark mode */
-    --chart-3: 30 90% 60%; /* Lighter orange for dark mode */
-    --chart-4: 280 70% 65%; /* Lighter purple for dark mode */
-    --chart-5: 340 80% 60%; /* Lighter red for dark mode */
-
-    /* Dark mode additional colors */
-    --color-chrome: #60a5fa; /* Lighter blue */
-    --color-safari: #34d399; /* Lighter green */
-    --color-firefox: #fbbf24; /* Lighter orange */
-    --color-edge: #a78bfa; /* Lighter purple */
-    --color-other: #f87171; /* Lighter red */
-    --color-january: #60a5fa;
-    --color-february: #34d399;
-    --color-march: #fbbf24;
-    --color-april: #a78bfa;
-    --color-may: #f87171;
-  }
-
-  /* Enhanced responsive font sizing + zoom for more content density */
   html {
     font-size: 16px;
-    /* Reduce overall scale to show 15% more content (0.85 = 85% scale) */
-    zoom: 0.85;
-  }
-
-  @media (max-width: 640px) {
-    html {
-      font-size: 14px;
-    }
-  }
-
-  @media (max-width: 480px) {
-    html {
-      font-size: 13px;
-    }
+    -webkit-text-size-adjust: 100%;
+    text-rendering: optimizeLegibility;
   }
 
   /* RTL support improvements */
@@ -240,25 +101,55 @@
     flex-direction: row-reverse;
   }
 
-  /* Hebrew font support */
-  .font-hebrew {
-    font-family: "Segoe UI", "Arial", "Noto Sans Hebrew", "David", sans-serif;
-  }
-
-  /* Smooth transitions for language switching */
-  * {
-    transition:
-      margin 0.2s ease,
-      padding 0.2s ease,
-      text-align 0.2s ease;
+  /* Hebrew is set in Rubik (Geist has no Hebrew glyphs) */
+  .font-hebrew,
+  html[lang="he"] body,
+  [dir="rtl"] {
+    font-family: var(--font-hebrew);
   }
 
   /* Base body styles */
   body {
-    font-family: "Inter", sans-serif;
+    font-family: var(--font-sans);
+    font-size: 15px;
+    line-height: 1.6;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    font-feature-settings: "ss01" 0, "cv11" 1;
     overflow-x: hidden; /* Prevent horizontal scroll */
+  }
+
+  h1, h2, h3, h4 {
+    letter-spacing: -0.015em;
+    text-wrap: balance;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+
+  /* Figures line up: tables, KPIs, chart labels */
+  table, .tabular, .recharts-text, [data-figure] {
+    font-variant-numeric: tabular-nums;
+  }
+
+  ::selection {
+    background: var(--ember-100);
+    color: var(--ink-900);
+  }
+
+  /* One visible focus treatment for every focusable thing */
+  :focus-visible {
+    outline: 2px solid var(--focus);
+    outline-offset: 2px;
+  }
+
+  [data-radix-popper-content-wrapper] :focus-visible,
+  input:focus-visible,
+  textarea:focus-visible,
+  select:focus-visible,
+  [role="combobox"]:focus-visible {
+    outline-offset: 0;
   }
 
   /* Improved scrollbar styling */
@@ -295,9 +186,10 @@
     font-family: "Geist", sans-serif;
   }
 
+  /* Weights are 400, 500 and 600 only (DESIGN.md, "Type") */
   .font-geist-light {
     font-family: "Geist", sans-serif;
-    font-weight: 300;
+    font-weight: 400;
   }
 
   .font-geist-medium {
@@ -312,7 +204,28 @@
 
   .font-geist-bold {
     font-family: "Geist", sans-serif;
-    font-weight: 700;
+    font-weight: 600;
+  }
+
+  /* Hebrew keeps Rubik even inside Geist utility classes */
+  [dir="rtl"] .font-geist,
+  [dir="rtl"] .font-geist-light,
+  [dir="rtl"] .font-geist-medium,
+  [dir="rtl"] .font-geist-semibold,
+  [dir="rtl"] .font-geist-bold {
+    font-family: var(--font-hebrew);
+  }
+
+  /* Skeleton placeholder: a quiet sweep, static under reduced motion */
+  .skeleton {
+    background: linear-gradient(90deg, var(--ink-100) 0%, var(--ink-50) 50%, var(--ink-100) 100%);
+    background-size: 200% 100%;
+    animation: skeleton-sweep 1.4s ease-in-out infinite;
+  }
+
+  .dark .skeleton {
+    background: linear-gradient(90deg, #1E252D 0%, #252D36 50%, #1E252D 100%);
+    background-size: 200% 100%;
   }
 
   /* System font for chat interface (mimics WhatsApp behavior) */
@@ -426,7 +339,7 @@
     inset-inline-end: auto !important;
     right: auto !important;
     left: 0 !important;
-    border-inline-end: 1px solid rgb(229 231 235) !important;
+    border-inline-end: 1px solid var(--line) !important;
     border-inline-start: none !important;
   }
 
@@ -592,6 +505,41 @@
   }
 }
 
+/* Hero entrance: one 400 ms rise, so the eye lands on the promise first.
+   The global prefers-reduced-motion rule below makes it instant. */
+@keyframes rise {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: none; }
+}
+
+.rise {
+  animation: rise 400ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+.rise-delay {
+  animation-delay: 120ms;
+}
+
+/* Legal and help prose (LegalDocument): body role, 68ch, real lists and links */
+.legal-prose {
+  font-size: 15px;
+  line-height: 1.65;
+  color: var(--text-secondary);
+}
+.legal-prose > * + * { margin-top: 0.875rem; }
+.legal-prose h3, .legal-prose h4 { color: var(--text); font-weight: 600; font-size: 15px; margin-top: 1.5rem; }
+.legal-prose ul { list-style: disc; padding-inline-start: 1.25rem; }
+.legal-prose ol { list-style: decimal; padding-inline-start: 1.25rem; }
+.legal-prose li + li { margin-top: 0.375rem; }
+.legal-prose a { color: var(--text); text-decoration: underline; text-underline-offset: 3px; text-decoration-color: var(--line-strong); }
+.legal-prose a:hover { text-decoration-color: currentColor; }
+.legal-prose strong { color: var(--text); font-weight: 600; }
+
+@keyframes skeleton-sweep {
+  from { background-position: 100% 0; }
+  to { background-position: -100% 0; }
+}
+
 /* Material Design Elevation */
 .elevation-1 {
   @apply shadow-card-1 transition-shadow duration-200;
@@ -665,21 +613,10 @@
 
 /* Consolidated placeholder styling with enhanced visual feedback */
 .react-grid-item.react-grid-placeholder {
-  background:
-    linear-gradient(45deg, #3b82f6 25%, transparent 25%),
-    linear-gradient(-45deg, #3b82f6 25%, transparent 25%),
-    linear-gradient(45deg, transparent 75%, #3b82f6 75%),
-    linear-gradient(-45deg, transparent 75%, #3b82f6 75%);
-  background-size: 8px 8px;
-  background-position:
-    0 0,
-    0 4px,
-    4px -4px,
-    -4px 0px;
-  opacity: 0.3;
-  border: 2px dashed #3b82f6;
-  border-radius: 8px;
-  animation: pulse 1s ease-in-out infinite alternate;
+  background: var(--ember-50);
+  opacity: 0.8;
+  border: 2px dashed var(--ember-400);
+  border-radius: var(--radius-surface);
   transition-duration: 100ms;
   z-index: 2;
   -webkit-user-select: none;
@@ -696,8 +633,8 @@
 }
 
 .react-grid-item.static {
-  background: #f3f4f6;
-  border: 2px dashed #d1d5db;
+  background: var(--surface-sunken);
+  border: 2px dashed var(--line-strong);
 }
 
 .widget-container {
@@ -808,7 +745,7 @@
 .widget-description {
   font-size: 0.75rem;
   line-height: 1.3;
-  color: #6b7280;
+  color: var(--text-muted);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -1555,16 +1492,9 @@
   color: hsl(var(--foreground)) !important;
 }
 
-/* Ensure proper contrast ratios */
+/* Sidebar text takes the sidebar's own ink (contrast is set by the tokens) */
 .sidebar-text {
-  background: rgba(255, 255, 255, 0.95) !important;
-  backdrop-filter: blur(8px);
-  color: #000 !important;
-}
-
-.dark .sidebar-text {
-  background: rgba(0, 0, 0, 0.95) !important;
-  color: #fff !important;
+  color: inherit;
 }
 
 /* Fix text backgrounds in cards and components */
