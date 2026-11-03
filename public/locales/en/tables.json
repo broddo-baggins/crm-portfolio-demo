@@ -132,7 +132,6 @@
     "reload": "Reload",
     "sync": "Sync",
     "backup": "Backup",
-    "restore": "Restore",
     "reset": "Reset",
     "clear": "Clear",
     "filter": "Filter",
@@ -391,4 +390,4 @@
     "firstMessage": "First Message Sent",
     "calendlyBooked": "Calendly Meeting Booked"
   }
-} 
+}

@@ -35,7 +35,14 @@
     "resetLayout": "Reset to default layout",
     "lockWidgets": "Click to lock all widgets in place",
     "unlockWidgets": "Click to unlock all widgets for editing",
-    "saveLayout": "Save layout changes"
+    "saveLayout": "Save layout changes",
+    "globalSearch": "Global Search",
+    "searchPlaceholder": "Search projects, leads, conversations...",
+    "notifications": "Notifications",
+    "profile": "Profile",
+    "settings": "Settings",
+    "logout": "Logout",
+    "menu": "Menu"
   },
   "language": {
     "selector": "Language",
@@ -61,7 +68,20 @@
     "refresh": "Refresh Page",
     "contactSupport": "Contact Support",
     "reportIssue": "Report Issue",
-    "retryingIn": "Retrying in {{seconds}}s"
+    "retryingIn": "Retrying in {{seconds}}s",
+    "search": "Search",
+    "filter": "Filter",
+    "sort": "Sort",
+    "view": "View",
+    "details": "Details",
+    "options": "Options",
+    "settings": "Settings",
+    "help": "Help",
+    "back": "Back",
+    "next": "Next",
+    "previous": "Previous",
+    "continue": "Continue",
+    "finish": "Finish"
   },
   "common": {
     "all": "All",
@@ -92,28 +112,7 @@
     "noProjects": "No projects",
     "searchProjects": "Search projects...",
     "createProject": "Create Project",
-    "createNew": "Create New Project"
-  },
-  "integration": {
-    "title": "Seamless CRM Integration",
-    "subtitle": "CRM Demo connects to your existing tools through secure webhooks and APIs",
-    "webhookLayer": {
-      "title": "Custom Webhook Layer",
-      "description": "Secure API gateway with real-time data synchronization between CRM Demo and your CRM platforms"
-    }
-  },
-  "leads": {
-    "individual": "Individual",
-    "status": "Status & Temperature",
-    "temperature": "Temperature",
-    "contactInfo": "Contact Information",
-    "activity": "Activity",
-    "created": "Created",
-    "lastContacted": "Last contacted",
-    "messages": "Messages",
-    "notAvailable": "N/A"
-  },
-  "projects": {
+    "createNew": "Create New Project",
     "project": "Project",
     "statusProgress": "Status & Progress",
     "status": "Status",
@@ -136,14 +135,24 @@
     "lastMessage": "Last Message",
     "notes": "Notes"
   },
-  "toolbar": {
-    "globalSearch": "Global Search",
-    "searchPlaceholder": "Search projects, leads, conversations...",
-    "notifications": "Notifications",
-    "profile": "Profile",
-    "settings": "Settings",
-    "logout": "Logout",
-    "menu": "Menu"
+  "integration": {
+    "title": "Seamless CRM Integration",
+    "subtitle": "CRM Demo connects to your existing tools through secure webhooks and APIs",
+    "webhookLayer": {
+      "title": "Custom Webhook Layer",
+      "description": "Secure API gateway with real-time data synchronization between CRM Demo and your CRM platforms"
+    }
+  },
+  "leads": {
+    "individual": "Individual",
+    "status": "Status & Temperature",
+    "temperature": "Temperature",
+    "contactInfo": "Contact Information",
+    "activity": "Activity",
+    "created": "Created",
+    "lastContacted": "Last contacted",
+    "messages": "Messages",
+    "notAvailable": "N/A"
   },
   "search": {
     "noResults": "No results found",
@@ -294,21 +303,6 @@
     "warning": "Warning",
     "info": "Information"
   },
-  "actions": {
-    "search": "Search",
-    "filter": "Filter",
-    "sort": "Sort",
-    "view": "View",
-    "details": "Details",
-    "options": "Options",
-    "settings": "Settings",
-    "help": "Help",
-    "back": "Back",
-    "next": "Next",
-    "previous": "Previous",
-    "continue": "Continue",
-    "finish": "Finish"
-  },
   "validation": {
     "required": "This field is required",
     "email": "Please enter a valid email address",
@@ -389,4 +383,4 @@
     "calendlyOptimization": "Calendly Conversion Boost",
     "calendlyOptimizationDesc": "Only 23% of burning leads book meetings - optimize CTAs and reduce friction in scheduling flow."
   }
-} 
+}
