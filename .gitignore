@@ -168,6 +168,10 @@ coverage/
 *confidential*
 *credential*
 *token*
+# Design tokens are colours and sizes, not secrets (DESIGN.md)
+!design/tokens.json
+!design/build-tokens.mjs
+!src/styles/tokens.css
 *.backup
 
 # Auth pattern - ONLY block auth config/credential files, NOT source code

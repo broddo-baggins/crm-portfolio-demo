@@ -5,11 +5,11 @@ import { Eye, EyeOff, AlertCircle, CheckCircle2, Info } from "lucide-react"
 
 const inputVariants = cva(
   // Base styles for all inputs
-  "flex w-full rounded-md border bg-background px-3 py-2 text-sm text-foreground ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 transition-colors",
+  "flex w-full rounded-md border bg-surface px-3 py-2 text-sm text-foreground ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-0 disabled:cursor-not-allowed disabled:opacity-50 transition-colors duration-[120ms]",
   {
     variants: {
       variant: {
-        default: "border-gray-300 focus-visible:ring-primary-500 focus-visible:border-primary-500",
+        default: "border-input hover:border-ink-400 focus-visible:ring-ring/30 focus-visible:border-primary",
         error: "border-error-500 focus-visible:ring-error-500 focus-visible:border-error-500 bg-error-50",
         success: "border-success-500 focus-visible:ring-success-500 focus-visible:border-success-500 bg-success-50",
         warning: "border-warning-500 focus-visible:ring-warning-500 focus-visible:border-warning-500 bg-warning-50",

@@ -77,32 +77,34 @@ const ChartSkeleton = () => (
 );
 
 // Modern Chart configurations
+// Colours come from the chart tokens (DESIGN.md, "Charts"): series 1 is ember, then steel.
 const leadFunnelConfig: ChartConfig = {
   count: {
     label: "Leads",
     icon: Target,
+    color: "hsl(var(--chart-1))",
   },
 };
 
 const temperatureConfig: ChartConfig = {
-  cold: { label: "Cold" },
-  warm: { label: "Warm" },
-  hot: { label: "Hot" },
-  burning: { label: "Burning" },
+  cold: { label: "Cold", color: "var(--heat-cold)" },
+  warm: { label: "Warm", color: "var(--heat-warm)" },
+  hot: { label: "Hot", color: "var(--ember-400)" },
+  burning: { label: "Burning", color: "var(--heat-hot)" },
 };
 
 const agentPerformanceConfig: ChartConfig = {
-  meetings: { label: "Meetings", icon: Calendar },
-  closures: { label: "Closures", icon: Target },
+  meetings: { label: "Meetings", icon: Calendar, color: "hsl(var(--chart-1))" },
+  closures: { label: "Closures", icon: Target, color: "hsl(var(--chart-2))" },
 };
 
 const trendsConfig: ChartConfig = {
-  leads: { label: "Leads", icon: Target },
-  conversions: { label: "Conversions", icon: TrendingUp },
+  leads: { label: "Leads", icon: Target, color: "hsl(var(--chart-2))" },
+  conversions: { label: "Conversions", icon: TrendingUp, color: "hsl(var(--chart-1))" },
 };
 
 const messageActivityConfig: ChartConfig = {
-  messages: { label: "Messages", icon: Activity },
+  messages: { label: "Messages", icon: Activity, color: "hsl(var(--chart-1))" },
 };
 
 // Mobile-specific error component
@@ -259,14 +261,15 @@ const temperatureLabels = {
 };
 
 // FIXED: Enhanced status colors matching real database values
+// Funnel stages walk the heat ramp; won/lost take the status hues.
 const statusColors = {
-  new: "#8E9196",
-  contacted: "#D3E4FD", 
-  interested: "#FEC6A1",
-  not_interested: "#FF6B6B",
-  meeting: "#ea384c",
-  closed_won: "#4CAF50",
-  closed_lost: "#F44336"
+  new: "#486C86",
+  contacted: "#97B2C6",
+  interested: "#D69A2E",
+  not_interested: "#B9C0C8",
+  meeting: "#C24816",
+  closed_won: "#367E50",
+  closed_lost: "#A5332D"
 };
 
 // FIXED: Enhanced temperature colors for 8-level system
@@ -277,7 +280,7 @@ const temperatureColors = {
   cool: "#4FC3F7",
   warm: "#FFB74D",
   hot: "#FF8A65",
-  burning: "#F44336",
+  burning: "#A5332D",
   white_hot: "#9C27B0"
 };
 
@@ -1287,7 +1290,8 @@ For detailed analysis, please access the dashboard at: ${window.location.origin}
             {/* Date Range Selector - Mobile optimized */}
             <div className="w-full sm:w-auto">
               <Select value={dateRange} onValueChange={setDateRange}>
-                <SelectTrigger className="w-full sm:w-[120px] h-10" aria-label={t('pages:reports.dateRange', 'Date range')}>
+                {/* 148 px: at 120 "Last 30 days" wrapped and its second line was clipped */}
+                <SelectTrigger className="w-full sm:w-[148px] h-10" aria-label={t('pages:reports.dateRange', 'Date range')}>
                   <Calendar className="h-4 w-4 mr-2 sm:hidden" />
                   <SelectValue placeholder="Period" />
                 </SelectTrigger>
@@ -1854,7 +1858,7 @@ For detailed analysis, please access the dashboard at: ${window.location.origin}
                     <Bar
                       dataKey="count"
                       name="Messages"
-                      fill="#1976d2"
+                      fill="#C24816"
                       radius={[4, 4, 0, 0]}
                     />
                   </BarChart>
@@ -1923,13 +1927,13 @@ For detailed analysis, please access the dashboard at: ${window.location.origin}
                     <Bar
                       dataKey="firstContact"
                       name="First Contact"
-                      fill="#1976d2"
+                      fill="#C24816"
                     />
-                    <Bar dataKey="responses" name="Responses" fill="#4CAF50" />
+                    <Bar dataKey="responses" name="Responses" fill="#3E5F77" />
                     <Bar
                       dataKey="meetingsScheduled"
                       name="Meetings Scheduled"
-                      fill="#FF9800"
+                      fill="#D69A2E"
                     />
                     <Line
                       type="monotone"
@@ -2085,9 +2089,9 @@ For detailed analysis, please access the dashboard at: ${window.location.origin}
                         <Bar
                           dataKey="dropOff"
                           name="Drop-offs"
-                          fill="#ea384c"
+                          fill="#C24816"
                         />
-                        <Bar dataKey="total" name="Total" fill="#e0e0e0" />
+                        <Bar dataKey="total" name="Total" fill="#D9DEE3" />
                       </BarChart>
                     </ResponsiveContainer>
                   </div>
@@ -2149,13 +2153,13 @@ For detailed analysis, please access the dashboard at: ${window.location.origin}
                         yAxisId="left"
                         dataKey="attempts"
                         name="Revival Attempts"
-                        fill="#1976d2"
+                        fill="#C24816"
                       />
                       <Bar
                         yAxisId="left"
                         dataKey="successes"
                         name="Successful Revivals"
-                        fill="#4CAF50"
+                        fill="#3E5F77"
                       />
                       <Line
                         yAxisId="right"
@@ -2290,7 +2294,7 @@ For detailed analysis, please access the dashboard at: ${window.location.origin}
                         <Bar
                           dataKey="avgDays"
                           name="Avg Days to Close"
-                          fill="#1976d2"
+                          fill="#C24816"
                           radius={[4, 4, 0, 0]}
                         />
                       </BarChart>
@@ -2343,7 +2347,7 @@ For detailed analysis, please access the dashboard at: ${window.location.origin}
                         type="monotone"
                         dataKey="hotToClose"
                         name="Hot → Close"
-                        stroke="#4CAF50"
+                        stroke="#367E50"
                         strokeWidth={2}
                       />
                     </LineChart>

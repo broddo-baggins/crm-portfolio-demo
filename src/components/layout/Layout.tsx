@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-// import { useLocation } from 'react-router'; // TODO: Use for page-specific logic if needed
 import { Outlet, useLocation } from "react-router";
 import Sidebar from "./Sidebar";
 import TopBar from "./TopBar";
@@ -9,21 +8,20 @@ import StagingBanner from "../common/StagingBanner";
 import { useAuth } from "@/context/ClientAuthContext";
 import { toast } from "sonner";
 import { RTLProvider } from "@/contexts/RTLContext";
-import { Sheet, SheetContent, SheetDescription, SheetTitle } from "@/components/ui/sheet";
 import { useLang } from "@/hooks/useLang";
-// import { useLang } from '@/hooks/useLang'; // TODO: Use for RTL layout if needed
+import { Sheet, SheetContent, SheetDescription, SheetTitle } from "@/components/ui/sheet";
 
 const LayoutContent = () => {
   const { user } = useAuth();
+  const { isRTL } = useLang();
   // const location = useLocation(); // TODO: Use for page-specific logic if needed
   const [pendingUsers, setPendingUsers] = useState(0);
-  const [isNavigationOpen, setIsNavigationOpen] = useState(false);
-  const { isRTL } = useLang();
+  const [navOpen, setNavOpen] = useState(false);
   const { pathname } = useLocation();
 
   // Close the mobile navigation drawer after navigating
   useEffect(() => {
-    setIsNavigationOpen(false);
+    setNavOpen(false);
   }, [pathname]);
   // Staging environment removed - use regular authentication
   // const { isRTL } = useLang(); // TODO: Use for RTL layout if needed
@@ -63,21 +61,34 @@ const LayoutContent = () => {
   }, [user?.role]);
 
   return (
-    <div className="flex min-h-screen w-full bg-gray-50 dark:bg-gray-950">
-      {/* The 256px sidebar left phones ~130px of content; below md it lives in a drawer */}
-      <div className="hidden md:flex">
+    <div className="flex min-h-screen w-full bg-background" dir={isRTL ? "rtl" : "ltr"}>
+      <a
+        href="#main-content"
+        className="sr-only focus:not-sr-only focus:fixed focus:start-4 focus:top-3 focus:z-[60] focus:rounded-md focus:bg-surface focus:px-3 focus:py-2 focus:text-sm focus:font-medium focus:shadow-float"
+      >
+        Skip to content
+      </a>
+      {/* Desktop: the sidebar stands beside the page. Below 1024 px it is a drawer. */}
+      <aside className="sticky top-0 hidden h-screen shrink-0 lg:block">
         <Sidebar />
-      </div>
-      <Sheet open={isNavigationOpen} onOpenChange={setIsNavigationOpen}>
-        <SheetContent side={isRTL ? "right" : "left"} className="w-64 p-0" data-testid="navigation-drawer">
+      </aside>
+      <Sheet open={navOpen} onOpenChange={setNavOpen}>
+        <SheetContent
+          side={isRTL ? "right" : "left"}
+          className="w-[280px] max-w-[85vw] p-0 sm:max-w-[280px]"
+          data-testid="navigation-drawer"
+        >
           <SheetTitle className="sr-only">Navigation</SheetTitle>
           <SheetDescription className="sr-only">Main navigation</SheetDescription>
-          <Sidebar />
+          <Sidebar onNavigate={() => setNavOpen(false)} />
         </SheetContent>
       </Sheet>
       <div className="flex min-w-0 flex-1 flex-col">
-        <TopBar pendingUserCount={pendingUsers} onOpenNavigation={() => setIsNavigationOpen(true)} />
-                        <main className="flex-1 p-3 sm:p-4 md:p-6 bg-background overflow-x-hidden overflow-y-auto">
+        <TopBar pendingUserCount={pendingUsers} onOpenNav={() => setNavOpen(true)} />
+        <main
+          id="main-content"
+          className="flex-1 overflow-x-hidden overflow-y-auto bg-background px-4 py-5 sm:px-6 md:py-6 lg:px-8"
+        >
           <Outlet />
         </main>
         <Footer />

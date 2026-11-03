@@ -247,7 +247,7 @@ export const DashboardProvider: React.FC<{ children: ReactNode }> = ({ children 
     };
 
     try {
-      toast.loading("SAVE Saving dashboard layout...", { id: 'save-toast' });
+      toast.loading("Saving dashboard layout...", { id: 'save-toast' });
       
       const result = await dashboardPersistence.forceSaveToServer(layoutData);
       
@@ -256,16 +256,16 @@ export const DashboardProvider: React.FC<{ children: ReactNode }> = ({ children 
         initialWidgetsRef.current = JSON.stringify(widgets);
         
         if (result.savedToServer) {
-          toast.success("SAVE Dashboard saved to server!", { id: 'save-toast' });
+          toast.success("Dashboard saved to server!", { id: 'save-toast' });
         } else if (result.savedLocally) {
-          toast.success("SAVE Dashboard saved locally (server unavailable)", { id: 'save-toast' });
+          toast.success("Dashboard saved locally (server unavailable)", { id: 'save-toast' });
         }
       } else {
-        toast.error(`ERROR Save failed: ${result.error}`, { id: 'save-toast' });
+        toast.error(`Save failed: ${result.error}`, { id: 'save-toast' });
       }
     } catch (error) {
       console.error('[Dashboard Context] Manual save failed:', error);
-      toast.error("ERROR Failed to save dashboard", { id: 'save-toast' });
+      toast.error("Failed to save dashboard", { id: 'save-toast' });
     }
   }, [widgets]);
 

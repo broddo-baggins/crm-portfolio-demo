@@ -636,11 +636,13 @@ export const ChatMockup: React.FC = () => {
   }
 
   return (
-    <div className="relative">
+    // light-island: WhatsApp's own light chrome in both themes; the dark remap stays out of it.
+    <div className="relative light-island">
       {/* Chat Container - Reduced by 10% to prevent excessive scrolling */}
       <div className="bg-white rounded-xl shadow-[0_4px_16px_rgba(0,0,0,0.12)] overflow-hidden w-full max-w-[432px] mx-auto border border-gray-200 flex flex-col" style={{ height: '605px' /* 672px * 0.9 = 605px */ }}>
         {/* WhatsApp-style Header - Fixed for mobile alignment and centering */}
-        <div className="bg-[#25D366] text-white px-3 py-1 sm:py-1 flex items-center justify-between relative min-h-[32px] sm:min-h-[34px] md:min-h-[36px] font-chat flex-shrink-0">
+        {/* WhatsApp's own dark teal header: white on it is 7.6:1 (the bright #25D366 was 2.0:1) */}
+        <div className="bg-[#075E54] text-white px-3 py-2 flex items-center justify-between relative min-h-[48px] font-chat flex-shrink-0">
           {/* Left side: Profile and info */}
           <div className="flex items-center gap-1.5 sm:gap-2.5 flex-1 min-w-0">
             <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full overflow-hidden border-2 border-white/20 flex-shrink-0">
@@ -654,16 +656,14 @@ export const ChatMockup: React.FC = () => {
               <h3 className="font-semibold text-xs sm:text-sm leading-tight truncate">{isHebrew ? 'מיכל' : 'Michal'}</h3>
               <div className="flex items-center gap-1">
                 <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-green-400 rounded-full flex-shrink-0"></div>
-                <p className="text-[10px] sm:text-xs text-white/80 leading-tight">{isHebrew ? 'פעיל עכשיו' : 'Active now'}</p>
+                <p className="text-xs text-white/90 leading-tight">{isHebrew ? 'פעיל עכשיו' : 'Active now'}</p>
               </div>
             </div>
           </div>
           
           {/* Right side: Live Now Badge */}
           <motion.div
-            animate={{ scale: [1, 1.05, 1] }}
-            transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-            className="bg-green-500 text-white px-1 sm:px-1.5 py-0.5 rounded-full text-[8px] sm:text-[10px] font-medium flex-shrink-0 ml-1 sm:ml-2"
+            className="border border-white/40 text-white px-2 py-0.5 rounded-full text-[11px] font-medium flex-shrink-0 ms-2"
           >
             {isHebrew ? 'חי עכשיו' : 'LIVE NOW'}
           </motion.div>
@@ -691,7 +691,7 @@ export const ChatMockup: React.FC = () => {
                     animate={{ opacity: 1 }}
                     className="flex justify-center my-2"
                   >
-                    <div className="bg-black/10 px-3 py-1 rounded-full text-xs text-gray-600 font-medium">
+                    <div className="bg-black/10 px-3 py-1 rounded-full text-xs text-gray-700 font-medium">
                       {formatDateSeparator(message.timestamp)}
                     </div>
                   </motion.div>
@@ -791,7 +791,7 @@ export const ChatMockup: React.FC = () => {
             >
               <div 
                 className={`flex-1 text-sm overflow-y-auto ${
-                  inputText ? 'text-gray-800' : 'text-[#9FA4A9]'
+                  inputText ? 'text-gray-800' : 'text-muted-foreground'
                 }`}
                 style={{ 
                   direction: isHebrew ? 'rtl' : 'ltr',
@@ -820,7 +820,7 @@ export const ChatMockup: React.FC = () => {
             </div>
           </div>
           <div 
-            className="w-10 h-10 rounded-full flex items-center justify-center cursor-pointer transition-all duration-150 bg-[#25D366] hover:bg-[#1eb85e] active:scale-90 active:bg-[#1aa157]"
+            className="w-10 h-10 rounded-full flex items-center justify-center cursor-pointer transition-all duration-150 bg-[#128C7E] hover:bg-[#0F7A6E] active:scale-90 active:bg-[#075E54]"
             onClick={handleSendClick}
           >
             <svg 

@@ -1,10 +1,10 @@
-import { useLocation } from "react-router";
+import { Link, useLocation } from "react-router";
 import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
+import { Compass } from "lucide-react";
 import { useLang } from "@/hooks/useLang";
-import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { Meteors } from "@/components/ui/meteors";
+import { StatusScreen } from "@/components/system/States";
 
 const NotFound = () => {
   const location = useLocation();
@@ -19,30 +19,24 @@ const NotFound = () => {
   }, [location.pathname]);
 
   return (
-    <div
-      className={cn(
-        "min-h-screen flex items-center justify-center bg-background relative overflow-hidden",
-        isRTL && "rtl",
-      )}
+    <StatusScreen
+      code="Error 404"
+      icon={Compass}
+      title={t("notFound.message", "Oops! Page not found")}
+      message={`${location.pathname} isn't a page in CRM Demo. It may have moved, or the link has a typo.`}
       dir={isRTL ? "rtl" : "ltr"}
-    >
-      {/* Meteors Background Effect */}
-      <Meteors number={12} className="animate-meteor" data-testid="meteor-animation" />
-      
-      <div className="text-center relative z-10">
-        <h1 className="text-4xl font-bold mb-4 text-foreground">404</h1>
-        <p className="text-xl text-muted-foreground mb-4">
-          {t("notFound.message", "Oops! Page not found")}
-        </p>
-        <Button
-          onClick={() => (window.location.href = "/")}
-          variant="link"
-          className="text-primary hover:text-primary/80"
-        >
-          {t("notFound.returnHome", "Return to Home")}
-        </Button>
-      </div>
-    </div>
+      testId="not-found-page"
+      actions={
+        <>
+          <Button asChild>
+            <Link to="/">{t("notFound.returnHome", "Return to Home")}</Link>
+          </Button>
+          <Button asChild variant="outline">
+            <Link to="/dashboard">Open the dashboard</Link>
+          </Button>
+        </>
+      }
+    />
   );
 };
 

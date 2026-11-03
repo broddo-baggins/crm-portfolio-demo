@@ -660,21 +660,20 @@ const Settings = () => {
 
 
   return (
-    <div className="container mx-auto p-6 space-y-6" data-testid="settings-page">
+    <div className="space-y-6" data-testid="settings-page">
       {/* Header */}
-      <div className="flex justify-between items-center">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <h1 className="text-3xl font-bold flex items-center gap-2">
-            <SettingsIcon className="h-8 w-8" />
-        {t("settings.title", "Settings")}
-      </h1>
-          <p className="text-muted-foreground mt-1">
+          <h1 className="text-2xl font-semibold leading-8 tracking-[-0.02em]">
+            {t("settings.title", "Settings")}
+          </h1>
+          <p className="mt-1 text-sm text-muted-foreground">
             {t("settings.description", "Manage your project and system settings")}
           </p>
-            </div>
-        
+        </div>
+
         {/* Action Buttons */}
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
           <AdminAccessButtons />
           <Button onClick={handleOpenDashboard} variant="outline">
             {t("settings.openDashboard", "Open Dashboard")}

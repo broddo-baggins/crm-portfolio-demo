@@ -9,10 +9,6 @@ import { useLang } from "@/hooks/useLang";
 import { useMobileInfo } from "@/hooks/use-mobile";
 import { cn } from "@/lib/utils";
 
-// Import enhanced mobile components
-import MobileHeader from "@/components/mobile/MobileHeader";
-import MobileBottomNavigation from "@/components/mobile/MobileBottomNavigation";
-
 // Import the FULL enhanced dashboard with all widgets (includes real-time metrics)
 import EnhancedDashboardExample from "@/components/dashboard/EnhancedDashboardExample";
 
@@ -186,41 +182,19 @@ interface DashboardPageProps {
 
 const DashboardPage: React.FC<DashboardPageProps> = () => {
   const { isRTL } = useLang();
-  const { isMobile, hasNotch } = useMobileInfo();
-  const { t } = useTranslation("pages");
+  const { isMobile } = useMobileInfo();
 
-  // Mobile-specific layout classes
-  const mobileLayoutClasses = isMobile ? [
-    hasNotch ? "pt-[calc(44px+env(safe-area-inset-top))]" : "pt-[44px]",
-    "pb-[calc(80px+env(safe-area-inset-bottom))]", // Space for bottom nav
-    "px-3", // Reduced horizontal padding for mobile
-    "space-y-3" // Tighter vertical spacing on mobile
-  ] : [
-    "p-4 md:p-6", // Desktop padding
-    "space-y-6" // Desktop vertical spacing
-  ];
-
+  // The app shell (Layout) owns the header, navigation and page padding at every width.
   return (
     <DashboardErrorBoundary>
-      {/* Mobile Header - Only rendered on mobile */}
-      {isMobile && (
-        <MobileHeader
-          title={t("dashboard.title", "Dashboard")}
-          showNotifications={true}
-          showSearch={false}
-          className="z-50"
-        />
-      )}
-
       {/* Main Content with mobile-aware spacing and overflow prevention */}
       <div
         className={cn(
           // Base layout
-          "min-h-screen w-full",
+          "w-full",
           // RTL support
           isRTL && "rtl",
-          // Mobile vs Desktop layout
-          ...mobileLayoutClasses,
+          isMobile ? "space-y-3" : "space-y-6",
           // Overflow prevention for mobile
           isMobile && [
             "overflow-x-hidden", // Prevent horizontal scroll
@@ -240,9 +214,6 @@ const DashboardPage: React.FC<DashboardPageProps> = () => {
           <EnhancedDashboardExample />
         </div>
       </div>
-
-      {/* Mobile Bottom Navigation - Only rendered on mobile */}
-      {isMobile && <MobileBottomNavigation />}
     </DashboardErrorBoundary>
   );
 };

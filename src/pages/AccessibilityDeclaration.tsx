@@ -18,6 +18,7 @@ import {
 } from "lucide-react";
 import { useLang } from "@/hooks/useLang";
 import { cn } from "@/lib/utils";
+import { PublicPageShell } from "@/components/marketing/PublicPageShell";
 
 export const AccessibilityDeclaration: React.FC = () => {
   const { isRTL } = useLang();
@@ -36,40 +37,36 @@ export const AccessibilityDeclaration: React.FC = () => {
           content="נגישות, accessibility, WCAG, תקן ישראלי 5568, portfolio demo"
         />
       </Helmet>
+      {/* The declaration is written in Hebrew, so it always reads right to left */}
+      <PublicPageShell dir="rtl">
       <div
-        className={cn("min-h-screen bg-background py-8 px-4", isRTL && "rtl")}
-        dir={isRTL ? "rtl" : "ltr"}
+        className="rtl px-4 py-10 font-hebrew sm:px-8 md:py-16"
+        lang="he"
       >
         <div className="max-w-4xl mx-auto">
           {/* Header */}
-          <div className="text-center mb-8">
-            <h1 className="text-4xl font-bold text-foreground mb-4">
+          <div className="mb-10 text-start">
+            <h1 className="mb-3 text-[32px] font-semibold leading-[38px] tracking-[-0.02em] text-foreground md:text-[40px] md:leading-[46px]">
               הצהרת נגישות
             </h1>
-            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+            <p className="max-w-[60ch] text-lg leading-8 text-subtle">
               פרויקט פורטפוליו המדגים מחויבות לנגישות ושוויון לכל המשתמשים
             </p>
-            <div className="flex justify-center gap-4 mt-4">
-              <Badge
-                variant="outline"
-                className="bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200 border-green-300 dark:border-green-700"
-              >
-                <CheckCircle className="w-4 h-4 mr-1" />
+            <div className="mt-4 flex flex-wrap gap-2">
+              <Badge variant="outline" className="border-moss-200 bg-moss-50 text-moss-700">
+                <CheckCircle className="h-3.5 w-3.5" aria-hidden="true" />
                 WCAG 2.2 AA
               </Badge>
-              <Badge
-                variant="outline"
-                className="bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 border-blue-300 dark:border-blue-700"
-              >
-                <Shield className="w-4 h-4 mr-1" />
+              <Badge variant="outline">
+                <Shield className="h-3.5 w-3.5" aria-hidden="true" />
                 תקן ישראלי 5568
               </Badge>
             </div>
-            
+
             {/* Demo Notice */}
-            <div className="mt-6 p-4 bg-orange-50 dark:bg-orange-950/30 border border-orange-200 dark:border-orange-800 rounded-lg text-right">
-              <p className="text-orange-900 dark:text-orange-200 font-semibold mb-2">
-                ⚠️ הודעה: זהו פרויקט תיק עבודות
+            <div className="mt-6 border-s-2 border-amber-400 bg-amber-50 p-4 text-start dark:bg-amber-950/40">
+              <p className="mb-1 font-semibold text-amber-800 dark:text-amber-200">
+                הודעה: זהו פרויקט תיק עבודות
               </p>
               <p className="text-orange-800 dark:text-orange-300 text-sm">
                 זהו פרויקט הדגמה של עמית יוגב עם מידע דמו. לשאלות או לבקשות הסרה:{" "}
@@ -448,6 +445,7 @@ export const AccessibilityDeclaration: React.FC = () => {
           </div>
         </div>
       </div>
+      </PublicPageShell>
     </>
   );
 };
