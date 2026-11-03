@@ -36,14 +36,37 @@ Captured headless at 1440 and 390 on all 48 routes before any change.
 
 ## Before and after
 
-Screenshots: `/private/tmp/claude-502/-Users-Amit-Yogev-Downloads-projects-shellcv/d9eb7315-1044-4b41-896f-5a4547688b8e/scratchpad/design-shots/crm-portfolio-demo/` (`before-<route>-<1440|390>.png`, `after-<route>-<1440|390>.png`, side-by-side `compare-<route>.png`).
+Screenshots: `/private/tmp/claude-502/-Users-Amit-Yogev-Downloads-projects-shellcv/d9eb7315-1044-4b41-896f-5a4547688b8e/scratchpad/design-shots/crm-portfolio-demo/` (`before-<route>-<1440|390>.png`, `after-<route>-<1440|390>.png`, side-by-side `compare-<route>.png`). The `after-*` set was recaptured in light after the final fixes. `contrast-final.json` holds every measured failure (none) and every excluded run with its reason, and `contrast-measure.cjs` is the script that produced it.
 
-## Results (Nov 3, 2026)
+## Results (final, Nov 3, 2026)
 
-- **Contrast, measured from rendered pixels** (headless Chrome, 1440, light, all 48 routes): 3,041 text elements, 2,953 pass (97.1%). 37 of 48 routes have zero failures, including every marketing, auth, legal and status page. Known open failures: green WhatsApp message bubbles and the "Meeting scheduling ready" label on Messages (white or green on `#26D266`, about 2:1); white time labels on steel calendar events (4.26:1, Calendar and Calendly callback); two Privacy data-request buttons; collapsed accordion text measured while hidden on FAQ and Leads (1.0:1, not visible text); "3 Pending" on Users (4.48:1).
-- **Unit tests:** 12 files, 108 tests pass (same as baseline). One LeadForm test timed out under machine load and passes when rerun alone.
-- **Lint:** clean after removing two useless regex escapes in `GeminiAgent.tsx` (lint was red at HEAD).
-- **Type-check:** clean. **Build:** `npm run build` passes.
-- **Smoke:** 55 routes and 5 assets return 200 from the production build; no runtime errors on any of 96 captures (the Maintenance page crashed before).
-- **Mobile:** 22 routes overflowed at 390 before; none can be scrolled sideways by a user now.
-- **Not changed (out of scope):** `/auth/reset-password` without a token redirects to `/login`, which is not a route. Fixing it needs routing or redirect logic changes.
+### Contrast, measured from rendered pixels
+
+All 48 routes, at 1440×900 and 390×844 (phone emulation), in light and in dark (`vite-ui-theme` and `prefers-color-scheme` both set; the `dark` class was confirmed on `<html>` in all 96 dark runs). Headless Chrome at device scale 2. Each page is stepped through a viewport at a time, its horizontal scrollers are paged sideways, and any text never captured cleanly is scrolled to mid-screen and measured again, a second time after declining the cookie banner. For each text run, the most common pixel colour is the ground and the 90th percentile of the glyph pixels is the ink. A run counts only when it is on top at its centre and both ends, inside every clipping ancestor, and has the same position and opacity before and after the screenshot, so a fade or a late badge is not misread. Threshold 4.5:1 (3:1 for 24 px, or 18.66 px bold).
+
+| Theme | Text runs | Pass | Lowest | Routes with a failure |
+| --- | --- | --- | --- | --- |
+| Light | 8,660 (4,915 at 1440, 3,745 at 390) | **100%** | 4.51:1 | 0 of 48 |
+| Dark | 8,682 (4,923 at 1440, 3,759 at 390) | **100%** | 4.56:1 | 0 of 48 |
+
+**Hidden text, and why it was left out.** Text is excluded only for a reason recorded per run, and only when it was never measured anywhere on the page. Over all 192 page loads: `display: none` 2,032 (inactive tabs, the other breakpoint's copy of a label, closed menus), `.sr-only` 304 (skip link, table-action labels, figure captions for screen readers), zero-size 302 (empty separators, collapsed accordion panels), clipped by an `overflow` ancestor 102 (truncated previews), off the side of a scroller that cannot scroll further 50, `opacity: 0` 5 (toasts that have finished fading). The full list with the text of every excluded run is in `contrast-final.json` next to the screenshots. Another 260 runs (1.5%) were visible on the page but never captured cleanly: 100 truncated `...` previews on `/messages/optimized`, older chat history and dates inside the `/messages` chat pane, chart tick numbers on Reports and Dashboard, calendar cells, and footer links under the fixed cookie banner on five pages.
+
+**What fixed the open failures** (all on the tokens; see DESIGN.md):
+- WhatsApp: new `whatsapp-bubble`, `whatsapp-bubble-foreground` and `whatsapp-accent` tokens. Sent bubbles are WhatsApp's own pale outgoing green with dark text (15.8:1; dark 6.8:1), and "Meeting scheduling ready" is 5.5:1 or better. They used to be white or green on `#25D366`, about 2:1.
+- Calendar and Calendly event times: steel-500 `#486C86` and brick-500 `#B93E37`, so even the 90%-white time line passes (4.33 → 4.9 and 4.8:1).
+- Privacy data-request buttons: the legal-prose link colour no longer overrides links styled as buttons (2.5 → 6.8:1).
+- Users "3 Pending": passes in both themes (white on ember-500, 4.96:1). In dark, a 500 to 700 fill under on-primary text keeps white text.
+- FAQ pale questions: these were captured mid-fade from an uncapped entrance stagger (up to 2 s). The stagger is now capped.
+- Found by the deeper sweep and fixed: dark-mode `dark:text-gray-400` picks (2.6 to 3.2:1); recharts' default axis, label and legend greys (3.0 to 4.3:1, every chart); disabled buttons at 50% opacity (2.2:1, including the live "Retrying in 58s" countdown); the landing CTA and WhatsApp mock in dark (2.2 and 1.2:1, now a light island); the Reports period select clipping "Last 30 days"; ink-400 (`text-gray-400`) on tinted grounds (4.27 → 5.0:1 on steel-50, and 4.6:1 even on ink-100).
+
+### Build and tests
+
+- **Lint** (`npm run lint`, whole repo, `--max-warnings 0`): clean. Lint was red at HEAD on two useless regex escapes in `GeminiAgent.tsx`, which were removed earlier on this branch.
+- **Type-check** (`tsc --noEmit`): clean.
+- **Unit tests** (`vitest run`, the repo's only test suite; the Playwright scripts in `package.json` point at directories that do not exist): 12 files, 108 of 108 pass, with no timeouts on the final run.
+- **Build** (`npm run build`): passes.
+- **Captures:** all 96 `after-*` shots return 200, with no page errors. None is wider than its viewport, measured against the device width, which catches a phone layout widening as well as a page scrolling sideways. That check found and fixed `/leads` laying out 481 px wide at 390: sr-only header labels were escaping the table's scroller.
+
+### Not changed (out of scope)
+
+`/auth/reset-password` without a token redirects to `/login`, which is not a route. Fixing it needs routing or redirect logic changes. `/he` reuses the main landing page in Hebrew, so the old Hebrew page's own FAQ items are gone.
