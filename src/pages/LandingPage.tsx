@@ -3,7 +3,7 @@ import { Link, useNavigate } from "react-router";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { useTranslation } from "react-i18next";
 import { Helmet } from "react-helmet-async";
-import CountUp from "react-countup";
+import * as ReactCountUp from "react-countup";
 import { Button } from "@/components/ui/button";
 import {
   Accordion,
@@ -51,6 +51,12 @@ import {
   Sparkles,
 } from "lucide-react";
 import { ProgressWithLoading } from "@/components/ui/progress-with-loading";
+
+// react-countup is CommonJS with `exports.default`. Since Vite 8 (esbuild-style interop), a
+// default import from this "type": "module" package is the whole module.exports object, so
+// rendering it threw React error #130. Take the component off whichever shape we get.
+const CountUp = ((ReactCountUp.default as unknown as { default?: typeof ReactCountUp.default }).default ??
+  ReactCountUp.default) as typeof ReactCountUp.default;
 
 const LandingPage = () => {
   const { isAuthenticated } = useAuth();

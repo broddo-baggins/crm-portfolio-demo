@@ -1,7 +1,8 @@
 {
   "compilerOptions": {
     "target": "ES2022",
-    "lib": ["ES2023"],
+    "lib": ["ES2023", "DOM"],
+    "types": ["node"],
     "module": "ESNext",
     "skipLibCheck": true,
 
@@ -20,9 +21,8 @@
   },
   "include": [
     "vite.config.ts",
-    "vitest.config.ts",
-    "postcss.config.js",
     "tailwind.config.ts",
-    "eslint.config.js"
+    "api/**/*.ts",
+    "e2e/**/*.ts"
   ]
 }

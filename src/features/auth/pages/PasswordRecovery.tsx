@@ -8,7 +8,7 @@ import { AlertCircle, ArrowLeft } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import { Link } from 'react-router';
 
-const PasswordRecovery = (): JSX.Element => {
+const PasswordRecovery = (): React.JSX.Element => {
   const [email, setEmail] = useState<string>('');
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [message, setMessage] = useState<string>('');
@@ -89,7 +89,7 @@ const PasswordRecovery = (): JSX.Element => {
             
             <div className="text-center">
               <Link 
-                to="/login" 
+                to="/auth/login"
                 className="flex items-center justify-center text-sm text-muted-foreground hover:text-primary gap-1"
               >
                 <ArrowLeft className="h-4 w-4" />

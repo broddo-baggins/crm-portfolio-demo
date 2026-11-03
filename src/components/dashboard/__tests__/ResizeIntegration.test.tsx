@@ -4,7 +4,7 @@ import CRMDashboard from '../CRMDashboard'
 import { DashboardProvider } from '@/context/DashboardContext'
 
 // Mock react-grid-layout
-vi.mock('react-grid-layout', () => {
+vi.mock('react-grid-layout/legacy', () => {
   const MockResponsiveGridLayout = ({ children }: any) => {
     return (
       <div data-testid="responsive-grid-layout">

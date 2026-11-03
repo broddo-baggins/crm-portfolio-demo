@@ -637,7 +637,7 @@ const Reports = () => {
           const weekKey = `Week ${4 - weeksAgo}`;
           
           // FIXED: Use lead_metadata.ai_analysis.lead_qualification.confidence_score if available
-          let tempScore = 0;
+          let tempScore: number;
           if (lead.lead_metadata?.ai_analysis?.lead_qualification?.confidence_score) {
             tempScore = Math.floor(lead.lead_metadata.ai_analysis.lead_qualification.confidence_score / 12.5); // Convert 0-100 to 0-8
           } else if (typeof lead.temperature === 'number') {
@@ -1271,7 +1271,7 @@ For detailed analysis, please access the dashboard at: ${window.location.origin}
                 value={selectedTemplate}
                 onValueChange={setSelectedTemplate}
               >
-                <SelectTrigger className="w-full sm:w-[200px] h-10">
+                <SelectTrigger className="w-full sm:w-[200px] h-10" aria-label={t('pages:reports.reportType', 'Report type')}>
                   <SelectValue placeholder="Select template" />
                 </SelectTrigger>
                 <SelectContent>
@@ -1287,7 +1287,7 @@ For detailed analysis, please access the dashboard at: ${window.location.origin}
             {/* Date Range Selector - Mobile optimized */}
             <div className="w-full sm:w-auto">
               <Select value={dateRange} onValueChange={setDateRange}>
-                <SelectTrigger className="w-full sm:w-[120px] h-10">
+                <SelectTrigger className="w-full sm:w-[120px] h-10" aria-label={t('pages:reports.dateRange', 'Date range')}>
                   <Calendar className="h-4 w-4 mr-2 sm:hidden" />
                   <SelectValue placeholder="Period" />
                 </SelectTrigger>
@@ -1359,6 +1359,7 @@ For detailed analysis, please access the dashboard at: ${window.location.origin}
                 <SelectTrigger
                   className="w-full h-10"
                   data-testid="mobile-select-export"
+                  aria-label={t('pages:reports.exportOptions', 'Export Options')}
                 >
                   <FileText className="h-4 w-4 mr-2" />
                   <SelectValue placeholder={t('pages:reports.exportOptions', 'Export Options')} />
@@ -2104,8 +2105,8 @@ For detailed analysis, please access the dashboard at: ${window.location.origin}
                           cy="50%"
                           outerRadius={100}
                           dataKey="count"
-                          label={({ reason, percentage }) =>
-                            `${reason} (${percentage}%)`
+                          label={({ payload }) =>
+                            `${payload.reason} (${payload.percentage}%)`
                           }
                         >
                           {churnReasons.map((entry, index) => (

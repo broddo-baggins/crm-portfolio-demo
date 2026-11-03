@@ -95,6 +95,31 @@ interface SystemStatus {
   errors: string[];
 }
 
+const AdminAccessButtons = () => {
+  const navigate = useNavigate();
+  const { isSystemAdmin, isCompanyAdmin } = useAdminAccess();
+
+  if (!isSystemAdmin && !isCompanyAdmin) {
+    return null;
+  }
+
+  return (
+    <div className="flex items-center gap-2">
+      {(isSystemAdmin || isCompanyAdmin) && (
+        <Button
+          variant="outline"
+          onClick={() => navigate("/admin")}
+          className="flex items-center gap-2"
+          title="Access Admin Center - choose your administrative area"
+        >
+          <ShieldCheck className="h-4 w-4" />
+          Admin Center
+        </Button>
+      )}
+    </div>
+  );
+};
+
 const Settings = () => {
   const { t } = useTranslation("pages");
   const { t: tCommon } = useTranslation("common");
@@ -633,29 +658,6 @@ const Settings = () => {
     }
   };
 
-  const AdminAccessButtons = () => {
-    const { isSystemAdmin, isCompanyAdmin } = useAdminAccess();
-
-    if (!isSystemAdmin && !isCompanyAdmin) {
-      return null;
-    }
-
-    return (
-      <div className="flex items-center gap-2">
-        {(isSystemAdmin || isCompanyAdmin) && (
-          <Button
-            variant="outline"
-            onClick={() => navigate("/admin")}
-            className="flex items-center gap-2"
-            title="Access Admin Center - choose your administrative area"
-          >
-            <ShieldCheck className="h-4 w-4" />
-            Admin Center
-          </Button>
-        )}
-      </div>
-    );
-  };
 
   return (
     <div className="container mx-auto p-6 space-y-6" data-testid="settings-page">

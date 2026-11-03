@@ -66,7 +66,7 @@ const DashboardRecentActivity: React.FC = () => {
         const daysAgo = Math.floor(hoursAgo / 24);
         const minutesAgo = Math.floor(timeDiff / (1000 * 60));
 
-        let timeText = "";
+        let timeText: string;
         if (minutesAgo < 60) {
           timeText = `${minutesAgo} minutes ago`;
         } else if (hoursAgo < 24) {

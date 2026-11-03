@@ -27,7 +27,7 @@ const PasswordField = ({
   autoComplete = "current-password",
   disabled,
   required
-}: PasswordFieldProps): JSX.Element => {
+}: PasswordFieldProps): React.JSX.Element => {
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const [passwordStrength, setPasswordStrength] = useState<number>(0);
   const { t } = useTranslation('common');

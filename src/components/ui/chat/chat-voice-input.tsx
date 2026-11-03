@@ -42,7 +42,7 @@ export const ChatVoiceInput: React.FC<ChatVoiceInputProps> = ({
   const [volume, setVolume] = useState(0);
   const recognitionRef = useRef<any>(null);
   const volumeRef = useRef<number>(0);
-  const animationRef = useRef<number>();
+  const animationRef = useRef<number | undefined>(undefined);
 
   // Initialize speech recognition
   useEffect(() => {

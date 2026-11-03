@@ -4,6 +4,31 @@ import { OrbitingCircles } from "@/components/ui/orbiting-circles";
 import { motion } from "framer-motion";
 import { useTranslation } from 'react-i18next';
 
+// Create the CRM Demo logo (oven/fire themed)
+const CRMDemoLogo = () => (
+  <div className="relative flex items-center justify-center w-20 h-20 bg-gradient-to-br from-orange-500 via-red-500 to-orange-600 rounded-full shadow-2xl">
+    <div className="flex items-center justify-center w-16 h-16 bg-white rounded-full">
+      <svg viewBox="0 0 32 32" className="w-10 h-10">
+        {/* Oven body */}
+        <rect x="4" y="8" width="24" height="20" rx="2" fill="#ff6b35" stroke="#d63031" strokeWidth="1"/>
+        {/* Oven door */}
+        <rect x="6" y="12" width="20" height="14" rx="1" fill="#2d3436" stroke="#636e72" strokeWidth="0.5"/>
+        {/* Oven window */}
+        <rect x="8" y="14" width="16" height="8" rx="1" fill="#74b9ff" fillOpacity="0.3"/>
+        {/* Heat lines/flames */}
+        <path d="M10 18 L12 16 L14 18 L16 16 L18 18 L20 16 L22 18" 
+              stroke="#fdcb6e" strokeWidth="1.5" fill="none"/>
+        {/* Control knobs */}
+        <circle cx="10" cy="10" r="1.5" fill="#636e72"/>
+        <circle cx="22" cy="10" r="1.5" fill="#636e72"/>
+        {/* AI spark */}
+        <circle cx="24" cy="6" r="2" fill="#00b894" opacity="0.8"/>
+        <text x="24" y="7" textAnchor="middle" className="text-[6px] fill-white font-bold">AI</text>
+      </svg>
+    </div>
+  </div>
+);
+
 export default function IntegrationVisualization() {
   const { t } = useTranslation('common');
   
@@ -64,30 +89,6 @@ export default function IntegrationVisualization() {
     { name: 'Real-time Events', icon: 'FAST' },
   ];
 
-  // Create the CRM Demo logo (oven/fire themed)
-  const CRMDemoLogo = () => (
-    <div className="relative flex items-center justify-center w-20 h-20 bg-gradient-to-br from-orange-500 via-red-500 to-orange-600 rounded-full shadow-2xl">
-      <div className="flex items-center justify-center w-16 h-16 bg-white rounded-full">
-        <svg viewBox="0 0 32 32" className="w-10 h-10">
-          {/* Oven body */}
-          <rect x="4" y="8" width="24" height="20" rx="2" fill="#ff6b35" stroke="#d63031" strokeWidth="1"/>
-          {/* Oven door */}
-          <rect x="6" y="12" width="20" height="14" rx="1" fill="#2d3436" stroke="#636e72" strokeWidth="0.5"/>
-          {/* Oven window */}
-          <rect x="8" y="14" width="16" height="8" rx="1" fill="#74b9ff" fillOpacity="0.3"/>
-          {/* Heat lines/flames */}
-          <path d="M10 18 L12 16 L14 18 L16 16 L18 18 L20 16 L22 18" 
-                stroke="#fdcb6e" strokeWidth="1.5" fill="none"/>
-          {/* Control knobs */}
-          <circle cx="10" cy="10" r="1.5" fill="#636e72"/>
-          <circle cx="22" cy="10" r="1.5" fill="#636e72"/>
-          {/* AI spark */}
-          <circle cx="24" cy="6" r="2" fill="#00b894" opacity="0.8"/>
-          <text x="24" y="7" textAnchor="middle" className="text-[6px] fill-white font-bold">AI</text>
-        </svg>
-      </div>
-    </div>
-  );
 
   return (
     <div className="flex flex-col lg:flex-row gap-12 items-center justify-center">

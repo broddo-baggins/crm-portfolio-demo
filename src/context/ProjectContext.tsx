@@ -46,6 +46,7 @@ const ProjectContext = (() => {
     console.error("[Project Context] Failed to create context:", error);
     throw new Error(
       "Project context creation failed - React may not be properly loaded",
+      { cause: error },
     );
   }
 })();

@@ -1645,8 +1645,6 @@
   display: flex !important;
 }
 
-@source '../node_modules/@llamaindex/chat-ui/**/*.{ts,tsx}';
-
 /* Meteor Animation */
 @keyframes meteor {
   0% {
