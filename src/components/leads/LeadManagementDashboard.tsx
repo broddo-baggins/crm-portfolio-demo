@@ -1587,7 +1587,9 @@ export const LeadManagementDashboard: React.FC = () => {
                   </Button>
                 </div>
               ) : (
-                <div className="overflow-x-auto">
+                <div className="relative overflow-x-auto">
+                  {/* relative: the header's sr-only labels are absolutely positioned and otherwise
+                      escape the scroller, widening the phone layout to 481 px */}
                   <table className="w-full" data-testid="leads-table">
                     <thead className="bg-muted/50">
                       <tr className="border-b">
@@ -1688,18 +1690,21 @@ export const LeadManagementDashboard: React.FC = () => {
                               {/* Mobile: Show contact info below name */}
                               <div className="sm:hidden space-y-0.5">
                                 {lead.phone && (
-                                  <div className="text-xs text-muted-foreground">
-                                    CALL {lead.phone}
+                                  <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                                    <Phone className="h-3 w-3 shrink-0" aria-hidden="true" />
+                                    {lead.phone}
                                   </div>
                                 )}
                                 {lead.email && (
-                                  <div className="text-xs text-muted-foreground truncate">
-                                    ✉️ {lead.email}
+                                  <div className="flex min-w-0 items-center gap-1.5 text-xs text-muted-foreground">
+                                    <Mail className="h-3 w-3 shrink-0" aria-hidden="true" />
+                                    <span className="truncate">{lead.email}</span>
                                   </div>
                                 )}
                                 {lead.company && (
-                                  <div className="text-xs text-muted-foreground">
-                                    🏢 {lead.company}
+                                  <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                                    <Building className="h-3 w-3 shrink-0" aria-hidden="true" />
+                                    {lead.company}
                                   </div>
                                 )}
                               </div>
