@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useAuth } from "@/context/ClientAuthContext";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -53,231 +53,10 @@ import { useTranslation } from "react-i18next";
 import { useLang } from "@/hooks/useLang";
 import { cn } from "@/lib/utils";
 import { supabase } from "@/integrations/supabase/client";
+import { getMockUsers, type User } from "@/data/mockUsers";
 
-interface User {
-  id: string;
-  email: string;
-  name: string | null;
-  role: string;
-  status: string;
-  clientId: string;
-  clientName: string | null;
-  projectCount: number;
-}
-
-const getMockUsers = (): User[] => [
-  // ===== SUPER ADMIN =====
-  {
-    id: 'super-admin-1',
-    email: 'honored.guest@demo.portfolio',
-    name: 'Honored Guest (You)',
-    role: 'SUPER_ADMIN',
-    status: 'ACTIVE',
-    clientId: 'client-demo',
-    clientName: 'CRM Portfolio Demo Company',
-    projectCount: 3
-  },
-  {
-    id: 'super-admin-2',
-    email: 'system.admin@crm.demo',
-    name: 'System Administrator',
-    role: 'SUPER_ADMIN',
-    status: 'ACTIVE',
-    clientId: 'client-demo',
-    clientName: 'CRM Portfolio Demo Company',
-    projectCount: 5
-  },
-  
-  // ===== ADMINS (Full Company Access) =====
-  {
-    id: 'admin-1',
-    email: 'john.smith@techstart.demo',
-    name: 'John Smith',
-    role: 'ADMIN',
-    status: 'ACTIVE',
-    clientId: 'client-001',
-    clientName: 'TechStart Solutions',
-    projectCount: 3
-  },
-  {
-    id: 'admin-2',
-    email: 'alexandra.wong@enterprise.demo',
-    name: 'Alexandra Wong',
-    role: 'ADMIN',
-    status: 'ACTIVE',
-    clientId: 'client-003',
-    clientName: 'Enterprise Systems Inc',
-    projectCount: 4
-  },
-  {
-    id: 'admin-3',
-    email: 'robert.chen@cloudtech.demo',
-    name: 'Robert Chen',
-    role: 'ADMIN',
-    status: 'ACTIVE',
-    clientId: 'client-006',
-    clientName: 'CloudTech Partners',
-    projectCount: 2
-  },
-  
-  // ===== STAFF (Project Managers & Sales Leads) =====
-  {
-    id: 'staff-1',
-    email: 'sarah.johnson@techstart.demo',
-    name: 'Sarah Johnson',
-    role: 'STAFF',
-    status: 'ACTIVE',
-    clientId: 'client-001',
-    clientName: 'TechStart Solutions',
-    projectCount: 2
-  },
-  {
-    id: 'staff-2',
-    email: 'michael.chen@growth.demo',
-    name: 'Michael Chen',
-    role: 'STAFF',
-    status: 'ACTIVE',
-    clientId: 'client-002',
-    clientName: 'Growth Marketing Co',
-    projectCount: 3
-  },
-  {
-    id: 'staff-3',
-    email: 'james.wilson@cloudtech.demo',
-    name: 'James Wilson',
-    role: 'STAFF',
-    status: 'ACTIVE',
-    clientId: 'client-006',
-    clientName: 'CloudTech Partners',
-    projectCount: 2
-  },
-  {
-    id: 'staff-4',
-    email: 'emily.rodriguez@innovate.demo',
-    name: 'Emily Rodriguez',
-    role: 'STAFF',
-    status: 'ACTIVE',
-    clientId: 'client-005',
-    clientName: 'Innovate Labs',
-    projectCount: 1
-  },
-  {
-    id: 'staff-5',
-    email: 'david.park@enterprise.demo',
-    name: 'David Park',
-    role: 'STAFF',
-    status: 'ACTIVE',
-    clientId: 'client-003',
-    clientName: 'Enterprise Systems Inc',
-    projectCount: 4
-  },
-  
-  // ===== USERS (Sales Reps & Team Members) =====
-  {
-    id: 'user-1',
-    email: 'maria.garcia@smartbiz.demo',
-    name: 'Maria Garcia',
-    role: 'USER',
-    status: 'ACTIVE',
-    clientId: 'client-007',
-    clientName: 'SmartBiz Solutions',
-    projectCount: 1
-  },
-  {
-    id: 'user-2',
-    email: 'thomas.anderson@matrix.demo',
-    name: 'Thomas Anderson',
-    role: 'USER',
-    status: 'ACTIVE',
-    clientId: 'client-008',
-    clientName: 'Matrix Technologies',
-    projectCount: 1
-  },
-  {
-    id: 'user-3',
-    email: 'lisa.wang@digital.demo',
-    name: 'Lisa Wang',
-    role: 'USER',
-    status: 'ACTIVE',
-    clientId: 'client-001',
-    clientName: 'TechStart Solutions',
-    projectCount: 2
-  },
-  {
-    id: 'user-4',
-    email: 'kevin.martinez@growth.demo',
-    name: 'Kevin Martinez',
-    role: 'USER',
-    status: 'ACTIVE',
-    clientId: 'client-002',
-    clientName: 'Growth Marketing Co',
-    projectCount: 1
-  },
-  {
-    id: 'user-5',
-    email: 'amanda.lee@cloudtech.demo',
-    name: 'Amanda Lee',
-    role: 'USER',
-    status: 'ACTIVE',
-    clientId: 'client-006',
-    clientName: 'CloudTech Partners',
-    projectCount: 1
-  },
-  {
-    id: 'user-6',
-    email: 'daniel.kim@enterprise.demo',
-    name: 'Daniel Kim',
-    role: 'USER',
-    status: 'ACTIVE',
-    clientId: 'client-003',
-    clientName: 'Enterprise Systems Inc',
-    projectCount: 2
-  },
-  
-  // ===== PENDING APPROVALS (New Sign-ups) =====
-  {
-    id: 'pending-1',
-    email: 'jennifer.brown@startup.demo',
-    name: 'Jennifer Brown',
-    role: 'USER',
-    status: 'PENDING_APPROVAL',
-    clientId: 'client-009',
-    clientName: 'Startup Ventures LLC',
-    projectCount: 0
-  },
-  {
-    id: 'pending-2',
-    email: 'chris.taylor@bizdev.demo',
-    name: 'Christopher Taylor',
-    role: 'USER',
-    status: 'PENDING_APPROVAL',
-    clientId: 'client-010',
-    clientName: 'BizDev Associates',
-    projectCount: 0
-  },
-  {
-    id: 'pending-3',
-    email: 'lisa.thompson@smallbiz.demo',
-    name: 'Lisa Thompson',
-    role: 'USER',
-    status: 'PENDING_APPROVAL',
-    clientId: 'client-004',
-    clientName: 'Small Biz Consulting',
-    projectCount: 0
-  },
-  
-  // ===== SUSPENDED/INACTIVE =====
-  {
-    id: 'suspended-1',
-    email: 'former.employee@oldclient.demo',
-    name: 'Former Employee',
-    role: 'USER',
-    status: 'SUSPENDED',
-    clientId: 'client-011',
-    clientName: 'Legacy Client Corp',
-    projectCount: 0
-  }
-];
+// The /api/users endpoints don't exist in the portfolio demo; changes stay in the page
+const isDemoMode = import.meta.env.VITE_DEMO_MODE === "true";
 
 // CACHE mock users to prevent infinite re-renders
 const MOCK_USERS_CACHE = getMockUsers();
@@ -332,6 +111,9 @@ const Users = () => {
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
   const [resetDialogOpen, setResetDialogOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
+  const queryClient = useQueryClient();
+  const updateDemoUsers = (update: (users: User[]) => User[]) =>
+    queryClient.setQueryData<User[]>(["users"], (prev) => update(prev ?? []));
 
   const {
     data: users,
@@ -373,6 +155,25 @@ const Users = () => {
 
   const handleCreateUser = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (isDemoMode) {
+      updateDemoUsers((users) => [
+        {
+          id: `demo-${Date.now()}`,
+          email: newUser.email,
+          name: newUser.name || null,
+          role: newUser.role,
+          status: "ACTIVE",
+          clientId: newUser.clientId || "client-demo",
+          clientName: null,
+          projectCount: 0,
+        },
+        ...users,
+      ]);
+      toast.success("Demo mode: user added to this list (no account was created)");
+      setCreateDialogOpen(false);
+      setNewUser({ email: "", name: "", password: "", role: "STAFF", clientId: "" });
+      return;
+    }
     try {
       const response = await fetch("/api/users", {
         method: "POST",
@@ -406,6 +207,14 @@ const Users = () => {
     e.preventDefault();
     if (!selectedUser) return;
 
+    if (isDemoMode) {
+      toast.success("Demo mode: password reset simulated");
+      setResetDialogOpen(false);
+      setResetPassword("");
+      setSelectedUser(null);
+      return;
+    }
+
     try {
       const response = await fetch(
         `/api/users/${selectedUser.id}/reset-password`,
@@ -436,6 +245,12 @@ const Users = () => {
     userId: string,
     currentStatus: string,
   ) => {
+    if (isDemoMode) {
+      const nextStatus = currentStatus === "ACTIVE" ? "SUSPENDED" : "ACTIVE";
+      updateDemoUsers((users) => users.map((u) => (u.id === userId ? { ...u, status: nextStatus } : u)));
+      toast.success(`Demo mode: user ${nextStatus === "ACTIVE" ? "activated" : "disabled"}`);
+      return;
+    }
     try {
       const response = await fetch(`/api/users/${userId}/toggle-status`, {
         method: "POST",
@@ -591,7 +406,7 @@ const Users = () => {
                         setNewUser({ ...newUser, role: value })
                       }
                     >
-                      <SelectTrigger>
+                      <SelectTrigger id="new-role">
                         <SelectValue placeholder="Select role" />
                       </SelectTrigger>
                       <SelectContent>

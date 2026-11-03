@@ -27,7 +27,6 @@ import {
   Download,
   SortAsc,
   SortDesc,
-  Filter,
   Calendar,
   ChevronLeft,
   ChevronRight,
@@ -370,7 +369,7 @@ const Messages = () => {
         // Transform conversations into messages format
         const messages: WhatsAppMessage[] = leadConversations.map((conv, index) => {
           // Determine direction based on message_type or alternating pattern
-          let direction: "inbound" | "outbound" = "inbound";
+          let direction: "inbound" | "outbound";
           
           if (conv.message_type === "incoming") {
             direction = "inbound";
@@ -531,6 +530,33 @@ const Messages = () => {
         lead.phone,
       );
 
+      // DEMO MODE: no WhatsApp Business account is connected, so show the message
+      // locally instead of calling Meta's API (which always failed here)
+      if (import.meta.env.VITE_DEMO_MODE === "true") {
+        const now = new Date().toISOString();
+        setCurrentMessages((prev) => [
+          ...prev,
+          {
+            id: `demo-${Date.now()}`,
+            lead_id: lead.id,
+            sender_number: "",
+            receiver_number: lead.phone,
+            content: messageText,
+            wamid: "",
+            created_at: now,
+            updated_at: now,
+            wa_timestamp: now,
+            direction: "outbound",
+            message_type: "text",
+          },
+        ]);
+        setMessageText("");
+        setAttachments([]);
+        setReplyToMessage(null);
+        toast.success("Demo mode: message added to the conversation (not sent to WhatsApp)");
+        return;
+      }
+
       // Initialize WhatsApp® service and send message
       const whatsappService = new WhatsAppService();
       const result = await whatsappService.sendMessage(lead.phone, messageText);
@@ -556,7 +582,7 @@ const Messages = () => {
         setAttachments([]);
         setReplyToMessage(null);
 
-        toast.success("Message sent successfully via WhatsApp®! MOBILE");
+        toast.success("Message sent successfully via WhatsApp®!");
 
         // Reload messages for this conversation to show the new message
         await loadMessagesForConversation(selectedConversation);
@@ -686,7 +712,7 @@ const Messages = () => {
   const sortConversations = useCallback(
     (conversations: ConversationWithMeta[]) => {
       return [...conversations].sort((a, b) => {
-        let comparison = 0;
+        let comparison: number;
 
         switch (sortBy) {
           case "date":
@@ -1227,11 +1253,10 @@ const Messages = () => {
                   variant="outline"
                   size="sm"
                   onClick={() => setSortOrder(sortOrder === "asc" ? "desc" : "asc")}
+                  aria-label={sortOrder === "asc" ? "Sort descending" : "Sort ascending"}
+                  data-testid="sort-order-toggle"
                 >
                   {sortOrder === "asc" ? <SortAsc className="h-4 w-4" /> : <SortDesc className="h-4 w-4" />}
-                </Button>
-                <Button variant="outline" size="sm">
-                  <Filter className="h-4 w-4" />
                 </Button>
               </div>
             </div>
@@ -1250,7 +1275,7 @@ const Messages = () => {
                 />
               </div>
               <Select value={priorityFilter} onValueChange={(value: "all" | "active") => setPriorityFilter(value)}>
-                <SelectTrigger className="w-32">
+                <SelectTrigger className="w-32" aria-label={t("pages.messages.filterConversations", "Filter conversations")}>
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -1259,7 +1284,7 @@ const Messages = () => {
                 </SelectContent>
               </Select>
               <Select value={sortBy} onValueChange={(value: any) => setSortBy(value)}>
-                <SelectTrigger className="w-32">
+                <SelectTrigger className="w-32" aria-label={t("pages.messages.sortBy", "Sort by")}>
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -1277,7 +1302,7 @@ const Messages = () => {
                 {t("pages.messages.conversationsPerPage", "Conversations per page")}:
               </span>
               <Select value={itemsPerPage.toString()} onValueChange={(value: string) => setItemsPerPage(parseInt(value))}>
-                <SelectTrigger className="w-20">
+                <SelectTrigger className="w-20" aria-label={t("pages.messages.conversationsPerPage", "Conversations per page")}>
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -1318,7 +1343,13 @@ const Messages = () => {
           )}
 
           {/* Conversations List Content */}
-          <div className="flex-1 overflow-y-auto p-4" data-testid="conversations-list">
+          <div
+            className="flex-1 overflow-y-auto p-4"
+            data-testid="conversations-list"
+            tabIndex={0}
+            role="region"
+            aria-label={t("pages.messages.conversations", "Conversations")}
+          >
             <div className="space-y-3">
               {paginatedConversations.map((conversation) => (
                 <div
@@ -1566,6 +1597,7 @@ const Messages = () => {
                             size="sm"
                             onClick={() => handleScheduleMeeting(selectedConversation.lead)}
                             className="flex items-center gap-2"
+                            aria-label={t("pages.messages.scheduleMeeting", "Schedule Meeting")}
                           >
                             <CalendarDays className="h-4 w-4" />
                             <span className="hidden sm:inline">
@@ -1577,6 +1609,7 @@ const Messages = () => {
                             size="sm"
                             onClick={() => handleShareMeetingLink(selectedConversation.lead)}
                             className="flex items-center gap-2"
+                            aria-label={t("pages.messages.shareLink", "Share Link")}
                           >
                             <ExternalLink className="h-4 w-4" />
                             <span className="hidden sm:inline">
@@ -1784,6 +1817,7 @@ const Messages = () => {
                         disabled={!messageText.trim() || sendingMessage}
                         size="sm"
                         className="px-3"
+                        aria-label={t("pages.messages.send", "Send message")}
                       >
                         {sendingMessage ? (
                           <MessageLoading />

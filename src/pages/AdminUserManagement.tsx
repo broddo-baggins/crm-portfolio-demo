@@ -26,6 +26,10 @@ import {
   AlertTriangle
 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
+import { getMockUsers } from '@/data/mockUsers';
+
+// The user-management edge function doesn't exist in the portfolio demo
+const isDemoMode = import.meta.env.VITE_DEMO_MODE === 'true';
 
 interface User {
   id: string;
@@ -103,6 +107,20 @@ const AdminUserManagement: React.FC = () => {
 
   // Fetch users
   const fetchUsers = async () => {
+    if (isDemoMode) {
+      setUsers(
+        getMockUsers().map((u) => ({
+          id: u.id,
+          email: u.email,
+          name: u.name ?? undefined,
+          role: u.role,
+          status: u.status,
+          created_at: '2024-01-01T00:00:00Z',
+        })),
+      );
+      return;
+    }
+
     setLoading(true);
     try {
       const response = await fetch('/functions/v1/user-management', {
@@ -135,6 +153,23 @@ const AdminUserManagement: React.FC = () => {
   const createUser = async () => {
     if (!createUserData.email) {
       toast.error('Email is required');
+      return;
+    }
+
+    if (isDemoMode) {
+      setUsers((prev) => [
+        {
+          id: `demo-${Date.now()}`,
+          email: createUserData.email,
+          name: createUserData.name || undefined,
+          role: createUserData.role,
+          status: 'ACTIVE',
+          created_at: new Date().toISOString(),
+        },
+        ...prev,
+      ]);
+      toast.success(`Demo mode: ${createUserData.email} added locally (no invitation sent)`);
+      setIsCreateDialogOpen(false);
       return;
     }
 
@@ -183,6 +218,12 @@ const AdminUserManagement: React.FC = () => {
   // Delete user
   const deleteUser = async (userId: string, email: string) => {
     if (!confirm(`Are you sure you want to delete user: ${email}?`)) {
+      return;
+    }
+
+    if (isDemoMode) {
+      setUsers((prev) => prev.filter((u) => u.id !== userId));
+      toast.success('Demo mode: user removed locally');
       return;
     }
 

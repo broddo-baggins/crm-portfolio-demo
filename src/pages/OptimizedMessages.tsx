@@ -7,7 +7,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Send, Paperclip, MessageSquare, AlertTriangle, Activity, Search, RefreshCw } from "lucide-react";
+import { Send, MessageSquare, AlertTriangle, Activity, Search, RefreshCw } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { useProject } from "@/context/ProjectContext";
 import { toast } from "sonner";
@@ -17,6 +17,11 @@ import {
   useSendMessage,
   OptimizedConversation
 } from "@/hooks/useOptimizedConversations";
+
+
+/** Demo leads carry first/last name rather than `name` */
+const leadDisplayName = (lead: { name?: string | null; first_name?: string | null; last_name?: string | null }) =>
+  lead.name || [lead.first_name, lead.last_name].filter(Boolean).join(' ') || 'Unknown Lead';
 
 const OptimizedMessages = () => {
   // Get current project context
@@ -159,7 +164,7 @@ const OptimizedMessages = () => {
       {/* Header with stats */}
       <div className="mb-4">
         <div className="flex justify-between items-center mb-4">
-          <h1 className="text-2xl font-bold">INIT Optimized Messages</h1>
+          <h1 className="text-2xl font-bold">Optimized Messages</h1>
           <div className="text-sm text-gray-500">
             Project: {currentProject?.name || 'All Projects'}
           </div>
@@ -242,7 +247,7 @@ const OptimizedMessages = () => {
             </div>
           </div>
               
-          <div className="overflow-y-auto h-[calc(100%-100px)]">
+          <div className="overflow-y-auto h-[calc(100%-100px)]" tabIndex={0} role="region" aria-label="Conversations">
             {conversations.map((conversation) => (
               <div
                 key={conversation.id}
@@ -253,7 +258,7 @@ const OptimizedMessages = () => {
               >
                 <div className="flex justify-between items-start">
                   <span className="font-medium">
-                    {conversation.lead.name || 'Unknown Lead'}
+                    {leadDisplayName(conversation.lead)}
                   </span>
                   <div className="flex items-center gap-1">
                     {conversation.requiresHumanReview && (
@@ -303,7 +308,7 @@ const OptimizedMessages = () => {
               <CardHeader className="p-4 border-b">
                 <CardTitle className="text-lg flex items-center justify-between">
                   <div className="flex items-center">
-                    <span>{selectedConversation.lead.name || 'Unknown Lead'}</span>
+                    <span>{leadDisplayName(selectedConversation.lead)}</span>
                     <div className={`h-3 w-3 rounded-full ml-2 ${getStatusColor(selectedConversation.leadStatus)}`}></div>
                     <Badge variant="outline" className="ml-2">
                       {selectedConversation.leadStatus || 'new'}
@@ -387,12 +392,10 @@ const OptimizedMessages = () => {
                     className="flex-1"
                     disabled={sendMessageMutation.isPending}
                   />
-                  <Button size="icon" variant="outline">
-                    <Paperclip className="h-4 w-4" />
-                  </Button>
                   <Button 
                     onClick={handleSendMessage}
                     disabled={!messageText.trim() || sendMessageMutation.isPending}
+                    aria-label="Send message"
                   >
                     {sendMessageMutation.isPending ? (
                       <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>

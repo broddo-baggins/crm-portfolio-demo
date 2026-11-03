@@ -77,7 +77,7 @@ import {
   getLeadCompany, 
   getDisplayTemperature, 
   getTemperatureVariant,
-  getHeatLevelFromTemperature 
+  getHeatScaleLevel,
 } from "@/utils/leadUtils";
 import { type Lead } from "@/types";
 import { LeadProperties } from "./LeadProperties";
@@ -787,6 +787,8 @@ export const LeadManagementDashboard: React.FC = () => {
       // Transform data to include full name and ensure type compatibility
       const transformedLeads = filteredLeads.map((lead) => ({
         ...lead,
+        // Demo and database rows carry first/last name only; the table and search read `name`
+        name: lead.name || getLeadName(lead),
         // Computed properties using utility functions
         displayName: getLeadName(lead),
         displayTemperature: getLeadTemperature(lead),
@@ -823,7 +825,7 @@ export const LeadManagementDashboard: React.FC = () => {
     const now = new Date();
     const stats: DashboardStats = {
       totalLeads: leads.length,
-      newLeads: leads.filter((lead) => lead.state === "new_lead").length,
+      newLeads: leads.filter((lead) => lead.state === "new_lead" || lead.status === "new").length,
       hotLeads: 0, // Will calculate based on confidence score
       convertedLeads: leads.filter((lead) => 
         lead.state === "qualified" || lead.status === "purchase_ready"
@@ -1080,22 +1082,8 @@ export const LeadManagementDashboard: React.FC = () => {
     }
   };
 
-  // Convert numeric temperature (0-100) to string heat level
-  const getHeatLevelFromTemperature = (temperature: number | string | null): string => {
-    if (temperature === null || temperature === undefined) return 'FROZEN';
-    
-    const temp = typeof temperature === 'string' ? parseInt(temperature) : temperature;
-    if (isNaN(temp)) return 'FROZEN';
-    
-    if (temp <= 10) return 'FROZEN';
-    if (temp <= 20) return 'ICE_COLD';
-    if (temp <= 35) return 'COLD';
-    if (temp <= 50) return 'COOL';
-    if (temp <= 65) return 'WARM';
-    if (temp <= 80) return 'HOT';
-    if (temp <= 95) return 'BURNING';
-    return 'WHITE_HOT';
-  };
+  // Seven-step heat scale (FROZEN..WHITE_HOT) used by this table's filter and stats
+  const getHeatLevelFromTemperature = getHeatScaleLevel;
 
   const getDisplayTemperature = (heat: string | number | null) => {
     // Convert numeric temperature to string heat level if needed
@@ -1231,7 +1219,7 @@ export const LeadManagementDashboard: React.FC = () => {
     >
       {/* Header */}
       <div
-        className={cn("flex items-center justify-between", isRTL ? "flex-row-reverse" : "flex-row")}
+        className={cn("flex flex-wrap items-center justify-between gap-4", isRTL ? "flex-row-reverse" : "flex-row")}
       >
         <div className={textStart()}>
           <h1
@@ -1273,7 +1261,8 @@ export const LeadManagementDashboard: React.FC = () => {
           </div>
         </div>
 
-        <div className={cn("flex items-center gap-2", isRTL ? "flex-row-reverse" : "flex-row")}>
+        {/* flex-wrap: on phones "Export" and "Add Lead" were pushed off-screen */}
+        <div className={cn("flex flex-wrap items-center gap-2", isRTL ? "flex-row-reverse" : "flex-row")}>
           {/* Real-time Status */}
           <Badge
             variant={isRealTimeConnected ? "default" : "secondary"}
@@ -1299,6 +1288,7 @@ export const LeadManagementDashboard: React.FC = () => {
             size="sm"
             onClick={handleRefresh}
             disabled={isManualRefreshing || isAutoRefreshing}
+            aria-label={t("pages.leadManagement.refresh", "Refresh leads")}
           >
             <RefreshCw
               className={cn("h-4 w-4", (isManualRefreshing || isAutoRefreshing) && "animate-spin")}
@@ -1500,7 +1490,7 @@ export const LeadManagementDashboard: React.FC = () => {
                     value={filters.state}
                     onValueChange={(value) => handleFilterChange("state", value)}
                   >
-                    <SelectTrigger>
+                    <SelectTrigger aria-label={t("pages.leads.status", "Status")}>
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
@@ -1521,7 +1511,7 @@ export const LeadManagementDashboard: React.FC = () => {
                     value={filters.heat}
                     onValueChange={(value) => handleFilterChange("heat", value)}
                   >
-                    <SelectTrigger>
+                    <SelectTrigger aria-label={t("pages.leads.heatLevel", "Heat Level")}>
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
@@ -1545,7 +1535,7 @@ export const LeadManagementDashboard: React.FC = () => {
                     value={filters.dateRange}
                     onValueChange={(value) => handleFilterChange("dateRange", value)}
                   >
-                    <SelectTrigger>
+                    <SelectTrigger aria-label={t("pages.leads.dateRange", "Date Range")}>
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
@@ -1664,6 +1654,7 @@ export const LeadManagementDashboard: React.FC = () => {
                         <th className="p-3 w-12">
                           <Checkbox
                             size="table"
+                            aria-label="Select all leads"
                             checked={
                               bulkSelection.selectAllMode === 'filtered' ||
                               (filteredLeads.length > 0 && filteredLeads.every(lead => bulkSelection.selectedLeads.has(lead.id)))
@@ -1734,6 +1725,7 @@ export const LeadManagementDashboard: React.FC = () => {
                           <td className="p-2 sm:p-3 align-top">
                             <Checkbox
                               size="table"
+                              aria-label={`Select ${lead.name}`}
                               checked={bulkSelection.selectedLeads.has(lead.id)}
                               onCheckedChange={(checked) => handleLeadSelection(lead.id, !!checked)}
                             />

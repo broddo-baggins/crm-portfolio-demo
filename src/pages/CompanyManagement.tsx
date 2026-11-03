@@ -24,6 +24,7 @@ import { toast } from 'sonner';
 
 import { useAuth } from '@/context/ClientAuthContext';
 import { useAdminAccess } from '@/hooks/useAdminAccess';
+import { getMockUsers } from '@/data/mockUsers';
 import { supabase } from '@/lib/supabase';
 
 interface CompanyUser {
@@ -113,8 +114,17 @@ const CompanyManagement: React.FC = () => {
       }
     };
 
-    if (!isLoading && companyAdminClients.length > 0) {
+    if (isLoading) return;
+    if (import.meta.env.VITE_DEMO_MODE === 'true') {
+      // No clients table in the portfolio demo
+      setCompanies([{ id: 'client-demo', name: 'CRM Portfolio Demo Company', description: 'Demo company', member_role: 'ADMIN' } as ClientInfo]);
+      setSelectedCompany('client-demo');
+      setLoading(false);
+    } else if (companyAdminClients.length > 0) {
       loadCompanies();
+    } else {
+      // Nothing to load: show the "No Companies Found" state instead of spinning forever
+      setLoading(false);
     }
   }, [user, companyAdminClients, isLoading]);
 
@@ -122,6 +132,23 @@ const CompanyManagement: React.FC = () => {
   useEffect(() => {
     const loadCompanyUsers = async () => {
       if (!selectedCompany || !user) return;
+
+      if (import.meta.env.VITE_DEMO_MODE === 'true') {
+        setCompanyUsers(
+          getMockUsers()
+            .filter((u) => u.clientId === selectedCompany)
+            .map((u) => ({
+              id: u.id,
+              email: u.email,
+              full_name: u.name ?? undefined,
+              role: u.role,
+              status: u.status.toLowerCase(),
+              created_at: '2024-01-01T00:00:00Z',
+              last_sign_in_at: undefined,
+            })),
+        );
+        return;
+      }
 
       try {
         // Get all users who are members of the selected company
@@ -411,6 +438,7 @@ const CompanyManagement: React.FC = () => {
                                   size="sm"
                                   onClick={() => handleRemoveUser(user.id)}
                                   className="text-red-600 hover:text-red-700"
+                                  aria-label={`Remove ${user.full_name || user.email}`}
                                 >
                                   <UserX className="h-4 w-4" />
                                 </Button>
