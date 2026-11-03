@@ -87,6 +87,18 @@ export const MobileBottomNavigation: React.FC<MobileBottomNavigationProps> = ({
     });
   }, [touchHandlers]);
 
+  // The bar is fixed over the bottom of the page; reserve its height so the
+  // page footer can still be scrolled into view and tapped
+  useEffect(() => {
+    const nav = navigationRef.current;
+    if (!isMobile || !nav) return;
+    const previous = document.body.style.paddingBottom;
+    document.body.style.paddingBottom = `${nav.offsetHeight}px`;
+    return () => {
+      document.body.style.paddingBottom = previous;
+    };
+  }, [isMobile]);
+
   // Don't render on desktop
   if (!isMobile) return null;
 
@@ -134,9 +146,7 @@ export const MobileBottomNavigation: React.FC<MobileBottomNavigationProps> = ({
                 "focus:outline-none focus:ring-2 focus:ring-primary/20",
                 isActive && "bg-gray-100 dark:bg-slate-700/30"
               )}
-              role="menuitem"
               aria-current={isActive ? "page" : undefined}
-              aria-label={label}
             >
               {/* Icon Container with enhanced dark mode */}
               <div className="relative flex items-center justify-center">

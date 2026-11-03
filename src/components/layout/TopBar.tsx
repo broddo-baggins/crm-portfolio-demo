@@ -1,4 +1,4 @@
-import { Bell, Search, UserPlus, FolderOpen, Sparkles } from "lucide-react";
+import { Bell, Search, UserPlus, FolderOpen, Sparkles, Menu } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/context/ClientAuthContext";
@@ -24,6 +24,8 @@ import { useAgentOnboarding } from "@/hooks/useAgentOnboarding";
 
 interface TopBarProps {
   pendingUserCount?: number;
+  /** Opens the navigation drawer on screens too narrow for the sidebar */
+  onOpenNavigation?: () => void;
 }
 
 interface SearchResult {
@@ -159,7 +161,7 @@ const generateDynamicNotifications = async (t: any, isRTL: boolean) => {
   }
 };
 
-const TopBar = ({ pendingUserCount = 0 }: TopBarProps) => {
+const TopBar = ({ pendingUserCount = 0, onOpenNavigation }: TopBarProps) => {
   const { user } = useAuth();
   const { isRTL } = useLang();
   const { t } = useTranslation('common');
@@ -304,9 +306,21 @@ const TopBar = ({ pendingUserCount = 0 }: TopBarProps) => {
   return (
           <div className="sticky top-0 z-50 border-b px-3 sm:px-4 md:px-6 py-3 bg-background safe-area-top">
       {/* Main header container following design specification */}
-      <header className="topbar flex items-center gap-2 sm:gap-4">
+      {/* Wraps below md: in one row the trailing controls were pushed off-screen on phones */}
+      <header className="topbar flex flex-wrap md:flex-nowrap items-center gap-2 sm:gap-4">
         
-        {/* Removed non-functional sidebar toggle button */}
+        {onOpenNavigation && (
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-8 w-8 shrink-0 md:hidden"
+            onClick={onOpenNavigation}
+            aria-label="Open navigation"
+            data-testid="open-navigation"
+          >
+            <Menu className="h-5 w-5" />
+          </Button>
+        )}
 
         {/* Project Selector - hidden on mobile to save space */}
         <div className="shrink-0 hidden lg:block">
@@ -382,7 +396,7 @@ const TopBar = ({ pendingUserCount = 0 }: TopBarProps) => {
               <LanguageSelector variant="dropdown" size="sm" />
               <Popover open={isNotificationsOpen} onOpenChange={setIsNotificationsOpen}>
                 <PopoverTrigger asChild>
-                  <Button variant="ghost" size="icon" className="relative h-8 w-8">
+                  <Button variant="ghost" size="icon" className="relative h-8 w-8" aria-label={unreadCount > 0 ? `Notifications, ${unreadCount} unread` : "Notifications"}>
                     <Bell className="h-5 w-5" />
                     {unreadCount > 0 && (
                       <span className="absolute -top-1 -right-1 h-4 w-4 rounded-full bg-red-500 text-white text-[10px] flex items-center justify-center">
@@ -483,7 +497,7 @@ const TopBar = ({ pendingUserCount = 0 }: TopBarProps) => {
               {/* Admin User Plus Icon (if admin) */}
               {isAdmin && (
                 <Button variant="ghost" size="icon" className="relative h-8 w-8" asChild>
-                  <Link to="/users">
+                  <Link to="/users" aria-label={pendingUserCount > 0 ? `Manage users, ${pendingUserCount} pending` : "Manage users"}>
                     <UserPlus className="h-5 w-5" />
                     {pendingUserCount > 0 && (
                       <span className="absolute -top-1 -right-1 h-4 w-4 rounded-full bg-red-500 text-white text-[10px] flex items-center justify-center">
@@ -503,7 +517,7 @@ const TopBar = ({ pendingUserCount = 0 }: TopBarProps) => {
               <LanguageSelector variant="dropdown" size="sm" />
               <Popover open={isNotificationsOpen} onOpenChange={setIsNotificationsOpen}>
                 <PopoverTrigger asChild>
-                  <Button variant="ghost" size="icon" className="relative h-8 w-8">
+                  <Button variant="ghost" size="icon" className="relative h-8 w-8" aria-label={unreadCount > 0 ? `Notifications, ${unreadCount} unread` : "Notifications"}>
                     <Bell className="h-5 w-5" />
                     {unreadCount > 0 && (
                       <span className="absolute -top-1 -right-1 h-4 w-4 rounded-full bg-red-500 text-white text-[10px] flex items-center justify-center">
@@ -594,7 +608,7 @@ const TopBar = ({ pendingUserCount = 0 }: TopBarProps) => {
               {/* Admin User Plus Icon (if admin) */}
               {isAdmin && (
                 <Button variant="ghost" size="icon" className="relative h-8 w-8" asChild>
-                  <Link to="/users">
+                  <Link to="/users" aria-label={pendingUserCount > 0 ? `Manage users, ${pendingUserCount} pending` : "Manage users"}>
                     <UserPlus className="h-5 w-5" />
                     {pendingUserCount > 0 && (
                       <span className="absolute -top-1 -right-1 h-4 w-4 rounded-full bg-red-500 text-white text-[10px] flex items-center justify-center">
@@ -620,6 +634,7 @@ const TopBar = ({ pendingUserCount = 0 }: TopBarProps) => {
                     setIsAgentOpen(true);
                   }}
                   title="AI Assistant - Ask about this CRM"
+                  aria-label="AI Assistant"
                 >
                   <Sparkles className="h-5 w-5 text-purple-500" />
                   
