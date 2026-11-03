@@ -55,6 +55,8 @@ const createMockSupabaseClient = () => {
       error: { message: 'Demo mode - no real authentication' },
     }),
     resetPasswordForEmail: async () => ({ data: {}, error: null }),
+    // Any recovery/magic-link token is accepted, so the reset-password page can be demoed
+    verifyOtp: async () => ({ data: { user: DEMO_AUTH_USER, session: DEMO_SESSION }, error: null }),
     updateUser: async () => ({ data: { user: DEMO_AUTH_USER }, error: null }),
     exchangeCodeForSession: async () => ({ data: { session: DEMO_SESSION }, error: null }),
     setSession: async () => ({ data: { session: DEMO_SESSION }, error: null }),
@@ -690,7 +692,8 @@ export const authService = {
       }
 
       const { error } = await supabase.auth.resetPasswordForEmail(email, {
-        redirectTo: `${window.location.origin}/reset-password`,
+        // The route is /auth/reset-password; /reset-password is a 404
+        redirectTo: `${window.location.origin}/auth/reset-password`,
       });
 
       if (error) throw error;

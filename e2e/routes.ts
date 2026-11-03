@@ -16,11 +16,12 @@ export const PUBLIC_ROUTES: RouteCase[] = [
   { path: '/', expect: 'Advanced Lead Heating System' },
   { path: '/landingpage', expect: 'Advanced Lead Heating System' },
   { path: '/land', expect: 'Advanced Lead Heating System' },
-  { path: '/he', expect: 'מערכת מבוססת בינה מלאכותית' },
+  { path: '/he', expect: 'לידים קרים, מתחממים בוואטסאפ.' },
   { path: '/auth/login', expect: 'Welcome Back' },
-  // Without OAuth/reset parameters these send the visitor to the login page
+  // Without an OAuth code the callback sends the visitor to the login page
   { path: '/auth/callback', expect: 'Welcome Back', redirectsTo: '/auth/login' },
-  { path: '/auth/reset-password', expect: 'Welcome Back', redirectsTo: '/auth/login' },
+  // Without a reset token there is nothing to reset: ask for a new link
+  { path: '/auth/reset-password', expect: 'Reset Your Password', redirectsTo: '/auth/password-recovery' },
   { path: '/auth/password-recovery', expect: 'Reset Your Password' },
   { path: '/auth/magic-link', expect: 'Magic Link Login' },
   { path: '/auth/change-email', expect: 'Change Email Address' },
