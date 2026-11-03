@@ -3,7 +3,7 @@ import {
   Routes,
   Route,
   Navigate,
-} from "react-router-dom";
+} from "react-router";
 import { Toaster } from "sonner";
 import { Toaster as ShadcnToaster } from "@/components/ui/toaster";
 import { AuthProvider } from "./context/ClientAuthContext";
@@ -25,7 +25,7 @@ import { DemoLogoutBanner } from "@/components/demo/DemoLogoutBanner";
 
 // Import analytics utilities
 import { initializeAnalytics, trackPageView } from "@/utils/combined-analytics";
-import { useLocation } from "react-router-dom";
+import { useLocation } from "react-router";
 
 // Import authSync
 import { authSync } from "@/lib/authSync";
@@ -426,6 +426,9 @@ function App() {
                               {/* Backward compatibility redirects */}
                               <Route path="company-management" element={<Navigate to="/admin/company" replace />} />
                               <Route path="admin/users" element={<AdminUserManagement />} />
+
+                              {/* Unknown paths match the "/*" layout first, so catch them here */}
+                              <Route path="*" element={<NotFound />} />
                             </Route>
 
                             {/* Admin Routes with AppLayout */}
