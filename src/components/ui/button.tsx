@@ -6,16 +6,18 @@ import { designTokens } from "@/config/design-system"
 
 const buttonVariants = cva(
   // Thermal: radius 6, ui type (14/500), 120 ms colour change, 1 px press, ember focus ring.
-  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md [&>svg]:!m-0 text-sm font-medium leading-5 ring-offset-background transition-[color,background-color,border-color,transform] duration-[120ms] ease-out active:translate-y-px focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 [&_svg]:flex-shrink-0",
+  // Disabled is drawn on the tokens (muted text, and the secondary fill on filled variants), not
+  // at 50% opacity: a faded button read 2.2:1, and some carry live text ("Retrying in 58s").
+  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md [&>svg]:!m-0 text-sm font-medium leading-5 ring-offset-background transition-[color,background-color,border-color,transform] duration-[120ms] ease-out active:translate-y-px focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:text-muted-foreground [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 [&_svg]:flex-shrink-0",
   {
     variants: {
       variant: {
-        default: "bg-primary text-primary-foreground hover:bg-action-hover",
-        destructive: "bg-destructive text-destructive-foreground hover:bg-brick-700 dark:hover:bg-brick-300",
-        success: "bg-moss-600 text-white hover:bg-moss-700",
-        warning: "bg-amber-500 text-white hover:bg-amber-600",
+        default: "bg-primary text-primary-foreground hover:bg-action-hover disabled:bg-secondary",
+        destructive: "bg-destructive text-destructive-foreground hover:bg-brick-700 dark:hover:bg-brick-300 disabled:bg-secondary",
+        success: "bg-moss-600 text-white hover:bg-moss-700 disabled:bg-secondary",
+        warning: "bg-amber-500 text-white hover:bg-amber-600 disabled:bg-secondary",
         outline: "border border-input bg-surface text-foreground hover:bg-accent hover:border-ink-400 dark:hover:border-ink-500",
-        secondary: "bg-secondary text-secondary-foreground hover:bg-ink-200 dark:hover:bg-ink-700",
+        secondary: "bg-secondary text-secondary-foreground hover:bg-ink-200 dark:hover:bg-ink-700 disabled:bg-secondary",
         ghost: "text-subtle hover:bg-accent hover:text-foreground",
         link: "h-auto px-0 text-primary underline underline-offset-4 decoration-ember-200 hover:decoration-current",
       },
