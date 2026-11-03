@@ -263,7 +263,7 @@ const temperatureLabels = {
 // FIXED: Enhanced status colors matching real database values
 // Funnel stages walk the heat ramp; won/lost take the status hues.
 const statusColors = {
-  new: "#50758F",
+  new: "#486C86",
   contacted: "#97B2C6",
   interested: "#D69A2E",
   not_interested: "#B9C0C8",

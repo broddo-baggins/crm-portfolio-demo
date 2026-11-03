@@ -35,10 +35,14 @@ Six scales (50 to 950) in `tokens.json`: **ink** (the neutral), **ember** (the a
 | `action` | #C24816 | #E8784C | primary button, links, active nav (Tailwind `primary`) | white on it 5.0:1 |
 | `action-soft` | #FDF3EE | #33130A | selected / active background | ember-700 on it 6.8:1 |
 | `success` `warning` `danger` `info` | moss-600, amber-600, brick-600, steel-600 | the 300 steps | status text and icons | 6.2 to 6.8:1 |
+| `whatsapp-bubble` / `-foreground` | #D9FDD3 / #111B21 | #005C4B / #E9EDEF | a sent WhatsApp message (Tailwind `bg-whatsapp-bubble`) | 15.8:1 (dark 6.8:1) |
+| `whatsapp-accent` | #00705C | #25D366 | WhatsApp-green text and icons | 5.5:1 on sunken (dark 7.8:1) |
 
-Shade rule for legacy classes: on a white or 50-tinted ground, text uses step **500 or darker** (every 500 is at least 4.6:1 on white); fills that carry white text use **500 or darker**; 50 to 200 are grounds only.
+Shade rule for legacy classes: on a white or 50-tinted ground, text uses step **400 or darker** (ink-400 is 4.6:1 even on ink-100; every 500 is at least 4.9:1 on white); fills that carry white text use **500 or darker**, and every 500 holds white at 4.9:1 or better; steel-500 and brick-500 (the calendar's Calendly and Google event fills) also hold white at 90% opacity (4.9 and 4.8:1), the others do not, so use full white on them; 50 to 200 are grounds only. The WhatsApp brand green `#25D366` is never a fill under white text (2.0:1).
 
-**Heat ramp:** cold `#50758F`, cool `#97B2C6`, warm `#D69A2E`, hot `#C24816`. Always with its word.
+Dark-mode safety net (generated into `tokens.css`): legacy text steps 400 to 950 become the family's 300 step (ink 400 and 500 become `text-muted`, so captions keep their rank); explicit `dark:text-*-400/500/600` variants, which pick light-theme steps, get the same treatment; a 500 to 700 fill under `text-primary-foreground` keeps white text, because the fill does not change with the theme. Recharts' axis, label and legend text is set on `text-muted` / `text-secondary` in `index.css` for every chart.
+
+**Heat ramp:** cold `#486C86`, cool `#97B2C6`, warm `#D69A2E`, hot `#C24816`. Always with its word.
 
 **Charts:** series order ember, steel-600, amber-400, moss-500, steel-300 (`--chart-1..5`).
 

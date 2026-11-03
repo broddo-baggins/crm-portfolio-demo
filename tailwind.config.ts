@@ -73,6 +73,11 @@ const config: Config = {
         warning: { ...AMBER, DEFAULT: "var(--warning)" },
         danger: "var(--danger)",
         info: "var(--info)",
+        whatsapp: {
+          bubble: "var(--whatsapp-bubble)",
+          "bubble-foreground": "var(--whatsapp-bubble-foreground)",
+          accent: "var(--whatsapp-accent)",
+        },
         paper: "var(--paper)",
         surface: "var(--surface)",
         sunken: "var(--surface-sunken)",

@@ -109,7 +109,7 @@ lines.push("/* Dark-mode remap for legacy colour classes (generated). */");
 for (const [scaleName, aliases] of Object.entries(families)) {
   const textSel = [], bgSel = [], borderSel = [];
   for (const a of aliases) {
-    for (const step of ["500", "600", "700", "800", "900", "950"]) textSel.push(`.dark .text-${a}-${step}`);
+    for (const step of ["400", "500", "600", "700", "800", "900", "950"]) textSel.push(`.dark .text-${a}-${step}`);
     for (const step of ["50", "100", "200"]) {
       bgSel.push(`.dark .bg-${a}-${step}`);
       borderSel.push(`.dark .border-${a}-${step}`, `.dark .border-${a}-300`);
@@ -120,6 +120,22 @@ for (const [scaleName, aliases] of Object.entries(families)) {
   lines.push(`${bgSel.join(",\n")} {\n  background-color: ${scaleName === "ink" ? "#1E252D" : esc(S[scaleName]["950"])};\n}`);
   lines.push(`${[...new Set(borderSel)].join(",\n")} {\n  border-color: #3B4652;\n}`);
 }
+// Explicit `dark:text-gray-400`-style variants pick a light-mode step (ink-400 on the dark
+// surface is 3.6:1). `:root.dark` (0,3,0) outranks Tailwind's `.dark\:x:is(.dark *)` (0,2,0).
+const mutedDark = t.color.tokens.find((x) => x.name === "text-muted").dark;
+// Pale greys (400/500) stay the muted step in dark too, so captions keep their rank.
+lines.push(`${families.ink.flatMap((a) => [`.dark .text-${a}-400`, `.dark .text-${a}-500`]).join(",\n")} {\n  color: ${mutedDark};\n}`);
+for (const [scaleName, aliases] of Object.entries(families)) {
+  // 400-600 only: a deliberate `dark:text-ink-900` on a pale dark-mode fill is left alone.
+  const sel = aliases.flatMap((a) => ["400", "500", "600"].map((s) => `:root.dark .dark\\:text-${a}-${s}`));
+  lines.push(`${sel.join(",\n")} {\n  color: ${scaleName === "ink" ? mutedDark : S[scaleName]["300"]};\n}`);
+}
+// A Button or Badge recoloured with a mid fill (`bg-red-600`) keeps the theme's on-primary text,
+// which in dark is ink-950 (2.7:1 on brick-600). Those fills are the same in both themes, so
+// their text stays white (4.9:1 or better on every 500-700 step).
+const fillSel = Object.values(families).flat().filter((a) => a !== "primary").flatMap((a) =>
+  ["500", "600", "700"].flatMap((s) => [`:root.dark .bg-${a}-${s}.text-primary-foreground`, `:root.dark .bg-${a}-${s}.text-destructive-foreground`]));
+lines.push(`${fillSel.join(",\n")} {\n  color: #FFFFFF;\n}`);
 lines.push(`.dark .bg-white {\n  background-color: #171D24;\n}`);
 lines.push(`.dark .text-black {\n  color: ${S.ink["100"]};\n}`);
 lines.push("");
