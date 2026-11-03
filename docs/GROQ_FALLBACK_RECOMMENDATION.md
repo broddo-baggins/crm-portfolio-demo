@@ -42,7 +42,7 @@ This provides high availability and reliability for the AI assistant functionali
    - Temperature: 0.7, Max tokens: 2048
    
 2. **Groq** (Secondary) - Fast, 14,400 req/day  
-   - Model: `llama-3.3-70b-versatile`
+   - Model: `openai/gpt-oss-120b` (was `llama-3.3-70b-versatile`, shut down by Groq on 2026-08-16)
    - Maintains RAG context and conversation history
    - Temperature: 0.7, Max tokens: 2048
    - Powered by LPU (Language Processing Unit)

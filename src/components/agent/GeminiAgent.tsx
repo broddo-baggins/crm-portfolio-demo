@@ -363,6 +363,7 @@ export const GeminiAgent: React.FC<GeminiAgentProps> = ({
                             variant="ghost"
                             size="sm"
                             className="h-6 w-6 p-0"
+                            aria-label={copiedId === message.id ? "Copied" : "Copy answer"}
                             onClick={() => handleCopy(message.id, message.content)}
                           >
                             {copiedId === message.id ? (
@@ -410,6 +411,7 @@ export const GeminiAgent: React.FC<GeminiAgentProps> = ({
                 onChange={(e) => setInput(e.target.value)}
                 onKeyPress={handleKeyPress}
                 placeholder="Ask me anything about this CRM demo..."
+                aria-label="Ask the AI assistant"
                 disabled={isLoading}
                 className="flex-1"
               />
@@ -417,6 +419,7 @@ export const GeminiAgent: React.FC<GeminiAgentProps> = ({
                 onClick={() => handleSend()}
                 disabled={isLoading || !input.trim()}
                 size="icon"
+                aria-label="Send"
               >
                 {isLoading ? (
                   <Loader2 className="h-4 w-4 animate-spin" />

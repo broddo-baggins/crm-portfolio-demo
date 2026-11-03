@@ -189,7 +189,7 @@ export async function queryAgent(question: string, context?: string): Promise<st
             { role: 'system', content: ragContext },
             { role: 'user', content: question }
           ],
-          model: 'llama-3.3-70b-versatile',
+          model: 'openai/gpt-oss-120b', // llama-3.3-70b-versatile was shut down 2026-08-16
           temperature: 0.7,
           max_tokens: 2048,
         });
