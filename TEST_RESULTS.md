@@ -103,10 +103,10 @@ npm run build
 ### Environment Variables Required
 ```bash
 # Already configured in Vercel:
-VITE_GROQ_API_KEY=<your_groq_api_key_here>
+GROQ_API_KEY=<your_groq_api_key_here>
 
 # Optional (for Gemini primary):
-VITE_GEMINI_API_KEY=<your_gemini_key_here>
+GOOGLE_GENERATIVE_AI_API_KEY=<your_gemini_key_here>
 ```
 
 ---
@@ -258,7 +258,7 @@ git push origin main
 ### To Test Locally:
 ```bash
 # Optional: Add Groq key to .env.local (use your actual key from Vercel)
-echo "VITE_GROQ_API_KEY=<your_groq_key_here>" >> .env.local
+echo "GROQ_API_KEY=<your_groq_key_here>" >> .env.local
 
 # Start dev server
 npm run dev

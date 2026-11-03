@@ -18,8 +18,16 @@ import {
 // Markdown parser utility
 const parseMarkdown = (markdown: string): string => {
   if (!markdown) return '';
-  
+
+  // The result goes into dangerouslySetInnerHTML: escape raw HTML from the AI response
+  // first, keeping only the <small> tag the assistant itself adds for the sources footer
   let html = markdown
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/&lt;(\/?)small&gt;/g, '<$1small>')
+
     // Headers
     .replace(/^### (.*$)/gm, '<h3 class="text-lg font-semibold mb-2 mt-4">$1</h3>')
     .replace(/^## (.*$)/gm, '<h2 class="text-xl font-semibold mb-3 mt-4">$1</h2>')
@@ -39,10 +47,13 @@ const parseMarkdown = (markdown: string): string => {
     
     // Lists (numbered and bullet)
     .replace(/^\d+\.\s+(.*$)/gm, '<li class="ml-6 mb-1">$1</li>')
-    .replace(/^[\*\-]\s+(.*$)/gm, '<li class="ml-6 mb-1">$1</li>')
+    .replace(/^[*-]\s+(.*$)/gm, '<li class="ml-6 mb-1">$1</li>')
     
-    // Links
-    .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" class="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 underline" target="_blank" rel="noopener noreferrer">$1</a>')
+    // Links (http(s), mailto and same-site paths only, so no javascript: URLs)
+    .replace(/\[([^\]]+)\]\(([^)]+)\)/g, (match, text, url) =>
+      /^(https?:\/\/|mailto:|\/(?!\/))/i.test(url)
+        ? `<a href="${url}" class="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 underline" target="_blank" rel="noopener noreferrer">${text}</a>`
+        : text)
     
     // Blockquotes
     .replace(/^&gt;\s+(.*$)/gm, '<blockquote class="border-l-4 border-gray-300 dark:border-gray-700 pl-4 italic my-2">$1</blockquote>')
@@ -417,7 +428,7 @@ export const GeminiAgent: React.FC<GeminiAgentProps> = ({
 
             {!isGeminiAvailable() && (
               <p className="text-xs text-muted-foreground mt-2 text-center">
-                Running in mock mode. Install @google/generative-ai and add VITE_GEMINI_API_KEY for live responses.
+                Running in mock mode. Set GOOGLE_GENERATIVE_AI_API_KEY or GROQ_API_KEY on the server (/api/ai-assistant) for live responses.
               </p>
             )}
           </div>

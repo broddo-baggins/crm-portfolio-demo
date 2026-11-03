@@ -290,7 +290,7 @@ Uses mock data services:
 
 3. Set environment variables:
    - VITE_DEMO_MODE=true (for demo without backend)
-   - VITE_GEMINI_API_KEY=your_key (optional, for AI agent)
+   - GOOGLE_GENERATIVE_AI_API_KEY=your_key (optional, for AI agent)
    - VITE_SUPABASE_URL (if using real backend)
    - VITE_SUPABASE_ANON_KEY (if using real backend)
 

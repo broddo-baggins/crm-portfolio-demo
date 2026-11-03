@@ -22,7 +22,7 @@ This provides high availability and reliability for the AI assistant functionali
    - `groq-sdk` package added to dependencies
 
 2. ✅ **Environment Configuration**
-   - Added `VITE_GROQ_API_KEY` to `env.ts`
+   - Added `GROQ_API_KEY` to `env.ts`
    - Added Groq configuration checks (`isGroqConfigured`)
    - Added AI status to debug info
 
@@ -57,7 +57,7 @@ To enable Groq fallback in production (Vercel), ensure the environment variable 
 
 ```bash
 # In Vercel Dashboard > Settings > Environment Variables
-VITE_GROQ_API_KEY=<your_groq_api_key>
+GROQ_API_KEY=<your_groq_api_key>
 ```
 
 The variable is already configured in your Vercel project according to your setup.

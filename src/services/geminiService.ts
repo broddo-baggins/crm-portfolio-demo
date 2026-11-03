@@ -10,13 +10,12 @@
  * 1. Gemini (Primary) - High quality, 50 req/day
  * 2. Groq (Fallback) - Fast LPU inference, 14,400 req/day
  * 3. Mock Responses (Final) - Always available
+ *
+ * Gemini and Groq are called by the /api/ai-assistant Vercel function, which holds
+ * the API keys. The browser never sees a key.
  */
 
-import { GoogleGenerativeAI } from '@google/generative-ai';
-import Groq from 'groq-sdk';
-import { CRM_DEMO_ASSISTANT_PROMPT, LANDING_PAGE_CONTEXT } from '@/config/systemPrompts';
-import { searchKnowledgeBase, buildRAGContext, type DocumentChunk } from './ragKnowledgeBase';
-import { env } from '@/config/env';
+import { searchKnowledgeBase, type DocumentChunk } from './ragKnowledgeBase';
 
 // Mock response when Gemini is not available
 const getMockResponse = (question: string): string => {
@@ -262,202 +261,69 @@ What would you like to know?`;
 };
 
 /**
- * Initialize Groq client for fallback AI responses
+ * The AI keys live server-side in /api/ai-assistant. The browser can't know whether
+ * they're configured, so assume yes until the function says otherwise (503).
  */
-const groqApiKey = env.GROQ_API_KEY;
-const groq = groqApiKey && groqApiKey.length > 0 
-  ? new Groq({ 
-      apiKey: groqApiKey, 
-      dangerouslyAllowBrowser: true 
-    }) 
-  : null;
+let aiBackendAvailable = true;
 
 /**
- * Check if Gemini API is available
+ * Check if the AI backend (Gemini/Groq via /api/ai-assistant) is available
  */
 export function isGeminiAvailable(): boolean {
-  const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
-  return Boolean(apiKey && apiKey.length > 0);
+  return aiBackendAvailable;
 }
 
 /**
- * Check if Groq API is available
- */
-export function isGroqAvailable(): boolean {
-  return Boolean(groqApiKey && groqApiKey.length > 0);
-}
-
-/**
- * Query the Gemini AI agent with RAG (Retrieval-Augmented Generation)
+ * Query the AI agent with RAG (Retrieval-Augmented Generation).
+ * The prompt is built and sent to Gemini (Groq fallback) by the server function.
  */
 export async function queryAgent(
   question: string,
   context?: string,
   pageContext?: 'landing' | 'dashboard'
 ): Promise<string> {
-  // Step 1: Search knowledge base for relevant documentation
-  console.log('🔍 Searching knowledge base for:', question);
-  const relevantDocs = searchKnowledgeBase(question, 3);
-  console.log(`📚 Found ${relevantDocs.length} relevant documents`);
-  
-  // Step 2: Build RAG context from matched documents
-  const ragContext = buildRAGContext(relevantDocs);
-  
-  // Step 3: Add page-specific context for landing page visitors
-  const pageSpecificContext = pageContext === 'landing' 
-    ? `\n\n${LANDING_PAGE_CONTEXT}\n\n` 
-    : '';
-  
-  // Step 3: Check if Gemini is available
-  if (!isGeminiAvailable()) {
-    console.warn('Gemini API key not found, using mock responses with RAG');
-    
-    // Even in mock mode, use RAG context if available
-    if (ragContext) {
-      return `${getMockResponse(question)}\n\n---\n\n**📚 Related Documentation:**\n\n${relevantDocs.map(doc => `- ${doc.title} (${doc.source})`).join('\n')}`;
-    }
-    
-    return getMockResponse(question);
-  }
+  // Search the knowledge base locally too, for the "sources" footer and mock mode
+  const relevantDocs: DocumentChunk[] = searchKnowledgeBase(question, 3);
+  const sources = relevantDocs.map(doc => `- ${doc.title} (${doc.source})`).join('\n');
+
+  const mockFallback = (notice = '') => {
+    const mock = `${notice}${getMockResponse(question)}`;
+    return relevantDocs.length > 0
+      ? `${mock}\n\n---\n\n**📚 Related Documentation:**\n\n${sources}`
+      : mock;
+  };
+
+  if (!aiBackendAvailable) return mockFallback();
 
   try {
-    const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
-    
-    // Initialize Gemini AI
-    const genAI = new GoogleGenerativeAI(apiKey);
-    
-    // Use gemini-pro for stable responses (v1 API)
-    const model = genAI.getGenerativeModel({ 
-      model: 'gemini-pro',
-      generationConfig: {
-        temperature: 0.7,
-        maxOutputTokens: 2048,
-      }
+    const res = await fetch('/api/ai-assistant', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ question, context, pageContext }),
     });
-    
-    // Build enhanced prompt with RAG context
-    let fullPrompt = CRM_DEMO_ASSISTANT_PROMPT;
-    
-    // Add page-specific context for landing page visitors
-    if (pageSpecificContext) {
-      fullPrompt += pageSpecificContext;
+
+    const isJson = res.headers.get('content-type')?.includes('application/json');
+    if (res.status === 503 || res.status === 404 || !isJson) {
+      // 503: no AI keys configured; 404 or HTML: no functions (e.g. vite dev/preview)
+      console.warn('AI backend not available, using mock responses with RAG');
+      aiBackendAvailable = false;
+      return mockFallback();
     }
-    
-    // Add RAG context if available
-    if (ragContext) {
-      fullPrompt += `\n\n## 📚 Relevant Documentation from CRM Knowledge Base:\n\n${ragContext}`;
-    }
-    
-    // Add conversation context if provided
-    if (context) {
-      fullPrompt += `\n\n## 💬 Conversation History:\n${context}`;
-    }
-    
-    // Add user question
-    fullPrompt += `\n\n---\n\n## ❓ User Question:\n${question}`;
-    
-    // Add instructions for using RAG context
-    if (ragContext) {
-      fullPrompt += `\n\n**Instructions:** Use the documentation provided above to give accurate, specific answers about this CRM system. Reference the exact features, architecture, and capabilities described in the docs. If the documentation covers the question, prioritize that information over general knowledge.`;
-    }
-    
-    console.log('🤖 Querying Gemini AI with RAG context...');
-    
-    const result = await model.generateContent(fullPrompt);
-    const response = await result.response;
-    const text = response.text();
-    
-    console.log('✅ Gemini response received');
-    
-    // Optionally append sources
+    if (!res.ok) throw new Error(`AI assistant HTTP ${res.status}`);
+
+    const { text, provider } = (await res.json()) as { text?: string; provider?: 'gemini' | 'groq' };
+    if (!text) return mockFallback();
+
     if (relevantDocs.length > 0) {
-      const sources = relevantDocs
-        .map(doc => `- ${doc.title} (${doc.source})`)
-        .join('\n');
-      return `${text}\n\n---\n\n<small>📚 **Sources consulted:**\n${sources}</small>`;
+      const poweredBy = provider === 'groq' ? '\n\n*⚡ Powered by Groq (Gemini fallback)*' : '';
+      return `${text}\n\n---\n\n<small>📚 **Sources consulted:**\n${sources}${poweredBy}</small>`;
     }
-    
     return text;
-  } catch (geminiError: any) {
-    console.warn('⚠️ Gemini failed, trying Groq fallback...', geminiError);
-    
-    // Step 2: Try Groq as fallback
-    if (groq && isGroqAvailable()) {
-      try {
-        console.log('🔄 Attempting Groq fallback...');
-        
-        // Build messages for Groq (OpenAI-compatible format)
-        const messages: Array<{ role: 'system' | 'user'; content: string }> = [
-          { role: 'system', content: CRM_DEMO_ASSISTANT_PROMPT }
-        ];
-        
-        // Add page-specific context for landing page visitors
-        if (pageSpecificContext) {
-          messages.push({
-            role: 'system',
-            content: pageSpecificContext
-          });
-        }
-        
-        // Add RAG context if available
-        if (ragContext) {
-          messages.push({
-            role: 'system',
-            content: `📚 Relevant Documentation from CRM Knowledge Base:\n\n${ragContext}`
-          });
-        }
-        
-        // Add conversation context if provided
-        if (context) {
-          messages.push({
-            role: 'system',
-            content: `💬 Conversation History:\n${context}`
-          });
-        }
-        
-        // Add user question
-        messages.push({ role: 'user', content: question });
-        
-        const completion = await groq.chat.completions.create({
-          messages,
-          model: 'llama-3.3-70b-versatile', // Best free model from Groq
-          temperature: 0.7,
-          max_tokens: 2048,
-        });
-        
-        const groqResponse = completion.choices[0]?.message?.content || '';
-        
-        console.log('✅ Groq response received');
-        
-        // Optionally append sources
-        if (relevantDocs.length > 0 && groqResponse) {
-          const sources = relevantDocs
-            .map(doc => `- ${doc.title} (${doc.source})`)
-            .join('\n');
-          return `${groqResponse}\n\n---\n\n<small>📚 **Sources consulted:**\n${sources}\n\n*⚡ Powered by Groq (Gemini fallback)*</small>`;
-        }
-        
-        return groqResponse || getMockResponse(question);
-        
-      } catch (groqError: any) {
-        console.error('❌ Groq also failed:', groqError);
-      }
-    }
-    
-    // Step 3: Final fallback to mock responses
-    console.warn('📋 Using mock responses (both Gemini and Groq unavailable)');
-    
-    // Provide helpful error messages
-    if (geminiError?.message?.includes('API key')) {
-      return `⚠️ **API Key Issue**\n\nThere's a problem with the Gemini API key. Please verify it's correctly set in your environment variables.\n\n${getMockResponse(question)}`;
-    }
-    
-    if (geminiError?.message?.includes('quota') || geminiError?.message?.includes('rate limit')) {
-      return `⚠️ **Rate Limit Reached**\n\nThe Gemini API rate limit has been reached. Trying alternative AI...\n\n${getMockResponse(question)}`;
-    }
-    
-    // Generic fallback message
-    return `⚠️ **AI Temporarily Unavailable**\n\nBoth Gemini and Groq AI services are currently unavailable. Here's a mock response:\n\n${getMockResponse(question)}`;
+  } catch (error) {
+    console.warn('📋 AI assistant failed, using mock responses', error);
+    return mockFallback(
+      `⚠️ **AI Temporarily Unavailable**\n\nBoth Gemini and Groq AI services are currently unavailable. Here's a mock response:\n\n`
+    );
   }
 }
 

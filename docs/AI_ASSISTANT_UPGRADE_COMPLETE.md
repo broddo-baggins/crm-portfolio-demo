@@ -318,15 +318,15 @@ Help users understand WHAT it is and WHY it was built this way.
 
 **Current Setup**:
 ```bash
-VITE_GROQ_API_KEY=<configured_in_vercel>
-VITE_GEMINI_API_KEY=<optional_gemini_key>
+GROQ_API_KEY=<configured_in_vercel>
+GOOGLE_GENERATIVE_AI_API_KEY=<optional_gemini_key>
 ```
 
 **For Local Testing** (Optional):
 Add to `.env.local` (use your actual keys from Vercel):
 ```bash
-VITE_GROQ_API_KEY=<your_groq_key_here>
-VITE_GEMINI_API_KEY=<optional>
+GROQ_API_KEY=<your_groq_key_here>
+GOOGLE_GENERATIVE_AI_API_KEY=<optional>
 ```
 
 ---
@@ -359,7 +359,7 @@ git push origin main
 
 **Vercel Will**:
 - ✅ Install `groq-sdk` package
-- ✅ Read `VITE_GROQ_API_KEY` from environment
+- ✅ Read `GROQ_API_KEY` from environment
 - ✅ Build with new system prompts
 - ✅ Deploy updated AI assistant
 
