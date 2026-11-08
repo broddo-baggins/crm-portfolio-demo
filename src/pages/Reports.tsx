@@ -436,7 +436,7 @@ const Reports = () => {
         });
 
         toast.success(
-          `Reports loaded with demo data: ${staticFallbackData.leads.length} leads analyzed`,
+          `Reports loaded with sample data: ${staticFallbackData.leads.length} leads analyzed`,
           { description: "Using sample data for demonstration" }
         );
         return;
@@ -455,7 +455,7 @@ const Reports = () => {
       });
 
       toast.success(
-        `Reports updated with real data: ${leads.length} leads analyzed`,
+        `Reports updated with sample data: ${leads.length} leads analyzed`,
       );
     } catch (error) {
       console.error("ERROR Error loading real data for reports:", error);
@@ -477,7 +477,7 @@ const Reports = () => {
       });
 
       toast.info(
-        `Reports loaded with demo data: ${staticFallbackData.leads.length} leads`,
+        `Reports loaded with sample data: ${staticFallbackData.leads.length} leads`,
         { description: "Using sample data for demonstration" }
       );
     }
@@ -1244,13 +1244,13 @@ For detailed analysis, please access the dashboard at: ${window.location.origin}
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-        <div className="flex items-center gap-3">
+      <div className="flex flex-col 2xl:flex-row justify-between items-start 2xl:items-center gap-4">
+        <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
           <h1 className="text-2xl font-bold">{t('pages:reports.title', 'Reports')}</h1>
           {realData.loading && (
             <div className="flex items-center gap-2 text-sm text-muted-foreground">
               <RefreshCw className="h-4 w-4 animate-spin" />
-              {t('pages:reports.loadingData', 'Loading real data...')}
+              {t('pages:reports.loadingData', 'Loading data...')}
             </div>
           )}
           {!realData.loading && (
@@ -1265,7 +1265,7 @@ For detailed analysis, please access the dashboard at: ${window.location.origin}
         </div>
 
         {/* Mobile-first controls */}
-        <div className="flex flex-col w-full sm:w-auto gap-3">
+        <div className="flex flex-col w-full 2xl:w-auto gap-3">
           {/* Mobile: Stack controls vertically */}
           <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-3">
             {/* Report Template Selector */}

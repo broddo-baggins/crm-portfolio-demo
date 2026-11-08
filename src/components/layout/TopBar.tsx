@@ -6,7 +6,12 @@ import {
   Menu,
   MessageSquare,
   Search,
+  Check,
+  ExternalLink,
+  Globe,
+  Moon,
   Sparkles,
+  Sun,
   UserPlus,
   UserRound,
 } from "lucide-react";
@@ -17,8 +22,15 @@ import { Link } from "react-router";
 import { useSidebar } from "@/components/ui/sidebar";
 import { cn } from "@/lib/utils";
 import { BasicProjectSelector } from "@/components/common/BasicProjectSelector";
-import { LanguageSelector } from "@/components/common/LanguageSelector";
-import { DaisyUIThemeController } from "@/components/ui/daisyui-theme-controller";
+import { useTheme } from "@/components/theme-provider";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { 
   Popover, 
   PopoverContent, 
@@ -174,8 +186,13 @@ const generateDynamicNotifications = async (t: any, isRTL: boolean) => {
 
 const TopBar = ({ pendingUserCount = 0, onOpenNav }: TopBarProps) => {
   const { user } = useAuth();
-  const { isRTL } = useLang();
+  const { isRTL, lang, setLang } = useLang();
+  const { theme, setTheme } = useTheme();
   const { t } = useTranslation('common');
+  const isDark =
+    theme === "dark" ||
+    (theme === "system" && typeof window !== "undefined" && window.matchMedia("(prefers-color-scheme: dark)").matches);
+  const userName = user?.user_metadata?.full_name || user?.email || "Guest";
   const isAdmin = user?.user_metadata?.role === 'ADMIN' || user?.user_metadata?.role === 'SUPER_ADMIN';
   const [notifications, setNotifications] = useState<Array<{ id: number; type: string; message: string; read: boolean; timestamp: string; title?: string; time?: string }>>([]);
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
@@ -382,15 +399,19 @@ const TopBar = ({ pendingUserCount = 0, onOpenNav }: TopBarProps) => {
           )}
         </div>
 
+        <a
+          href="https://amityogev.com/?cmd=crm"
+          className="hidden shrink-0 items-center gap-1.5 rounded-full border border-border bg-surface-sunken px-2.5 py-1 text-xs font-medium text-secondary-foreground transition-colors duration-[120ms] hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring lg:inline-flex"
+          data-testid="demo-badge"
+        >
+          <span className="h-1.5 w-1.5 rounded-full bg-primary" aria-hidden="true" />
+          Demo with sample data
+        </a>
+
         <div className="flex-1 md:hidden" />
 
         {/* Controls */}
         <div className="flex shrink-0 items-center gap-1 sm:gap-2 md:ms-auto">
-          <div className="hidden items-center gap-1 sm:flex">
-            <DaisyUIThemeController />
-            <LanguageSelector variant="dropdown" size="sm" />
-          </div>
-
           <Popover open={isNotificationsOpen} onOpenChange={setIsNotificationsOpen}>
             <PopoverTrigger asChild>
               <Button
@@ -464,16 +485,6 @@ const TopBar = ({ pendingUserCount = 0, onOpenNav }: TopBarProps) => {
             </PopoverContent>
           </Popover>
 
-          {/* Admin User Plus Icon (if admin) */}
-          {isAdmin && (
-            <Button variant="ghost" size="icon" className={iconButton} asChild>
-              <Link to="/users" aria-label={pendingUserCount > 0 ? `Users, ${pendingUserCount} pending` : "Users"}>
-                <UserPlus className="h-[18px] w-[18px]" />
-                {pendingUserCount > 0 && <span className={countBadge}>{pendingUserCount}</span>}
-              </Link>
-            </Button>
-          )}
-
           {/* AI Assistant Button with Onboarding */}
           <Button
             variant="outline"
@@ -491,6 +502,60 @@ const TopBar = ({ pendingUserCount = 0, onOpenNav }: TopBarProps) => {
             <Sparkles className="h-4 w-4 text-primary" />
             <span className="hidden xl:inline">Ask AI</span>
           </Button>
+          {/* Account menu: theme, language and the rest of the quiet controls */}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="relative h-9 w-9 min-h-[36px] min-w-[36px] rounded-full"
+                aria-label="Account menu"
+                data-testid="account-menu"
+              >
+                <span className="flex h-8 w-8 items-center justify-center rounded-full bg-ink-800 text-sm font-medium text-ink-50 dark:bg-ink-200 dark:text-ink-900">
+                  {userName.charAt(0).toUpperCase()}
+                </span>
+                {pendingUserCount > 0 && <span className={countBadge}>{pendingUserCount}</span>}
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-60">
+              <DropdownMenuLabel className="truncate font-medium">{userName}</DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem onSelect={() => setTheme(isDark ? "light" : "dark")} data-testid="theme-menu-item">
+                {isDark ? <Sun className="me-2 h-4 w-4" aria-hidden="true" /> : <Moon className="me-2 h-4 w-4" aria-hidden="true" />}
+                {isDark ? "Light mode" : "Dark mode"}
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuLabel className="flex items-center text-xs font-normal text-muted-foreground">
+                <Globe className="me-2 h-3.5 w-3.5" aria-hidden="true" />
+                Language
+              </DropdownMenuLabel>
+              {([["en", "English"], ["he", "עברית"]] as const).map(([code, label]) => (
+                <DropdownMenuItem key={code} onSelect={() => setLang(code)} className="justify-between">
+                  {label}
+                  {lang === code && <Check className="h-4 w-4" aria-hidden="true" />}
+                </DropdownMenuItem>
+              ))}
+              {isAdmin && (
+                <>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem asChild>
+                    <Link to="/users">
+                      <UserPlus className="me-2 h-4 w-4" aria-hidden="true" />
+                      Users{pendingUserCount > 0 ? `, ${pendingUserCount} pending` : ""}
+                    </Link>
+                  </DropdownMenuItem>
+                </>
+              )}
+              <DropdownMenuSeparator />
+              <DropdownMenuItem asChild>
+                <a href="https://amityogev.com/?cmd=crm">
+                  <ExternalLink className="me-2 h-4 w-4" aria-hidden="true" />
+                  Back to amityogev.com
+                </a>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
       </header>
 

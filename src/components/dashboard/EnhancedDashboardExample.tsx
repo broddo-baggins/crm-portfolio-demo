@@ -13,7 +13,6 @@ import {
   stringStatusToInt
 } from "@/utils/statusMapping";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
 import {
   Users,
@@ -51,6 +50,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { EnglishText } from '@/components/common/RTLProvider';
 
 // Import split components
+import DashboardOverview from "./DashboardOverview";
 import DashboardStatsSection from "./DashboardStatsSection";
 import DashboardChartsSection from "./DashboardChartsSection";
 import DashboardInsightsSection from "./DashboardInsightsSection";
@@ -718,102 +718,22 @@ const EnhancedDashboardExample: React.FC = () => {
               "min-w-0" // Prevent shrinking below content size
             )}
           >
-            {/* Main Metric Cards - Independent sizing container */}
-            <div 
-              className={cn(
-                "grid gap-3 grid-cols-1 w-full",
-                "auto-rows-fr", // Equal height rows
-                "place-items-stretch", // Stretch items to fill space
-                "isolate" // Create new stacking context
-              )}
-            >
-              {/* Total Leads */}
-              {widgetVisibility.totalLeads && (
-                <div className="w-full">
-                  <MetricCard
-                    title={tDashboard("dashboard.totalLeads", "Total Leads")}
-                    value={metrics?.lead_temperature_distribution.total || 0}
-                    trend={8.5}
-                    icon={Users}
-                    color="blue"
-                    loading={metricsLoading}
-                    subtitle={tDashboard("dashboard.allLeadsInPipeline", "All leads in pipeline")}
-                  />
-                </div>
-              )}
-
-              {/* BANT Qualification Rate */}
-              {widgetVisibility.bantQualification && (
-                <div className="w-full">
-                  <MetricCard
-                    title={tDashboard("dashboard.bantQualificationRate", "BANT Qualification Rate")}
-                    value={formatPercentage(
-                      metrics?.bant_qualification_rate.percentage || 0,
-                    )}
-                    unit="%"
-                    trend={metrics?.bant_qualification_rate.trend_weekly}
-                    icon={UserCheck}
-                    color="green"
-                    loading={metricsLoading}
-                    subtitle={`${metrics?.bant_qualification_rate.qualified_count || 0} ${tDashboard("dashboard.of", "of")} ${metrics?.bant_qualification_rate.total_assessed || 0} ${tDashboard("dashboard.leads", "leads")}`}
-                  />
-                </div>
-              )}
-
-              {/* Hot & Burning Leads */}
-              {widgetVisibility.hotBurningLeads && (
-                <div className="w-full">
-                  <MetricCard
-                    title={tDashboard("dashboard.hotBurningLeads", "Hot & Burning Leads")}
-                    value={
-                      (metrics?.lead_temperature_distribution.hot || 0) +
-                      (metrics?.lead_temperature_distribution.burning || 0)
+            <DashboardOverview
+              metrics={metrics}
+              loading={metricsLoading || realData.isLoading}
+              leads={allLeads as any}
+              trend={leadsConversionsData}
+              aside={
+                widgetVisibility.temperatureDistribution ? (
+                  <TemperatureDistribution
+                    distribution={
+                      metrics?.lead_temperature_distribution || { cold: 0, warm: 0, hot: 0, burning: 0, total: 0 }
                     }
-                    trend={12.3}
-                    icon={Thermometer}
-                    color="orange"
                     loading={metricsLoading}
-                    subtitle={tDashboard("dashboard.highPriorityLeads", "High priority leads requiring immediate attention")}
                   />
-                </div>
-              )}
-
-              {/* First Message Rate */}
-              {widgetVisibility.firstMessageRate && (
-                <div className="w-full">
-                  <MetricCard
-                    title={tDashboard("dashboard.firstMessageRate", "First Message Rate")}
-                    value={formatPercentage(
-                      metrics?.first_message_rate.percentage || 0,
-                    )}
-                    unit="%"
-                    trend={metrics?.first_message_rate.trend_weekly}
-                    icon={MessageSquare}
-                    color="purple"
-                    loading={metricsLoading}
-                    subtitle={`${metrics?.first_message_rate.contacted_count || 0} ${tDashboard("dashboard.messagesSent", "messages sent")}`}
-                  />
-                </div>
-              )}
-            </div>
-
-            {/* Temperature Distribution */}
-            {widgetVisibility.temperatureDistribution && (
-              <div className="w-full">
-                <TemperatureDistribution
-                  distribution={
-                    metrics?.lead_temperature_distribution || {
-                      cold: 0,
-                      warm: 0,
-                      hot: 0,
-                      burning: 0,
-                      total: 0,
-                    }
-                  }
-                  loading={metricsLoading}
-                />
-              </div>
-            )}
+                ) : undefined
+              }
+            />
 
             {/* Enhanced Stats Section */}
             <div className="w-full">
@@ -884,8 +804,8 @@ const EnhancedDashboardExample: React.FC = () => {
       className={cn(
         "min-h-screen w-full bg-background dark:bg-background",
         "overflow-x-hidden max-w-full", // Prevent horizontal overflow
-        "p-3 sm:p-4 md:p-6", // Mobile-first responsive padding
-        "space-y-3 sm:space-y-4 md:space-y-6", // Mobile-first responsive spacing
+        "p-3 sm:p-4 md:px-6 md:py-5", // Mobile-first responsive padding
+        "space-y-3 sm:space-y-4", // Tight vertical rhythm
         "box-border" // Ensure padding doesn't cause overflow
       )}
       data-testid="desktop-dashboard"
@@ -893,7 +813,7 @@ const EnhancedDashboardExample: React.FC = () => {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-bold text-foreground dark:text-foreground">
+          <h2 className="text-2xl font-semibold tracking-[-0.02em] text-foreground">
             {tDashboard("dashboard.title", "Dashboard")}
           </h2>
           <p className="text-sm text-muted-foreground">
@@ -901,15 +821,6 @@ const EnhancedDashboardExample: React.FC = () => {
           </p>
         </div>
         <div className="flex items-center gap-2">
-          <Badge variant="outline" className="text-xs">
-            {realData.isLoading ? (
-              t("dashboard.loading", "Loading...")
-            ) : (
-              <>
-                {visibleWidgetsCount} <EnglishText>{t("dashboard.activeWidgets", "Active Widgets")}</EnglishText>
-              </>
-            )}
-          </Badge>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="outline" size="sm">
@@ -981,111 +892,23 @@ const EnhancedDashboardExample: React.FC = () => {
         </div>
       )}
 
-      {/* Real-Time Analytics Section */}
-      <div className={cn(
-        "space-y-3 sm:space-y-4 md:space-y-6",
-        "w-full overflow-hidden" // Prevent content overflow
-      )}>
-        <div className={cn(
-          "grid gap-3 sm:gap-4 w-full",
-          "grid-cols-1", // Always single column on mobile
-          "sm:grid-cols-2", // Two columns on small screens
-          "lg:grid-cols-4", // Four columns on large screens
-          "max-w-full" // Ensure grid doesn't exceed screen width
-        )} data-testid="dashboard-metrics-grid">
-          {/* Total Leads */}
-          {widgetVisibility.totalLeads && (
-            <MetricCard
-              title={tDashboard("dashboard.totalLeads", "Total Leads")}
-              value={metrics?.lead_temperature_distribution.total || 0}
-              trend={8.5} // Placeholder trend - could be calculated from weekly data
-              icon={Users}
-              color="blue"
-              loading={metricsLoading}
-              subtitle={tDashboard("dashboard.allLeadsInPipeline", "All leads in pipeline")}
-            />
-          )}
-
-          {/* BANT Qualification Rate */}
-          {widgetVisibility.bantQualification && (
-            <MetricCard
-              title={tDashboard("dashboard.bantQualificationRate", "BANT Qualification Rate")}
-              value={formatPercentage(
-                metrics?.bant_qualification_rate.percentage || 0,
-              )}
-              unit="%"
-              trend={metrics?.bant_qualification_rate.trend_weekly}
-              icon={UserCheck}
-              color="green"
-              loading={metricsLoading}
-              subtitle={`${metrics?.bant_qualification_rate.qualified_count || 0} ${tDashboard("dashboard.of", "of")} ${metrics?.bant_qualification_rate.total_assessed || 0} ${tDashboard("dashboard.leads", "leads")}`}
-            />
-          )}
-
-          {/* Hot & Burning Leads */}
-          {widgetVisibility.hotBurningLeads && (
-            <MetricCard
-              title={tDashboard("dashboard.hotBurningLeads", "Hot & Burning Leads")}
-              value={
-                (metrics?.lead_temperature_distribution.hot || 0) +
-                (metrics?.lead_temperature_distribution.burning || 0)
+      {/* Overview: KPIs, pipeline funnel, activity chart, hot leads */}
+      <DashboardOverview
+              metrics={metrics}
+              loading={metricsLoading || realData.isLoading}
+              leads={allLeads as any}
+              trend={leadsConversionsData}
+              aside={
+                widgetVisibility.temperatureDistribution ? (
+                  <TemperatureDistribution
+                    distribution={
+                      metrics?.lead_temperature_distribution || { cold: 0, warm: 0, hot: 0, burning: 0, total: 0 }
+                    }
+                    loading={metricsLoading}
+                  />
+                ) : undefined
               }
-              trend={metrics?.lead_temperature_distribution.trend_weekly}
-              icon={Thermometer}
-              color="orange"
-              loading={metricsLoading}
-              subtitle={tDashboard("dashboard.highPriorityLeads", "High priority leads")}
             />
-          )}
-
-          {/* First Message Rate */}
-          {widgetVisibility.firstMessageRate && (
-            <MetricCard
-              title={tDashboard("dashboard.firstMessageRate", "First Message Rate")}
-              value={formatPercentage(
-                metrics?.first_message_rate.percentage || 0,
-              )}
-              unit="%"
-              trend={metrics?.first_message_rate.trend_weekly}
-              icon={MessageSquare}
-              color="purple"
-              loading={metricsLoading}
-              subtitle={`${metrics?.first_message_rate.contacted_count || 0} ${tDashboard("dashboard.contacted", "contacted")}`}
-            />
-          )}
-
-          {/* Meeting Pipeline */}
-          {widgetVisibility.meetingPipeline && (
-            <MetricCard
-              title={tDashboard("dashboard.meetingPipeline", "Meeting Pipeline")}
-              value={metrics?.meeting_pipeline.total_meetings || 0}
-              trend={metrics?.meeting_pipeline.trend_weekly}
-              icon={Calendar}
-              color="green"
-              loading={metricsLoading}
-              subtitle={`${formatPercentage(
-                metrics?.meeting_pipeline.conversion_rate || 0,
-              )}% ${tDashboard("dashboard.conversionRate", "conversion rate")}`}
-            />
-          )}
-
-          {/* Temperature Distribution */}
-          {widgetVisibility.temperatureDistribution && (
-            <TemperatureDistribution
-              distribution={
-                metrics?.lead_temperature_distribution || {
-                  cold: 0,
-                  warm: 0,
-                  hot: 0,
-                  burning: 0,
-                  total: 0,
-                }
-              }
-              loading={metricsLoading}
-            />
-          )}
-        </div>
-      </div>
 
       {/* Stats Cards Section */}
       {widgetVisibility.metrics && (

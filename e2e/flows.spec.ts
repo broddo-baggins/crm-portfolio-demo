@@ -147,24 +147,34 @@ test.describe('app shell', () => {
   test('dark mode toggles and survives a reload', async ({ page }, info) => {
     await page.goto('/dashboard');
     await waitForApp(page);
-    let controls = await shellControls(page, info.project.name);
-    // The checkbox is drawn as an icon button: click what the user sees
-    await controls.getByTestId('theme-controller').click();
-    await expect(controls.getByRole('checkbox', { name: 'Dark mode' })).toBeChecked();
+    // Desktop: the account menu; phones: the navigation drawer
+    const toggle = async () => {
+      if (isMobile(info.project.name)) {
+        const controls = await shellControls(page, info.project.name);
+        await controls.getByTestId('theme-controller').click();
+      } else {
+        await page.getByRole('button', { name: 'Account menu' }).click();
+        await page.getByTestId('theme-menu-item').click();
+      }
+    };
+    await toggle();
     await expect(page.locator('html')).toHaveClass(/dark/);
     await page.reload();
     await waitForApp(page);
     await expect(page.locator('html')).toHaveClass(/dark/);
-    controls = await shellControls(page, info.project.name);
-    await controls.getByTestId('theme-controller').click();
+    await toggle();
     await expect(page.locator('html')).not.toHaveClass(/dark/);
   });
 
   test('switching the app to Hebrew flips it right-to-left', async ({ page }, info) => {
     await page.goto('/dashboard');
     await waitForApp(page);
-    const controls = await shellControls(page, info.project.name);
-    await controls.getByRole('button', { name: 'English' }).click();
+    if (isMobile(info.project.name)) {
+      const controls = await shellControls(page, info.project.name);
+      await controls.getByRole('button', { name: 'English' }).click();
+    } else {
+      await page.getByRole('button', { name: 'Account menu' }).click();
+    }
     await page.getByRole('menuitem', { name: /עברית/ }).click();
     await expect(page.locator('html')).toHaveAttribute('dir', 'rtl');
   });
@@ -410,11 +420,11 @@ test.describe('other pages', () => {
     const page = await context.newPage();
     await page.goto('/dashboard');
     await waitForApp(page);
-    await page.getByRole('button', { name: 'Accept All' }).click();
-    await expect(page.getByText('Cookie Consent')).toHaveCount(0);
+    await page.getByRole('button', { name: 'Accept', exact: true }).click();
+    await expect(page.getByTestId('cookie-consent')).toHaveCount(0);
     await page.reload();
     await waitForApp(page);
-    await expect(page.getByText('Cookie Consent')).toHaveCount(0);
+    await expect(page.getByTestId('cookie-consent')).toHaveCount(0);
     await context.close();
   });
 });
