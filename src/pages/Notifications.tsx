@@ -10,7 +10,7 @@ const Notifications: React.FC = () => {
 
   return (
     <div
-      className={cn("container mx-auto py-6", isRTL && "rtl")}
+      className={cn("w-full", isRTL && "rtl")}
       dir={isRTL ? "rtl" : "ltr"}
     >
       <div className="mb-6">

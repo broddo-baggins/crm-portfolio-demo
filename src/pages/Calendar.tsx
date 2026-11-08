@@ -366,11 +366,10 @@ const Calendar = () => {
             description: event.meeting_notes_html,
           });
         } catch (inviteeError) {
-          console.warn(
-            "Failed to get invitees for event:",
-            event.uri,
-            inviteeError,
-          );
+          // Without a connected Calendly account (the sample data case) this is expected
+          if (import.meta.env.DEV) {
+            console.debug("No invitee details for event:", event.uri, inviteeError);
+          }
           // Add event without invitee details
           transformedMeetings.push({
             id: event.uri.split("/").pop() || "",
@@ -634,7 +633,7 @@ const Calendar = () => {
           key={day}
           className={cn(
             // min-h, not h: with three meetings a fixed 8rem cell spilled its chips over the next row's date
-            "min-h-32 p-3 border-r border-b border-border cursor-pointer hover:bg-gray-50 dark:hover:bg-slate-800 transition-colors",
+            "min-h-16 p-1 sm:min-h-32 sm:p-3 border-r border-b border-border cursor-pointer hover:bg-gray-50 dark:hover:bg-slate-800 transition-colors",
             isSelected && "bg-blue-100 dark:bg-blue-900",
             isToday && "bg-yellow-50 dark:bg-yellow-900/20 border-yellow-300"
           )}
@@ -643,12 +642,12 @@ const Calendar = () => {
           <div className={cn("text-sm font-medium", isToday && "text-yellow-700 dark:text-yellow-400")}>
             {day}
           </div>
-          <div className="space-y-1 mt-2">
+          <div className="space-y-1 mt-1 sm:mt-2">
             {dayMeetings.slice(0, 3).map((meeting) => (
               <div
                 key={meeting.id}
                 className={cn(
-                  "text-xs text-white px-2 py-1 rounded-sm cursor-pointer hover:opacity-90 transition-opacity",
+                  "text-xs text-white px-2 py-1 rounded-sm cursor-pointer hover:opacity-90 transition-opacity max-sm:h-1.5 max-sm:overflow-hidden max-sm:p-0",
                   meeting.source === 'calendly' ? "bg-blue-500" : "bg-red-500"
                 )}
                 title={`${meeting.source === 'calendly' ? 'Calendly' : 'Google Calendar'}: ${meeting.title}`}
@@ -657,12 +656,12 @@ const Calendar = () => {
                   setSelectedMeeting(meeting);
                 }}
               >
-                <div className="font-medium truncate">{meeting.title}</div>
-                <div className="text-xs opacity-90">{formatTime(meeting.start_time)}</div>
+                <div className="font-medium truncate max-sm:hidden">{meeting.title}</div>
+                <div className="text-xs opacity-90 max-sm:hidden">{formatTime(meeting.start_time)}</div>
               </div>
             ))}
             {dayMeetings.length > 3 && (
-              <div className="text-xs text-gray-500 px-2">+{dayMeetings.length - 3} more</div>
+              <div className="px-2 text-xs text-gray-500 max-sm:px-0 max-sm:text-center">+{dayMeetings.length - 3}<span className="max-sm:hidden"> more</span></div>
             )}
           </div>
         </div>
@@ -803,6 +802,7 @@ const Calendar = () => {
             onClick={() => {
               if (calendlyStatus.isConnected) loadMeetings();
               if (googleCalendarStatus.isConnected) loadGoogleCalendarEvents();
+              toast.success("Calendar refreshed (sample data)", { id: "calendar-refresh" });
             }}
             disabled={loadingMeetings}
           >

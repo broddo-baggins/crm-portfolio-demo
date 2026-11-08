@@ -204,7 +204,7 @@ const CompanyManagement: React.FC = () => {
 
   const handleInviteUser = () => {
     // TODO: Implement user invitation
-    toast.info('User invitation feature coming soon');
+    toast.info('Demo: invitations are not sent from the sample workspace');
   };
 
   const handleUpdateUserRole = async (userId: string, newRole: string) => {
@@ -261,7 +261,7 @@ const CompanyManagement: React.FC = () => {
 
   if (isLoading || loading) {
     return (
-      <div className="container mx-auto py-8">
+      <div className="w-full">
         <div className="flex items-center justify-center h-64">
           <div className="text-center">
             <div className="animate-spin h-8 w-8 border-b-2 border-blue-600 mx-auto mb-4"></div>
@@ -274,7 +274,7 @@ const CompanyManagement: React.FC = () => {
 
   if (!isCompanyAdmin && !isSystemAdmin) {
     return (
-      <div className="container mx-auto py-8">
+      <div className="w-full">
         <Alert className="border-red-200 bg-red-50">
           <AlertTriangle className="h-4 w-4" />
           <AlertDescription>
@@ -286,7 +286,7 @@ const CompanyManagement: React.FC = () => {
   }
 
   return (
-    <div className="container mx-auto py-6 space-y-6" data-testid="company-management-page">
+    <div className="w-full space-y-6" data-testid="company-management-page">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-4">
@@ -466,8 +466,7 @@ const CompanyManagement: React.FC = () => {
                   <Alert>
                     <Settings className="h-4 w-4" />
                     <AlertDescription>
-                      Company settings management coming soon. This will include company profile, 
-                      billing settings, and integration configurations.
+                      Company profile, billing and integration settings are not part of the sample workspace.
                     </AlertDescription>
                   </Alert>
                 </CardContent>

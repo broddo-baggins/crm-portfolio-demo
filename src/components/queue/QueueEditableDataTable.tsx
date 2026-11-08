@@ -306,16 +306,16 @@ export function QueueEditableDataTable({
           className={`${getPriorityColor(value)} cursor-pointer`}
           onClick={() => handleCellEdit(lead.id, field, value)}
         >
-          {value}
+          {String(value).charAt(0).toUpperCase() + String(value).slice(1)}
         </Badge>
       );
     } else if (field === 'queue_status') {
       return (
         <Badge 
-          className={`${getStatusColor(value)} cursor-pointer`}
+          className={`${getStatusColor(value)} cursor-pointer whitespace-nowrap`}
           onClick={() => handleCellEdit(lead.id, field, value)}
         >
-          {value}
+          {String(value).replace(/_/g, ' ').replace(/^./, (c) => c.toUpperCase())}
         </Badge>
       );
     } else if (field === 'scheduled_date') {

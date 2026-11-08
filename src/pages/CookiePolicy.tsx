@@ -327,7 +327,7 @@ const CookiePolicy: React.FC = () => {
             <div className="space-y-2 text-gray-700 dark:text-gray-300">
               <p><strong>Contact:</strong> amit@amityogev.com</p>
               <p><strong>Portfolio:</strong> https://amityogev.com</p>
-              <p><strong>Note:</strong> This is a portfolio demo with mock data</p>
+              <p><strong>Note:</strong> This is a portfolio demo with sample data</p>
             </div>
           </CardContent>
         </Card>

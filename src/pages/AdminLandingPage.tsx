@@ -29,7 +29,7 @@ const AdminLandingPage: React.FC = () => {
 
   if (!isAdmin) {
     return (
-      <div className="container mx-auto px-4 py-8 max-w-4xl">
+      <div className="w-full max-w-4xl">
         <Alert>
           <Shield className="h-4 w-4" />
           <AlertDescription>
@@ -49,7 +49,7 @@ const AdminLandingPage: React.FC = () => {
   }
 
   return (
-    <div className="container mx-auto px-4 py-8 max-w-6xl">
+    <div className="w-full max-w-6xl">
       {/* Header */}
       <div className="flex items-center justify-between mb-8">
         <div>

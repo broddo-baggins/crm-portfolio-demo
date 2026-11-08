@@ -28,6 +28,11 @@ i18n
     react: { useSuspense: false },
     backend: {
       loadPath: "/locales/{{lng}}/{{ns}}.json",
+      // Components ask the pages namespace for "pages.messages.x"; the files hold "messages.x"
+      parse: (data: string, _lng?: string | string[], ns?: string | string[]) => {
+        const parsed = JSON.parse(data);
+        return ns === "pages" ? { ...parsed, pages: parsed } : parsed;
+      },
     },
     detection: {
       order: ["localStorage", "htmlTag"], // Removed 'navigator' to prevent browser language detection on first visit

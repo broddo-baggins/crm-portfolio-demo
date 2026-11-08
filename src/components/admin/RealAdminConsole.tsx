@@ -110,7 +110,7 @@ function RealAdminConsole({ adminLevel }: AdminConsoleProps) {
         if (!value || value.trim() === '') {
           return (
             <div className="text-sm text-muted-foreground italic">
-              System prompt not implemented - page empty
+              No system prompt set for this page
             </div>
           );
         }

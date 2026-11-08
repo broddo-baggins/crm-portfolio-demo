@@ -20,7 +20,7 @@ export default function AdminConsolePage() {
   // Show loading state
   if (isLoading) {
     return (
-      <div className="container mx-auto py-8">
+      <div className="w-full">
         <div className="flex items-center justify-center h-64">
           <div className="w-full max-w-md space-y-4">
             <ProgressWithLoading
@@ -39,7 +39,7 @@ export default function AdminConsolePage() {
   // Show error if there's an access check error
   if (error) {
     return (
-      <div className="container mx-auto py-8">
+      <div className="w-full">
         <Alert className="border-red-200 bg-red-50">
           <AlertTriangle className="h-4 w-4" />
           <AlertDescription>
@@ -53,7 +53,7 @@ export default function AdminConsolePage() {
   // Show access denied for non-admin users
   if (!isAdmin) {
     return (
-      <div className="container mx-auto py-8">
+      <div className="w-full">
         <Card className="max-w-2xl mx-auto">
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-red-600">
@@ -86,7 +86,7 @@ export default function AdminConsolePage() {
 
   // Render admin console for admin users
   return (
-    <div className="container mx-auto py-6" data-testid="admin-console-page">
+    <div className="w-full" data-testid="admin-console-page">
       {/* Page Header */}
       <div className="mb-6">
         <div className="flex items-center justify-between">

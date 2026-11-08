@@ -265,7 +265,7 @@ test.describe('leads', () => {
     await expect(main.getByTestId('lead-name-lead-001')).toHaveText('Sarah Johnson');
     const card = (label: string) => main.getByText(label, { exact: true }).locator('..');
     await expect(card('Hot Leads')).not.toContainText(/^Hot Leads\s*0\b/);
-    await expect(card('New Leads')).not.toContainText(/^New Leads\s*0\b/);
+    await expect(card('Qualified').first()).not.toContainText(/^Qualified\s*0\b/);
   });
 
   test('search narrows the table and shows an empty state for no matches', async ({ page }) => {

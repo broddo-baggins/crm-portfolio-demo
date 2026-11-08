@@ -1,7 +1,7 @@
 {
   "chart": {
     "defaultTitle": "Chart",
-    "mockData": "Mock chart data visualization",
+    "mockData": "Sample chart data visualization",
     "rtlSupport": "RTL Support"
   },
   "types": {

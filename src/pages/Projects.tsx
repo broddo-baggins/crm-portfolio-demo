@@ -509,7 +509,7 @@ const Projects: React.FC = () => {
   // Mobile-optimized loading state
   if (loading) {
     return (
-      <div className="p-4 sm:p-6">
+      <div>
         <div className="animate-pulse space-y-4">
           <div className="h-6 sm:h-8 bg-gray-200 rounded w-1/3 sm:w-1/4"></div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
@@ -545,7 +545,7 @@ const Projects: React.FC = () => {
   return (
     <ErrorBoundary FallbackComponent={ErrorFallback} onReset={loadProjects}>
       <div
-        className="p-4 sm:p-6 space-y-4 sm:space-y-6"
+        className="space-y-4 sm:space-y-6"
         dir={isRTL ? "rtl" : "ltr"}
         data-testid="projects-page"
       >
@@ -557,10 +557,10 @@ const Projects: React.FC = () => {
           )}
         >
           <div>
-            <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">
+            <h1 className="text-2xl font-semibold leading-8 tracking-[-0.02em]">
               {t("projects.title", "Projects")}
             </h1>
-            <p className="text-muted-foreground text-sm sm:text-base">
+            <p className="mt-1 text-sm text-muted-foreground">
               {t(
                 "projects.subtitle",
                 "Manage your projects and track progress",

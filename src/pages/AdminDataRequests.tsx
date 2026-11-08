@@ -149,7 +149,7 @@ const AdminDataRequests = () => {
 
   return (
     <div
-      className={cn("container mx-auto py-8 px-4", isRTL && "rtl")}
+      className={cn("w-full", isRTL && "rtl")}
       dir={isRTL ? "rtl" : "ltr"}
     >
       <div className="max-w-6xl mx-auto">

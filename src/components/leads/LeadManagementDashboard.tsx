@@ -248,7 +248,7 @@ const getLeadStates = (t: any) => [
 ];
 
 export const LeadManagementDashboard: React.FC = () => {
-  const { t, i18n } = useTranslation(["leads", "common"]);
+  const { t, i18n } = useTranslation(["leads", "common", "pages"]);
   const { isRTL, flexRowReverse, textStart, textEnd } = useLang();
   const { currentProject } = useProject();
   const navigate = useNavigate();

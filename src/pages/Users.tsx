@@ -300,15 +300,15 @@ const Users = () => {
 
   return (
     <div
-      className={cn("container mx-auto py-6 space-y-6", isRTL && "rtl")}
+      className={cn("w-full space-y-6", isRTL && "rtl")}
       dir={isRTL ? "rtl" : "ltr"}
     >
       {/* Activity Banner */}
       <Card className="border-blue-200 bg-blue-50 dark:bg-blue-950/50">
         <CardContent className="pt-6">
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <div className="flex items-center gap-4">
-              <div className="h-12 w-12 rounded-full bg-blue-500 flex items-center justify-center">
+              <div className="h-12 w-12 shrink-0 rounded-full bg-blue-500 flex items-center justify-center">
                 <UsersIcon className="h-6 w-6 text-white" />
               </div>
               <div>
@@ -322,11 +322,11 @@ const Users = () => {
             </div>
             <div className="flex gap-2">
               {pendingUsers > 0 && (
-                <Badge variant="default" className="bg-orange-500">
+                <Badge variant="secondary" className="bg-amber-100 text-amber-900 dark:bg-amber-900/40 dark:text-amber-100">
                   {pendingUsers} Pending
                 </Badge>
               )}
-              <Badge variant="default" className="bg-green-500">
+              <Badge variant="secondary" className="bg-green-100 text-green-900 dark:bg-green-900/40 dark:text-green-100">
                 {activeUsers} Active
               </Badge>
             </div>

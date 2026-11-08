@@ -685,9 +685,9 @@ const EnhancedDashboardExample: React.FC = () => {
       <div
         key={currentProject?.id || 'no-project'}
         className={cn(
-          "min-h-screen w-full bg-background dark:bg-background",
+          "w-full bg-background dark:bg-background",
           "overflow-x-hidden max-w-full", // Prevent horizontal overflow
-          "p-3 space-y-3", // Tighter mobile spacing
+          "space-y-3", // Tighter mobile spacing; the page gutter comes from <main>
           "box-border" // Ensure padding doesn't cause overflow
         )}
         data-testid="mobile-dashboard"
@@ -802,10 +802,9 @@ const EnhancedDashboardExample: React.FC = () => {
     <div
       key={currentProject?.id || 'no-project'}
       className={cn(
-        "min-h-screen w-full bg-background dark:bg-background",
+        "w-full bg-background dark:bg-background",
         "overflow-x-hidden max-w-full", // Prevent horizontal overflow
-        "p-3 sm:p-4 md:px-6 md:py-5", // Mobile-first responsive padding
-        "space-y-3 sm:space-y-4", // Tight vertical rhythm
+        "space-y-4 md:space-y-5", // Vertical rhythm; the page gutter comes from <main>
         "box-border" // Ensure padding doesn't cause overflow
       )}
       data-testid="desktop-dashboard"
@@ -813,9 +812,9 @@ const EnhancedDashboardExample: React.FC = () => {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-semibold tracking-[-0.02em] text-foreground">
+          <h1 className="text-2xl font-semibold leading-8 tracking-[-0.02em] text-foreground">
             {tDashboard("dashboard.title", "Dashboard")}
-          </h2>
+          </h1>
           <p className="text-sm text-muted-foreground">
             {projectName} • {t("dashboard.lastUpdated", "Last updated")}: {new Date().toLocaleTimeString()}
           </p>

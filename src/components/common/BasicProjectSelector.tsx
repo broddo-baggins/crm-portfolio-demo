@@ -93,7 +93,8 @@ export const BasicProjectSelector: React.FC = () => {
           return {
             id: project.id,
             name: project.name,
-            lead_count: leadCount,
+            // Sample projects carry their own lead totals, the same ones the dashboard and Projects page show
+            lead_count: (project as { leads_count?: number }).leads_count ?? leadCount,
           };
         });
 

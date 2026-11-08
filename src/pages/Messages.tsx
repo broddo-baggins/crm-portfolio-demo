@@ -694,14 +694,16 @@ const Messages = () => {
   );
 
   const handleMessageBookmark = useCallback((messageId: string) => {
-    // TODO: Implement bookmark functionality
-    console.log("Bookmarking message:", messageId);
+    // Demo: nothing is stored, but the click answers
+    toast.success("Message bookmarked (demo)", { id: `bookmark-${messageId}` });
   }, []);
 
   const handleMessageRate = useCallback(
     (messageId: string, rating: "up" | "down") => {
-      // TODO: Implement message rating functionality
-      console.log("Rating message:", messageId, rating);
+      // Demo: nothing is stored, but the click answers
+      toast.success(rating === "up" ? "Thanks, marked as helpful (demo)" : "Thanks, marked as not helpful (demo)", {
+        id: `rate-${messageId}`,
+      });
     },
     [],
   );

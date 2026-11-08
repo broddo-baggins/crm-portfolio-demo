@@ -207,7 +207,7 @@ const TopBar = ({ pendingUserCount = 0, onOpenNav, onOpenSearch }: TopBarProps) 
   const [agentQuestion, setAgentQuestion] = useState<string | undefined>();
   
   // Agent onboarding hook
-  const { showPulse, markAsInteracted } = useAgentOnboarding();
+  const { markAsInteracted } = useAgentOnboarding();
   
   // Removed non-functional sidebar toggle function
   
@@ -372,10 +372,9 @@ const TopBar = ({ pendingUserCount = 0, onOpenNav, onOpenSearch }: TopBarProps) 
           aria-keyshortcuts="Control+K Meta+K"
           data-testid="search-trigger"
           className="hidden h-9 min-w-0 max-w-[420px] flex-1 items-center gap-2 rounded-md border border-input bg-surface-sunken px-3 text-sm text-muted-foreground transition-colors duration-[120ms] hover:border-ink-300 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring md:flex max-xl:w-9 max-xl:flex-none max-xl:justify-center max-xl:px-0"
-          aria-label="Search pages, leads, projects"
         >
           <Search className="h-4 w-4 shrink-0" aria-hidden="true" />
-          <span className="truncate max-xl:hidden">Search pages, leads, projects</span>
+          <span className="truncate max-xl:sr-only">Search pages, leads, projects</span>
           <span className="ms-auto hidden shrink-0 gap-0.5 xl:flex" dir="ltr" aria-hidden="true">
             <Kbd>{typeof navigator !== "undefined" && /Mac/.test(navigator.platform) ? "⌘" : "Ctrl"}</Kbd>
             <Kbd>K</Kbd>
@@ -472,7 +471,7 @@ const TopBar = ({ pendingUserCount = 0, onOpenNav, onOpenSearch }: TopBarProps) 
           <Button
             variant="outline"
             size="sm"
-            className={cn("relative h-9 gap-1.5 px-2.5 sm:px-3", showPulse && "animate-pulse-glow")}
+            className="relative h-9 gap-1.5 px-2.5 sm:px-3"
             onClick={() => {
               markAsInteracted();
               setAgentQuestion(undefined);
@@ -492,13 +491,16 @@ const TopBar = ({ pendingUserCount = 0, onOpenNav, onOpenSearch }: TopBarProps) 
                 variant="ghost"
                 size="icon"
                 className="relative h-9 w-9 min-h-[36px] min-w-[36px] rounded-full"
-                aria-label="Account menu"
+                aria-label={pendingUserCount > 0 ? `Account menu, ${pendingUserCount} pending users` : "Account menu"}
                 data-testid="account-menu"
               >
-                <span className="flex h-8 w-8 items-center justify-center rounded-full bg-ink-800 text-sm font-medium text-ink-50 dark:bg-ink-200 dark:text-ink-900">
-                  {userName.charAt(0).toUpperCase()}
-                </span>
-                {pendingUserCount > 0 && <span className={countBadge}>{pendingUserCount}</span>}
+                {/* Initial and count are drawn with CSS: the button's name is its aria-label, and axe wants no visible text left outside it */}
+                <span
+                  aria-hidden="true"
+                  data-initial={userName.charAt(0).toUpperCase()}
+                  className="flex h-8 w-8 items-center justify-center rounded-full bg-ink-800 text-sm font-medium text-ink-50 before:content-[attr(data-initial)] dark:bg-ink-200 dark:text-ink-900"
+                />
+                {pendingUserCount > 0 && <span aria-hidden="true" data-count={pendingUserCount} className={cn(countBadge, "before:content-[attr(data-count)]")} />}
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-60">

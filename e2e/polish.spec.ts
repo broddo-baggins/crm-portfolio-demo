@@ -69,6 +69,7 @@ test.describe('one source of numbers', () => {
     const total = (await page.getByTestId('metric-value-total-leads').locator('span').first().getAttribute('aria-label'))!;
     expect(Number(total)).toBeGreaterThan(20);
     await expect(sideValue('Leads Count')).toHaveText(total);
+    await expect(page.getByRole('banner').getByText(`${total} leads`)).toBeVisible();
     const conversion = (await sideValue('Conversion').innerText()).trim();
     await expect(main.getByText(new RegExp(`${conversion.replace('%', '')}% conversion rate`, 'i')).first()).toBeVisible();
 
@@ -78,6 +79,10 @@ test.describe('one source of numbers', () => {
     await expect(main.getByText('Conversion Rate', { exact: true }).first().locator('xpath=following-sibling::*[1]')).toContainText(conversion);
     await expect(main.getByText(`${total} leads analyzed`)).toBeVisible();
     await expect(sideValue('Leads Count')).toHaveText(total);
+
+    await page.goto('/projects');
+    await waitForApp(page);
+    await expect(main.getByText(total, { exact: true }).first()).toBeVisible();
 
     await page.goto('/leads');
     await waitForApp(page);

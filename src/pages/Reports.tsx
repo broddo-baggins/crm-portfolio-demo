@@ -895,12 +895,12 @@ const Reports = () => {
   const messageCadenceData = generateMessageCadenceData();
   const engagementTimelineData = generateEngagementTimelineData();
 
-  // Legacy mock data for features not yet implemented with real data
+  // Sample timeline data
   const leadTimelineDetails = [
     {
       leadId: "L001",
       name: "Real Lead Analysis",
-      company: "Coming Soon",
+      company: "Sample company",
       timeline: [
         {
           date: "2024-01-01",
@@ -1255,7 +1255,7 @@ For detailed analysis, please access the dashboard at: ${window.location.origin}
     <div className="space-y-6">
       <div className="flex flex-col 2xl:flex-row justify-between items-start 2xl:items-center gap-4">
         <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
-          <h1 className="text-2xl font-bold">{t('pages:reports.title', 'Reports')}</h1>
+          <h1 className="text-2xl font-semibold leading-8 tracking-[-0.02em]">{t('pages:reports.title', 'Reports')}</h1>
           {realData.loading && (
             <div className="flex items-center gap-2 text-sm text-muted-foreground">
               <RefreshCw className="h-4 w-4 animate-spin" />

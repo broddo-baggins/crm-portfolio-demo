@@ -160,7 +160,7 @@ const OptimizedMessages = () => {
   }
 
   return (
-    <div className="p-6 max-w-full h-full">
+    <div className="max-w-full h-full">
       {/* Header with stats */}
       <div className="mb-4">
         <div className="flex justify-between items-center mb-4">

@@ -276,7 +276,9 @@
     "trackLeadProgression": "עקוב אחר התקדמות הלידים דרך שלבי המכירה השונים",
     "system_prompt_reader": "קורא הנחיות מערכת",
     "client": "לקוח",
-    "sections": "קטעים",
+    "sections": {
+      "realTimeUpdates": "עדכונים בזמן אמת"
+    },
     "edit_system_prompt": "ערוך הנחיות מערכת",
     "search_sections": "חפש קטעים...",
     "expand_all": "הרחב הכל",
@@ -336,7 +338,13 @@
     "project": "פרויקט",
     "source": "מקור",
     "created": "נוצר",
-    "actions": "פעולות",
+    "actions": {
+      "view": "צפייה בפרטים",
+      "edit": "עריכת ליד",
+      "message": "שליחת הודעה",
+      "delete": "מחיקת ליד",
+      "clickToView": "לחצו לצפייה בפרטי הליד"
+    },
     "editLead": "ערוך ליד",
     "deleteLead": "מחק ליד",
     "viewDetails": "צפה בפרטים",
@@ -395,8 +403,38 @@
       "cold": "קר",
       "warm": "חם",
       "hot": "לוהט",
-      "burning": "בוער"
-    }
+      "burning": "בוער",
+      "frozen": "קפוא (0-10%)",
+      "iceCold": "קר כקרח (11-20%)",
+      "cool": "פושר (36-50%)",
+      "whiteHot": "לבן לוהט (96-100%)"
+    },
+    "states": {
+      "all": "כל המצבים",
+      "new": "חדש",
+      "contacted": "נוצר קשר",
+      "infoGathering": "איסוף מידע",
+      "demoScheduled": "הדגמה נקבעה",
+      "qualified": "מוסמך",
+      "proposal": "הצעה",
+      "negotiation": "משא ומתן",
+      "closedWon": "נסגר בהצלחה",
+      "closedLost": "נסגר ללא הצלחה",
+      "archived": "בארכיון"
+    },
+    "fields": {
+      "name": "שם",
+      "contact": "יצירת קשר",
+      "temperature": "טמפרטורה",
+      "bant": "סטטוס BANT",
+      "status": "סטטוס",
+      "interactions": "אינטראקציות",
+      "created": "נוצר"
+    },
+    "loading": "טוען נתונים...",
+    "leadsTable": "לידים",
+    "noLeads": "לא נמצאו לידים",
+    "noLeadsDescription": "אין לידים שתואמים לסינון הנוכחי."
   },
   "messages": {
     "title": "הודעות",
@@ -501,7 +539,17 @@
     "calendlyConnected": "Calendly מחובר",
     "meetingReady": "תזמון פגישות מוכן",
     "startWithMeeting": "התחל עם פגישה",
-    "addMeetingLink": "הוסף קישור לפגישה להודעה"
+    "addMeetingLink": "הוסף קישור לפגישה להודעה",
+    "conversationsCount": "שיחות",
+    "export": "ייצוא",
+    "totalConversations": "סך השיחות",
+    "filterConversations": "סינון שיחות",
+    "sortBy": "מיון לפי",
+    "sortByDate": "תאריך",
+    "sortByName": "שם",
+    "sortByMessages": "הודעות",
+    "sortByStatus": "סטטוס",
+    "send": "שליחת הודעה"
   },
   "calendar": {
     "title": "יומן",
@@ -639,7 +687,24 @@
     "legacyMetrics": "מדדים קודמים",
     "leadsConversions": "לידים והמרות",
     "leadPipelineMeetings": "צינור לידים ופגישות",
-    "monthlyPerformance": "ביצועים חודשיים"
+    "monthlyPerformance": "ביצועים חודשיים",
+    "funnel": {
+      "leads": "לידים",
+      "contacted": "נוצר קשר",
+      "qualified": "מוסמכים",
+      "meetings": "פגישות",
+      "title": "משפך המכירות",
+      "description": "מלידים ליצירת קשר, הסמכה ופגישות שנקבעו"
+    },
+    "activity": {
+      "title": "לידים והמרות",
+      "description": "נתוני לדוגמה, 6 חודשים אחרונים"
+    },
+    "hotLeads": {
+      "title": "לידים חמים",
+      "viewAll": "לכל הלידים"
+    },
+    "highPriorityLeads": "לידים בעדיפות גבוהה"
   },
   "leadPipeline": {
     "title": "צינור לידים",
@@ -680,7 +745,10 @@
     "name": "שם",
     "contact": "יצירת קשר",
     "created": "נוצר",
-    "actions": "פעולות"
+    "actions": "פעולות",
+    "allLeadsInSystem": "כל הלידים במערכת",
+    "highPriorityLeads": "לידים בעדיפות גבוהה",
+    "requiresAttention": "דורש תשומת לב"
   },
   "projects": {
     "title": "פרויקטים",
@@ -1137,7 +1205,13 @@
     "lastYear": "השנה שעברה",
     "navigation": {
       "mobile": "ניווט נייד"
-    }
+    },
+    "all": "הכול",
+    "addLead": "הוספת ליד",
+    "actions": "פעולות",
+    "openMenu": "פתיחת תפריט",
+    "loadingLeads": "טוען לידים...",
+    "retry": "ניסיון חוזר"
   },
   "insights": {
     "title": "אנליטיקת ביצועים",

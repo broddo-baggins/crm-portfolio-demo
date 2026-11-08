@@ -224,11 +224,11 @@ const TotalLeads: React.FC = () => {
         titleKey="totalLeads.title"
         subtitle="Authentication required"
         subtitleKey=""
-        value="—"
+        value="n/a"
         icon={<Users />}
         iconColor="text-gray-400"
         trend={{
-          value: "—",
+          value: "n/a",
           positive: null,
           label: "Please log in",
         }}
@@ -255,7 +255,7 @@ const TotalLeads: React.FC = () => {
         titleKey="totalLeads.title"
         subtitle="Select a project to view leads"
         subtitleKey="totalLeads.noProjectSubtitle"
-        value="—"
+        value="n/a"
         icon={<FolderOpen />}
         iconColor="text-gray-400"
         trend={{

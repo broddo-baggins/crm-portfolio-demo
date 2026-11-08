@@ -67,7 +67,7 @@ export default function TermsOfService() {
           </p>
           <p className="text-orange-800 dark:text-orange-300">
             This application is a <strong>demonstration project</strong> created by Amit Yogev for portfolio purposes only. 
-            All data shown is <strong>mock/fictional data</strong> for demonstration purposes.
+            All data shown is <strong>sample (fictional) data</strong> for demonstration purposes.
           </p>
           <ul className="list-disc pl-6 text-orange-800 dark:text-orange-300 space-y-1">
             <li>This is NOT a live commercial product or service</li>

@@ -7,7 +7,7 @@ const Leads = () => {
 
   return (
     <div
-      className={cn("container mx-auto p-6", isRTL && "rtl")}
+      className={cn("w-full", isRTL && "rtl")}
       dir={isRTL ? "rtl" : "ltr"}
       data-testid="leads-page"
     >

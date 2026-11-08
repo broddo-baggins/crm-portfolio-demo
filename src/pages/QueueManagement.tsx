@@ -356,7 +356,10 @@ const QueueManagement: React.FC = () => {
             {queueRunning ? 'Pause Queue' : 'Start Queue'}
           </Button>
           <Button 
-            onClick={loadQueueMetrics}
+            onClick={() => {
+              loadQueueMetrics();
+              toast.success("Queue refreshed (sample data)", { id: "queue-refresh" });
+            }}
             variant="outline" 
             size="sm"
           >
@@ -367,7 +370,7 @@ const QueueManagement: React.FC = () => {
       </div>
 
       {/* Queue Metrics */}
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+      <div className="grid grid-cols-2 gap-3 md:gap-4 lg:grid-cols-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">{t('pages:queue.metrics.depth', 'Queue Depth')}</CardTitle>
