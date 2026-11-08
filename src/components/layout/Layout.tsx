@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { Suspense, useState, useEffect } from "react";
 import { Outlet, useLocation, useNavigate } from "react-router";
 import Sidebar from "./Sidebar";
 import TopBar from "./TopBar";
@@ -13,6 +13,7 @@ import { useAuth } from "@/context/ClientAuthContext";
 import { toast } from "sonner";
 import { RTLProvider } from "@/contexts/RTLContext";
 import { useLang } from "@/hooks/useLang";
+import { PageSkeleton } from "./PageSkeleton";
 import { Sheet, SheetContent, SheetDescription, SheetTitle } from "@/components/ui/sheet";
 
 const LayoutContent = () => {
@@ -130,7 +131,9 @@ const LayoutContent = () => {
           id="main-content"
           className="flex-1 overflow-x-hidden overflow-y-auto bg-background px-4 py-5 sm:px-6 md:py-6 lg:px-8"
         >
-          <Outlet />
+          <Suspense fallback={<PageSkeleton />}>
+            <Outlet />
+          </Suspense>
         </main>
         <Footer />
       </div>

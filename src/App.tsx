@@ -248,14 +248,18 @@ const AnalyticsTracker = () => {
   const location = useLocation();
 
   useEffect(() => {
-    // Initialize analytics
-    initializeAnalytics();
-
-    // Track page views
-    trackPageView(location.pathname);
-    
-    // Track route changes for performance monitoring
-    perf.trackRouteChange(location.pathname);
+    // After first paint: analytics and perf tracking never compete with rendering
+    const run = () => {
+      initializeAnalytics();
+      trackPageView(location.pathname);
+      perf.trackRouteChange(location.pathname);
+    };
+    if (typeof requestIdleCallback === "function") {
+      const id = requestIdleCallback(run, { timeout: 2000 });
+      return () => cancelIdleCallback(id);
+    }
+    const id = setTimeout(run, 1000);
+    return () => clearTimeout(id);
   }, [location]);
 
   return null;

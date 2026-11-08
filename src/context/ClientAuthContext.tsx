@@ -7,7 +7,7 @@
  * - Bypasses login requirements for demo purposes
  */
 
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState } from 'react';
 
 // Mock user type (compatible with Supabase User interface)
 interface MockUser {
@@ -73,20 +73,9 @@ const DEMO_USER: MockUser = {
 
 // Provider component - DEMO MODE
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [loading, setLoading] = useState(true);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-
-  // Auto-authenticate for demo
-  useEffect(() => {
-    // Simulate brief loading state for realism
-    const timer = setTimeout(() => {
-      setIsAuthenticated(true);
-      setLoading(false);
-      console.log('DEMO [DEMO MODE] Auto-authenticated with mock user');
-    }, 100);
-
-    return () => clearTimeout(timer);
-  }, []);
+  // The guest session is synchronous: no loading state, no flash of the login screen
+  const [loading, setLoading] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(true);
 
   // Mock login - always succeeds
   const login = async (email: string, password: string): Promise<AuthResult> => {

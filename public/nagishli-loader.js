@@ -34,11 +34,20 @@
     document.head.appendChild(script);
   }
 
-  load(
-    'https://code.jquery.com/jquery-3.7.1.min.js',
-    { integrity: 'sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=', crossorigin: 'anonymous' },
-    function () {
-      load('/nagishli/nagishli_beta.js?v=3.0b', { charset: 'utf-8' });
-    },
-  );
+  // After the page has painted and gone idle, so the widget never competes with first render
+  function start() {
+    load(
+      'https://code.jquery.com/jquery-3.7.1.min.js',
+      { integrity: 'sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=', crossorigin: 'anonymous' },
+      function () {
+        load('/nagishli/nagishli_beta.js?v=3.0b', { charset: 'utf-8' });
+      },
+    );
+  }
+  function whenIdle() {
+    if (window.requestIdleCallback) window.requestIdleCallback(start, { timeout: 3000 });
+    else setTimeout(start, 1500);
+  }
+  if (document.readyState === 'complete') whenIdle();
+  else window.addEventListener('load', whenIdle);
 })();

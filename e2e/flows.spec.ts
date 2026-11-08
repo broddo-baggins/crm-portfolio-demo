@@ -187,7 +187,7 @@ test.describe('app shell', () => {
     await expect(page).toHaveURL(/\/notifications$/);
   });
 
-  test('a slow page shows the loading state, then the page', async ({ page }) => {
+  test('a slow page shows the skeleton in the shell, then the page', async ({ page }) => {
     await page.goto('/dashboard');
     await waitForApp(page);
     // Hold back the lazily loaded Reports chunk to observe the Suspense fallback
@@ -198,7 +198,9 @@ test.describe('app shell', () => {
       await route.continue();
     });
     await page.goto('/reports');
-    await expect(page.getByText('Loading...')).toBeVisible();
+    // A skeleton inside the app shell, not a full-screen spinner
+    await expect(page.getByTestId('page-skeleton')).toBeVisible();
+    await expect(page.getByRole('navigation').first()).toBeVisible();
     release();
     await waitForApp(page);
     await expect(page.getByRole('main').getByText('Lead Conversion Funnel').first()).toBeVisible();

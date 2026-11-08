@@ -20,6 +20,9 @@ import './index.css';
 // Removed startup logs for cleaner user experience
 // console.log('[MAIN] Starting React app with createRoot...');
 
+// Start the route chunk now, in parallel with the app's own startup, not after the router mounts
+if (location.pathname.startsWith('/dashboard')) void import('./pages/Dashboard');
+
 // Get root element
 const rootElement = document.getElementById('root');
 
