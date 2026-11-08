@@ -10,7 +10,7 @@ const UnauthorizedPage = () => {
   const { t } = useTranslation(["pages", "common"]);
 
   useEffect(() => {
-    console.warn(
+    console.debug(
       "401 Unauthorized: User attempted to access protected route:",
       location.pathname,
     );

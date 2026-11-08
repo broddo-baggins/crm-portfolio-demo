@@ -10,7 +10,7 @@ const ServiceUnavailablePage = () => {
   const [retryCountdown, setRetryCountdown] = useState(60);
 
   useEffect(() => {
-    console.warn(
+    console.debug(
       "503 Service Unavailable: Service temporarily unavailable at:",
       location.pathname,
     );

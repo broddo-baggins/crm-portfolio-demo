@@ -9,7 +9,7 @@ const ForbiddenPage = () => {
   const { t } = useTranslation(["pages", "common"]);
 
   useEffect(() => {
-    console.warn(
+    console.debug(
       "403 Forbidden: User lacks permission for:",
       location.pathname,
     );

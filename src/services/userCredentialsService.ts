@@ -383,7 +383,10 @@ class UserCredentialsService {
 
       
       if (!credentials || credentials.length === 0) {
-        console.warn('SEARCH getWhatsappStatus: No WhatsApp credentials found for user');
+        // The demo runs the integration on sample data, so no credentials is the normal case
+        if (import.meta.env.VITE_DEMO_MODE !== 'true') {
+          console.warn('SEARCH getWhatsappStatus: No WhatsApp credentials found for user');
+        }
         return { connected: false, configured: false };
       }
 

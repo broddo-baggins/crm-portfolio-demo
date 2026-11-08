@@ -15,7 +15,7 @@ const NotFoundAlternativePage = () => {
   const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
-    console.warn(
+    console.debug(
       "404 Alternative: Page not found (alternative design):",
       location.pathname,
     );

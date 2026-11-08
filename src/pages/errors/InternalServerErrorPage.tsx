@@ -9,7 +9,7 @@ const InternalServerErrorPage = () => {
   const { t } = useTranslation(["pages", "common"]);
 
   useEffect(() => {
-    console.warn(
+    console.debug(
       "500 Internal Server Error: Server error occurred at:",
       location.pathname,
     );

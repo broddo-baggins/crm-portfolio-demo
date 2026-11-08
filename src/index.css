@@ -1726,3 +1726,14 @@ input:-webkit-autofill:active {
 @media (prefers-reduced-motion: reduce) {
   .spark-line, .rise-in { animation: none; }
 }
+
+/* NagishLi trigger: clear of the cookie bar (its height is published as --cookie-bar-h)
+   and, below lg, of the bottom nav (56px) */
+#NagishLiTrigger {
+  bottom: calc(var(--cookie-bar-h, 0px) + 10px) !important;
+}
+@media (max-width: 1023.98px) {
+  #NagishLiTrigger {
+    bottom: calc(var(--cookie-bar-h, 56px) + 10px + env(safe-area-inset-bottom)) !important;
+  }
+}

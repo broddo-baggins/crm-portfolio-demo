@@ -9,7 +9,7 @@ const BadRequestPage = () => {
   const { t } = useTranslation(["pages", "common"]);
 
   useEffect(() => {
-    console.warn(
+    console.debug(
       "400 Bad Request: Invalid request made to:",
       location.pathname,
     );
