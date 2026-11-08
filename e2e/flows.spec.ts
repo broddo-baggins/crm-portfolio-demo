@@ -482,3 +482,32 @@ test.describe('design 1.2: palette, sidebar rail, bottom nav', () => {
     await expect(page.getByTestId('navigation-drawer')).toBeVisible();
   });
 });
+
+test.describe('design 1.3: lead drawer and chat', () => {
+  test.beforeEach(async ({ page }) => {
+    await acceptCookies(page);
+  });
+
+  test('a lead opens in a drawer with BANT, activity and conversation', async ({ page }) => {
+    await page.goto('/leads');
+    await waitForApp(page);
+    await page.getByTestId('lead-name-lead-001').click();
+    const drawer = page.getByTestId('lead-drawer');
+    await expect(drawer).toBeVisible();
+    await expect(drawer.getByRole('heading', { name: 'Sarah Johnson' })).toBeVisible();
+    await expect(drawer.getByRole('heading', { name: 'BANT breakdown' })).toBeVisible();
+    await expect(drawer.getByRole('heading', { name: 'Activity' })).toBeVisible();
+    await expect(drawer.getByRole('list', { name: 'Last messages' })).toBeVisible();
+    await page.keyboard.press('Escape');
+    await expect(drawer).toHaveCount(0);
+  });
+
+  test('a suggested reply fills the composer', async ({ page }) => {
+    await page.goto('/messages');
+    await waitForApp(page);
+    await page.getByTestId('conversations-list').getByText('Sarah Johnson').first().click();
+    const chat = page.getByTestId('chat-area');
+    await chat.getByRole('group', { name: 'Suggested replies' }).getByRole('button').first().click();
+    await expect(chat.getByRole('textbox', { name: 'Message' })).not.toHaveValue('');
+  });
+});

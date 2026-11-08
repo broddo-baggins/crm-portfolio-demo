@@ -1,7 +1,7 @@
 // @ts-nocheck
 // TEMP: TypeScript compatibility issues - systematic fix needed
 
-import { useState, useEffect, useMemo, useCallback } from "react";
+import { Fragment, useState, useEffect, useMemo, useCallback } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import {
@@ -58,6 +58,11 @@ import { WhatsAppService } from "@/services/whatsapp-api";
 import { ConversationService } from "@/services/conversationService";
 import { cn } from "@/lib/utils";
 import { useTranslation } from "react-i18next";
+import { ArrowLeft, CheckCheck, Check as CheckIcon } from "lucide-react";
+import { PersonAvatar } from "@/components/system/PersonAvatar";
+import { HeatTag } from "@/components/system/HeatTag";
+import { BantChip } from "@/components/system/BantChip";
+import { bantFlags, heatWord } from "@/utils/leadInsight";
 import { useLang } from "@/hooks/useLang";
 import {
   Select,
@@ -319,7 +324,7 @@ const Messages = () => {
 
       // Auto-select first conversation with messages
       const firstConvWithMessages = conversationsWithMeta[0];
-      if (firstConvWithMessages && typeof window !== 'undefined') {
+      if (firstConvWithMessages && typeof window !== 'undefined' && window.innerWidth >= 1024) {
         setSelectedConversation(firstConvWithMessages);
         // Messages will be loaded by useEffect when selectedConversation changes
       }
@@ -1127,7 +1132,7 @@ const Messages = () => {
       data-testid="messages-page"
     >
       {/* Header Section */}
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+      <div className={cn("flex-col gap-4 sm:flex-row sm:items-end sm:justify-between", selectedConversation ? "hidden lg:flex" : "flex")}>
         <div className={textStart()}>
           <h1 className="text-2xl font-semibold leading-8 tracking-[-0.02em]">
             {t("pages.messages.messagesAndConversations", "Messages & Conversations")}
@@ -1174,75 +1179,25 @@ const Messages = () => {
         </div>
       </div>
 
-      {/* Quick Stats */}
-      <div className="grid grid-cols-2 gap-3 lg:grid-cols-4 lg:gap-4">
-        <Card data-testid="message-stats-total">
-          <CardContent className="p-4 md:p-5">
-            <div className={cn("flex items-center", flexRowReverse())}>
-              <div className={cn("flex-1", textStart())}>
-                <p className="text-sm font-medium text-muted-foreground">
-                  {t("pages.messages.totalConversations", "Total Conversations")}
-                </p>
-                <p className="text-[28px] font-semibold leading-8 tracking-[-0.02em] tabular-nums">
-                  {filteredConversations.length}
-                </p>
-              </div>
-              <MessageSquare className="hidden h-5 w-5 text-muted-foreground sm:block" aria-hidden="true" />
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card data-testid="message-stats-active">
-          <CardContent className="p-4 md:p-5">
-            <div className={cn("flex items-center", flexRowReverse())}>
-              <div className={cn("flex-1", textStart())}>
-                <p className="text-sm font-medium text-muted-foreground">
-                  {t("pages.messages.activeChatToday", "Active Chat Today")}
-                </p>
-                <p className="text-[28px] font-semibold leading-8 tracking-[-0.02em] tabular-nums">
-                  {stats.activeConversations}
-                </p>
-              </div>
-              <Activity className="hidden h-5 w-5 text-muted-foreground sm:block" aria-hidden="true" />
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card data-testid="message-stats-messages">
-          <CardContent className="p-4 md:p-5">
-            <div className={cn("flex items-center", flexRowReverse())}>
-              <div className={cn("flex-1", textStart())}>
-                <p className="text-sm font-medium text-muted-foreground">
-                  {t("pages.messages.messagesSent", "Messages Sent")}
-                </p>
-                <p className="text-[28px] font-semibold leading-8 tracking-[-0.02em] tabular-nums">
-                  {stats.totalMessages}
-                </p>
-              </div>
-              <MessageSquare className="hidden h-5 w-5 text-muted-foreground sm:block" aria-hidden="true" />
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card data-testid="message-stats-response">
-          <CardContent className="p-4 md:p-5">
-            <div className={cn("flex items-center", flexRowReverse())}>
-              <div className={cn("flex-1", textStart())}>
-                <p className="text-sm font-medium text-muted-foreground">
-                  {t("pages.messages.avgResponseTime", "Avg Response Time")}
-                </p>
-                <p className="text-[28px] font-semibold leading-8 tracking-[-0.02em] tabular-nums">2.3h</p>
-              </div>
-              <Clock className="hidden h-5 w-5 text-muted-foreground sm:block" aria-hidden="true" />
-            </div>
-          </CardContent>
-        </Card>
-      </div>
+      {/* Quick Stats: one strip */}
+      <Card className={cn("grid-cols-2 lg:grid-cols-4 [&>*]:border-border max-lg:[&>*:nth-child(n+3)]:border-t max-lg:[&>*:nth-child(even)]:border-s lg:[&>*+*]:border-s", selectedConversation ? "hidden lg:grid" : "grid")}>
+        {[
+          { id: "total", label: t("pages.messages.totalConversations", "Total Conversations"), value: String(filteredConversations.length) },
+          { id: "active", label: t("pages.messages.activeChatToday", "Active Chat Today"), value: String(stats.activeConversations) },
+          { id: "messages", label: t("pages.messages.messagesSent", "Messages Sent"), value: String(stats.totalMessages) },
+          { id: "response", label: t("pages.messages.avgResponseTime", "Avg Response Time"), value: "2.3h" },
+        ].map((k) => (
+          <div key={k.id} className="px-4 py-3 md:px-5" data-testid={`message-stats-${k.id}`}>
+            <p className={cn("text-[13px] font-medium text-subtle", textStart())}>{k.label}</p>
+            <p className={cn("num mt-0.5 text-[26px] font-semibold leading-8", textStart())}>{k.value}</p>
+          </div>
+        ))}
+      </Card>
 
       {/* Main Content */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 h-[600px]">
+      <div className={cn("grid min-h-[480px] grid-cols-1 overflow-hidden rounded-[10px] border border-border bg-surface lg:h-[calc(100dvh-16rem)] lg:grid-cols-[340px_minmax(0,1fr)]", selectedConversation ? "h-[calc(100dvh-10.5rem)]" : "h-[calc(100dvh-14rem)]")}>
         {/* Conversations List */}
-        <div className="lg:col-span-1 bg-white dark:bg-slate-800 rounded-lg border dark:border-slate-700 flex flex-col h-full max-h-full overflow-hidden">
+        <div className={cn("flex h-full max-h-full flex-col overflow-hidden border-border bg-surface lg:border-e", selectedConversation ? "hidden lg:flex" : "flex")}>
           <div className="flex-shrink-0 p-4 border-b dark:border-slate-700">
             <div className={cn("flex items-center justify-between mb-4", flexRowReverse())}>
               <h2 className={cn("text-lg font-semibold", textStart())}>
@@ -1263,7 +1218,7 @@ const Messages = () => {
 
             {/* Search and filters */}
             {/* Phones: search takes its own row; beside two selects it shrank to an empty box */}
-            <div className={cn("flex flex-wrap items-center gap-2 mb-4", flexRowReverse())}>
+            <div className={cn("flex flex-wrap items-center gap-2 mb-2", flexRowReverse())}>
               <div className="relative basis-full sm:basis-auto sm:flex-1">
                 <Search className={cn("pointer-events-none absolute z-10 h-4 w-4 text-gray-400", isRTL ? "right-3 top-3" : "left-3 top-3")} aria-hidden="true" />
                 <Input
@@ -1298,12 +1253,12 @@ const Messages = () => {
             </div>
 
             {/* Items per page selector */}
-            <div className={cn("flex items-center gap-2 mb-4", flexRowReverse())}>
-              <span className="text-sm text-gray-600 dark:text-gray-400">
-                {t("pages.messages.conversationsPerPage", "Conversations per page")}:
+            <div className={cn("flex items-center justify-between gap-2", flexRowReverse())}>
+              <span className="text-xs text-muted-foreground">
+                {t("pages.messages.conversationsPerPage", "Conversations per page")}
               </span>
               <Select value={itemsPerPage.toString()} onValueChange={(value: string) => setItemsPerPage(parseInt(value))}>
-                <SelectTrigger className="w-20" aria-label={t("pages.messages.conversationsPerPage", "Conversations per page")}>
+                <SelectTrigger className="h-8 w-20" aria-label={t("pages.messages.conversationsPerPage", "Conversations per page")}>
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -1352,60 +1307,46 @@ const Messages = () => {
             aria-label={t("pages.messages.conversations", "Conversations")}
           >
             <div className="space-y-3">
-              {paginatedConversations.map((conversation) => (
+              {paginatedConversations.map((conversation) => {
+                const selected = selectedConversation?.id === conversation.id;
+                const leadName = formatLeadName(conversation.lead);
+                return (
                 <div
                   key={conversation.id}
+                  role="button"
+                  tabIndex={0}
+                  aria-current={selected || undefined}
                   className={cn(
-                    "p-3 rounded-lg border cursor-pointer transition-all hover:bg-muted/50",
-                    selectedConversation?.id === conversation.id
-                      ? "border-blue-500 bg-blue-50 dark:bg-blue-950/50"
-                      : "border-border hover:border-border/60",
-                    "conversation",
+                    "conversation flex cursor-pointer items-start gap-3 rounded-lg px-3 py-2.5 transition-colors duration-[120ms] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+                    selected ? "bg-accent" : "hover:bg-accent/50",
                   )}
                   onClick={() => handleConversationSelect(conversation)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" || e.key === " ") {
+                      e.preventDefault();
+                      handleConversationSelect(conversation);
+                    }
+                  }}
                   data-testid={`conversation-${conversation.id}`}
                 >
-                  <div className={cn("flex justify-between items-start", flexRowReverse())}>
-                    <div className={cn("flex-1 min-w-0", textStart())}>
-                      <h3 className="font-medium text-sm truncate">
-                        {formatLeadName(conversation.lead)}
-                      </h3>
-                      <p className="text-xs text-gray-500 dark:text-slate-400 truncate">
-                        {conversation.lastMessage || t("pages.messages.noMessages", "No messages yet")}
-                      </p>
+                  <PersonAvatar name={leadName} />
+                  <div className={cn("min-w-0 flex-1", textStart())}>
+                    <div className="flex items-baseline justify-between gap-2">
+                      <h3 className="truncate text-sm font-medium text-foreground">{leadName}</h3>
+                      <span className="num shrink-0 text-[11px] text-muted-foreground">{formatTimeAgo(conversation.lastActive)}</span>
                     </div>
-                    <div className={cn("flex flex-col items-end gap-1 ml-2", textEnd())}>
-                      <Badge variant="outline" className="text-xs">
-                        {conversation.messageCount} {t("pages.messages.msgs", "msgs")}
-                      </Badge>
-                      <span className="text-xs text-muted-foreground">
-                        {formatTimeAgo(conversation.lastActive)}
-                      </span>
-                    </div>
-                  </div>
-
-                  <div
-                    className={cn(
-                      "flex justify-between items-center mt-1",
-                      flexRowReverse(),
-                    )}
-                  >
-                    <p
-                      className={cn(
-                        "text-xs text-gray-400 dark:text-slate-500",
-                        textStart(),
-                      )}
-                    >
-                      {(conversation.lead as any).email || conversation.lead.phone}
+                    <p className="truncate text-[13px] text-secondary-foreground">
+                      {conversation.lastMessage || t("pages.messages.noMessages", "No messages yet")}
                     </p>
-                    <div className={cn("flex gap-1", flexRowReverse())}>
-                      <Badge variant="secondary" className="text-xs">
-                        {conversation.lead.status || "Unknown"}
-                      </Badge>
+                    <div className="mt-1 flex items-center gap-2 text-xs text-muted-foreground">
+                      <span className="num">{conversation.messageCount} {t("pages.messages.msgs", "msgs")}</span>
+                      <span aria-hidden="true">/</span>
+                      <span className="truncate">{conversation.lead.status || "Unknown"}</span>
                     </div>
                   </div>
                 </div>
-              ))}
+                );
+              })}
 
               {paginatedConversations.length === 0 && (
                 <div className="p-6 text-center text-gray-500 dark:text-slate-400" data-testid="conversations-empty">
@@ -1500,369 +1441,275 @@ const Messages = () => {
         </div>
 
         {/* Chat Area */}
-        <div className="lg:col-span-2 bg-white dark:bg-slate-800 rounded-lg border dark:border-slate-700 flex flex-col h-full max-h-full overflow-hidden" data-testid="chat-area">
+        <div className={cn("h-full max-h-full flex-col overflow-hidden", selectedConversation ? "flex" : "hidden lg:flex")} data-testid="chat-area">
           {selectedConversation ? (
             <>
-              {/* Conversation header - Fixed Height */}
-              <div className="flex-shrink-0 p-4 border-b dark:border-slate-700" data-testid="conversation-header">
-                  <div
-                    className={cn(
-                      // Wraps on phones: the contact line pushed the calendar actions off-screen
-                      "flex flex-wrap justify-between items-center gap-3",
-                      flexRowReverse(),
-                    )}
+              {/* Conversation header */}
+              <div className="shrink-0 border-b border-border px-4 py-3" data-testid="conversation-header">
+                <div className="flex flex-wrap items-center gap-3">
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="-ms-2 h-9 w-9 lg:hidden"
+                    onClick={() => setSelectedConversation(null)}
+                    aria-label="Back to conversations"
                   >
-                    <div className={cn("min-w-0", textStart())}>
-                      <h3 className="text-lg font-semibold">
-                        {formatLeadName(selectedConversation.lead)}
-                      </h3>
-                      <div className="flex flex-wrap items-center gap-2 text-sm text-gray-500 dark:text-slate-400">
-                        <span>
-                          {(selectedConversation.lead as any).email_address || (selectedConversation.lead as any).email || 
-                            t("pages.messages.noEmail", "No email")}
-                        </span>
-                        <span>•</span>
-                        <span>
-                          {selectedConversation.lead.phone ||
-                            t("pages.messages.noPhone", "No phone")}
-                        </span>
-                        <span>•</span>
-                        <Badge
-                          variant="outline"
-                          className={`text-xs ${
-                            (selectedConversation.lead.status || "Unknown") === "Unknown" 
-                              ? "bg-gray-100 text-gray-800 border-gray-300" 
-                              : ""
-                          }`}
-                        >
-                          {selectedConversation.lead.status || "Unknown"}
-                        </Badge>
-                      </div>
-                      
-                      {/* BANT & Heat Metrics Display */}
-                      <div className={cn("flex flex-wrap items-center gap-3 mt-2", flexRowReverse())}>
-                        {/* BANT Status */}
-                        <div className="flex items-center gap-1">
-                          <span className="text-xs font-medium text-gray-600 dark:text-slate-400">BANT:</span>
-                          <Badge
-                            variant={selectedConversation.lead.bant_status === 'qualified' ? 'default' : 'secondary'}
-                            className={cn(
-                              "text-xs",
-                              selectedConversation.lead.bant_status === 'qualified' 
-                                ? "bg-green-100 text-green-800 border-green-200" 
-                                : "bg-gray-100 text-gray-600 border-gray-200"
-                            )}
-                          >
-                            {selectedConversation.lead.bant_status || 'Not assessed'}
-                          </Badge>
-                        </div>
-                        
-                        {/* Heat Level */}
-                        <div className="flex items-center gap-1">
-                          <Thermometer className="h-3 w-3 text-gray-500" />
-                          <span className="text-xs font-medium text-gray-600 dark:text-slate-400">Heat:</span>
-                          <Badge
-                            variant="outline"
-                            className={cn(
-                              "text-xs border",
-                              selectedConversation.lead.heat === 'burning' && "bg-red-100 text-red-800 border-red-200",
-                              selectedConversation.lead.heat === 'hot' && "bg-orange-100 text-orange-800 border-orange-200",
-                              selectedConversation.lead.heat === 'warm' && "bg-yellow-100 text-yellow-800 border-yellow-200",
-                              selectedConversation.lead.heat === 'cold' && "bg-blue-100 text-blue-800 border-blue-200",
-                              !selectedConversation.lead.heat && "bg-gray-100 text-gray-600 border-gray-200"
-                            )}
-                          >
-                            {selectedConversation.lead.heat || 'Cold'}
-                          </Badge>
-                        </div>
-                        
-                        {/* Lead Progression Stage */}
-                        <div className="flex items-center gap-1">
-                          <Target className="h-3 w-3 text-gray-500" />
-                          <span className="text-xs font-medium text-gray-600 dark:text-slate-400">Stage:</span>
-                          <Badge
-                            variant="outline"
-                            className="text-xs bg-purple-100 text-purple-800 border-purple-200"
-                          >
-                            {selectedConversation.lead.state || 'New'}
-                          </Badge>
-                        </div>
-                      </div>
+                    <ArrowLeft className="h-4 w-4 rtl:rotate-180" aria-hidden="true" />
+                  </Button>
+                  <PersonAvatar name={formatLeadName(selectedConversation.lead)} size="md" className="sm:h-11 sm:w-11 sm:text-sm" />
+                  <div className={cn("min-w-0 flex-1", textStart())}>
+                    <h3 className="truncate text-[15px] font-semibold leading-5">{formatLeadName(selectedConversation.lead)}</h3>
+                    <p className="truncate text-xs text-muted-foreground">
+                      <span className="num">{selectedConversation.lead.phone || t("pages.messages.noPhone", "No phone")}</span>
+                      {" / "}
+                      {(selectedConversation.lead as any).email_address || (selectedConversation.lead as any).email || t("pages.messages.noEmail", "No email")}
+                    </p>
+                    <div className="mt-1.5 flex flex-wrap items-center gap-2">
+                      <HeatTag temperature={heatWord((selectedConversation.lead as any).heat ?? (selectedConversation.lead as any).temperature)} />
+                      <BantChip score={bantFlags(selectedConversation.lead as any).filter(Boolean).length} met={bantFlags(selectedConversation.lead as any)} />
+                      <span className="hidden rounded-full border border-border px-2 py-0.5 text-xs font-medium text-secondary-foreground sm:inline-flex">
+                        {String(selectedConversation.lead.state || "New").replace(/_/g, " ")}
+                      </span>
                     </div>
-                    
-                    {/* Calendar Actions */}
-                    <div className={cn("flex items-center gap-2", flexRowReverse())}>
-                      {calendlyStatus.isConnected ? (
-                        <>
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => handleScheduleMeeting(selectedConversation.lead)}
-                            className="flex items-center gap-2"
-                            aria-label={t("pages.messages.scheduleMeeting", "Schedule Meeting")}
-                          >
-                            <CalendarDays className="h-4 w-4" />
-                            <span className="hidden sm:inline">
-                              {t("pages.messages.scheduleMeeting", "Schedule Meeting")}
-                            </span>
-                          </Button>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => handleShareMeetingLink(selectedConversation.lead)}
-                            className="flex items-center gap-2"
-                            aria-label={t("pages.messages.shareLink", "Share Link")}
-                          >
-                            <ExternalLink className="h-4 w-4" />
-                            <span className="hidden sm:inline">
-                              {t("pages.messages.shareLink", "Share Link")}
-                            </span>
-                          </Button>
-                        </>
-                      ) : (
+                  </div>
+
+                  <div className="flex items-center gap-2">
+                    {calendlyStatus.isConnected ? (
+                      <>
                         <Button
                           variant="outline"
                           size="sm"
-                          onClick={() => window.location.href = "/settings?tab=integrations"}
-                          className="flex items-center gap-2 text-whatsapp-accent"
+                          onClick={() => handleScheduleMeeting(selectedConversation.lead)}
+                          aria-label={t("pages.messages.scheduleMeeting", "Schedule Meeting")}
                         >
-                          <Calendar className="h-4 w-4" />
-                          <span className="hidden sm:inline">
-                            {t("pages.messages.connectCalendly", "Connect Calendly")}
-                          </span>
+                          <CalendarDays className="h-4 w-4" aria-hidden="true" />
+                          <span className="hidden sm:inline">{t("pages.messages.scheduleMeeting", "Schedule Meeting")}</span>
                         </Button>
-                      )}
-                    </div>
-                  </div>
-                  
-                  {/* Calendar Connection Status */}
-                  {calendlyStatus.isConnected && calendlyStatus.user && (
-                    <div className="mt-2 p-2 bg-green-50 dark:bg-green-950/20 rounded-lg border border-green-200 dark:border-green-800">
-                      <div className="flex items-center gap-2 text-sm text-green-800 dark:text-green-300">
-                        <CheckCircle className="h-4 w-4" />
-                        <span>
-                          {t("pages.messages.calendlyConnected", "Calendly connected")} - {calendlyStatus.user.name}
-                        </span>
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Meeting Context Info */}
-                  <div
-                    className={cn(
-                      "mt-2 flex items-center gap-4 text-sm text-gray-500 dark:text-slate-400",
-                      flexRowReverse(),
-                    )}
-                  >
-                    <span>
-                      {selectedConversation.messageCount.toLocaleString(
-                        isRTL ? "he-IL" : "en-US",
-                      )}{" "}
-                      {t("pages.messages.messages", "messages")}
-                    </span>
-                    <span>
-                      {t("pages.messages.lastActive", "Last active")}:{" "}
-                      {formatTimeAgo(selectedConversation.lastActive)}
-                    </span>
-                    {calendlyStatus.isConnected && (
-                      <span className="text-whatsapp-accent">
-                        {t("pages.messages.meetingReady", "Meeting scheduling ready")}
-                      </span>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => handleShareMeetingLink(selectedConversation.lead)}
+                          aria-label={t("pages.messages.shareLink", "Share Link")}
+                        >
+                          <ExternalLink className="h-4 w-4" aria-hidden="true" />
+                          <span className="hidden md:inline">{t("pages.messages.shareLink", "Share Link")}</span>
+                        </Button>
+                      </>
+                    ) : (
+                      <Button variant="outline" size="sm" onClick={() => (window.location.href = "/settings?tab=integrations")}>
+                        <Calendar className="h-4 w-4" aria-hidden="true" />
+                        <span className="hidden sm:inline">{t("pages.messages.connectCalendly", "Connect Calendly")}</span>
+                      </Button>
                     )}
                   </div>
                 </div>
+              </div>
 
-                {/* Messages Container - Responsive Height (was 2/3 size, now full responsive) */}
-                <div className="flex-1 min-h-0 max-h-full overflow-hidden relative">
-                  <div 
-                    className="absolute inset-0 overflow-y-auto"
-                    style={{ 
-                      maxHeight: '100%',
-                      height: '100%'
-                    }}
-                  >
-                    <div className="p-4 min-h-full">
-                      {loadingMessages ? (
-                        <div className="flex justify-center items-center py-8">
-                          <div className="w-full max-w-sm">
-                            <ProgressWithLoading
-                              value={60}
-                              label={t("common.loadingMessages", "Loading messages...")}
-                              animated
-                              indeterminate
-                              className="mb-2"
-                            />
-                          </div>
+              {/* Thread */}
+              <div className="relative min-h-0 flex-1 bg-surface-sunken">
+                <div className="absolute inset-0 overflow-y-auto" role="log" aria-label="Conversation" tabIndex={0}>
+                  <div className="min-h-full px-4 py-4">
+                    {loadingMessages ? (
+                      <div className="flex items-center justify-center py-8">
+                        <div className="w-full max-w-sm">
+                          <ProgressWithLoading
+                            value={60}
+                            label={t("common.loadingMessages", "Loading messages...")}
+                            animated
+                            indeterminate
+                            className="mb-2"
+                          />
                         </div>
-                      ) : currentMessages.length > 0 ? (
-                        <div className="space-y-4" dir={isRTL ? "rtl" : "ltr"}>
-                          {currentMessages.map((message, index) => (
-                            <div key={message.id} className="relative group">
-                              <ChatBubble
-                                variant={
-                                  message.direction === "inbound"
-                                    ? "received"
-                                    : "sent"
-                                }
-                                className={cn(
-                                  "max-w-[80%]",
-                                  // Fix chat positioning - inbound on left, outbound on right
-                                  message.direction === "inbound"
-                                    ? cn("mr-auto", isRTL ? "ml-auto mr-0" : "")
-                                    : cn("ml-auto", isRTL ? "mr-auto ml-0" : ""),
-                                  isRTL && "font-hebrew",
-                                )}
-                              >
-                                <ChatBubbleMessage
+                      </div>
+                    ) : currentMessages.length > 0 ? (
+                      <div className="flex flex-col gap-1" dir={isRTL ? "rtl" : "ltr"}>
+                        {currentMessages.map((message, index) => {
+                          const inbound = message.direction === "inbound";
+                          const when = new Date(message.wa_timestamp || message.created_at);
+                          const prev = currentMessages[index - 1];
+                          const prevWhen = prev ? new Date(prev.wa_timestamp || prev.created_at) : null;
+                          const newDay = !prevWhen || prevWhen.toDateString() !== when.toDateString();
+                          const sameSender = prev && prev.direction === message.direction && !newDay;
+                          return (
+                            <Fragment key={message.id}>
+                              {newDay && (
+                                <div className="my-3 flex justify-center">
+                                  <span className="rounded-full border border-border bg-surface px-3 py-0.5 text-xs font-medium text-secondary-foreground">
+                                    {when.toLocaleDateString(isRTL ? "he-IL" : undefined, { weekday: "short", month: "short", day: "numeric" })}
+                                  </span>
+                                </div>
+                              )}
+                              <div className={cn("group relative flex", inbound ? "justify-start" : "justify-end", !sameSender && "mt-2")}>
+                                <div
                                   className={cn(
-                                    "whitespace-pre-wrap text-sm break-words",
-                                    // Fix chat colors - different colors for inbound vs outbound
-                                    message.direction === "inbound"
-                                      ? "bg-gray-100 dark:bg-slate-700 text-gray-900 dark:text-slate-100"
-                                      : "bg-whatsapp-bubble text-whatsapp-bubble-foreground",
-                                    textStart(),
+                                    "max-w-[82%] rounded-xl px-3 py-1.5 text-sm shadow-[0_1px_0_hsl(var(--border))] sm:max-w-[70%]",
+                                    inbound
+                                      ? cn("border border-border bg-surface text-foreground", !sameSender && "rounded-ss-sm")
+                                      : cn("bg-whatsapp-bubble text-whatsapp-bubble-foreground", !sameSender && "rounded-se-sm"),
+                                    isRTL && "font-hebrew",
                                   )}
                                 >
-                                  {message.content}
-                                </ChatBubbleMessage>
-                                <ChatBubbleTimestamp
-                                  timestamp={formatTimeAgo(
-                                    message.wa_timestamp || message.created_at,
-                                  )}
-                                  className={cn("text-xs", textStart())}
-                                />
-
+                                  <p className={cn("whitespace-pre-wrap break-words leading-5", textStart())}>{message.content}</p>
+                                  <p className={cn("num mt-0.5 flex items-center justify-end gap-1 text-[11px]", inbound ? "text-muted-foreground" : "text-whatsapp-bubble-foreground/70")}>
+                                    {when.toLocaleTimeString(isRTL ? "he-IL" : undefined, { hour: "2-digit", minute: "2-digit" })}
+                                    {!inbound && (
+                                      message.status === "read" ? (
+                                        <CheckCheck className="h-3.5 w-3.5 text-steel-600 dark:text-steel-300" aria-label="Read" />
+                                      ) : message.status === "delivered" ? (
+                                        <CheckCheck className="h-3.5 w-3.5" aria-label="Delivered" />
+                                      ) : (
+                                        <CheckIcon className="h-3.5 w-3.5" aria-label="Sent" />
+                                      )
+                                    )}
+                                  </p>
+                                </div>
                                 <ChatMessageActions
-                                  message={{
-                                    id: message.id,
-                                    content: message.content,
-                                    direction: message.direction,
-                                  }}
+                                  message={{ id: message.id, content: message.content, direction: message.direction }}
                                   onReply={handleMessageReply}
                                   onForward={handleMessageForward}
                                   onBookmark={handleMessageBookmark}
                                   onRate={handleMessageRate}
-                                  className={cn(
-                                    "absolute top-2",
-                                    isRTL ? "left-2" : "right-2",
-                                  )}
+                                  className={cn("absolute -top-3 max-sm:hidden", inbound ? "end-2" : "start-2")}
                                 />
-                              </ChatBubble>
-                            </div>
-                          ))}
-                        </div>
-                      ) : (
-                        <div className="flex justify-center items-center h-full text-gray-500 dark:text-slate-400">
-                          <div className="text-center">
-                            <MessageSquare className="h-8 w-8 mx-auto mb-2 text-gray-300 dark:text-slate-600" />
-                            <p className="text-sm">
-                              {t("pages.messages.noMessages", "No messages yet")}
-                            </p>
-                            {calendlyStatus.isConnected && (
-                              <Button
-                                variant="outline"
-                                size="sm"
-                                onClick={() => handleScheduleMeeting(selectedConversation.lead)}
-                                className="mt-2"
-                              >
-                                <CalendarDays className="h-4 w-4 mr-2" />
-                                {t("pages.messages.startWithMeeting", "Start with a meeting")}
-                              </Button>
-                            )}
-                          </div>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                </div>
+                              </div>
+                            </Fragment>
+                          );
+                        })}
 
-                {/* SIMPLIFIED Message input area with calendar integration */}
-                <div className="flex-shrink-0 border-t dark:border-slate-700 p-4">
-                  <div className={cn("flex gap-2", flexRowReverse())}>
-                    <div className="flex-1">
-                      <Input
-                        value={messageText}
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                          setMessageText(e.target.value)
-                        }
-                        placeholder={t(
-                          "pages.messages.typeMessage",
-                          "Type a message...",
+                        {calendlyStatus.isConnected && (
+                          <div className="mt-4 flex justify-end">
+                            <div className="w-full max-w-[82%] rounded-xl border border-border bg-surface p-3 sm:max-w-[360px]" data-testid="calendly-card">
+                              <div className="flex items-start gap-3">
+                                <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-steel-50 text-steel-700 dark:bg-steel-950 dark:text-steel-200">
+                                  <CalendarDays className="h-4 w-4" aria-hidden="true" />
+                                </span>
+                                <div className="min-w-0">
+                                  <p className="text-sm font-medium text-foreground">30 minute intro call</p>
+                                  <p className="text-xs text-muted-foreground">
+                                    Calendly{calendlyStatus.user ? `, ${calendlyStatus.user.name}` : ""}. The lead picks a slot, it lands in your calendar.
+                                  </p>
+                                </div>
+                              </div>
+                              <div className="mt-3 flex gap-2">
+                                <Button size="sm" className="flex-1" onClick={() => handleShareMeetingLink(selectedConversation.lead)}>
+                                  Send booking link
+                                </Button>
+                                <Button size="sm" variant="outline" onClick={() => handleScheduleMeeting(selectedConversation.lead)}>
+                                  Open
+                                </Button>
+                              </div>
+                            </div>
+                          </div>
                         )}
-                        onKeyPress={(
-                          e: React.KeyboardEvent<HTMLInputElement>,
-                        ) => {
-                          if (e.key === "Enter" && !e.shiftKey) {
-                            e.preventDefault();
-                            handleSendMessage();
-                          }
-                        }}
-                        disabled={sendingMessage}
-                        className={cn("w-full", isRTL && "font-hebrew")}
-                        dir={isRTL ? "rtl" : "ltr"}
-                      />
-                    </div>
-                    <div className="flex gap-2">
-                      {calendlyStatus.isConnected && (
-                        <Button
-                          variant="outline"
-                          onClick={() => handleShareMeetingLink(selectedConversation.lead)}
-                          size="sm"
-                          className="px-3"
-                          title={t("pages.messages.addMeetingLink", "Add meeting link to message")}
-                        >
-                          <Calendar className="h-4 w-4" />
-                        </Button>
-                      )}
-                      <Button
-                        onClick={handleSendMessage}
-                        disabled={!messageText.trim() || sendingMessage}
-                        size="sm"
-                        className="px-3"
-                        aria-label={t("pages.messages.send", "Send message")}
-                      >
-                        {sendingMessage ? (
-                          <MessageLoading />
-                        ) : (
-                          <Send className="h-4 w-4" />
-                        )}
-                      </Button>
-                    </div>
+                      </div>
+                    ) : (
+                      <div className="flex h-full items-center justify-center text-muted-foreground">
+                        <div className="text-center">
+                          <MessageSquare className="mx-auto mb-2 h-8 w-8" aria-hidden="true" />
+                          <p className="text-sm font-medium text-foreground">{t("pages.messages.noMessages", "No messages yet")}</p>
+                          <p className="mt-0.5 text-xs">The agent writes first once this lead reaches the queue.</p>
+                          {calendlyStatus.isConnected && (
+                            <Button variant="outline" size="sm" onClick={() => handleScheduleMeeting(selectedConversation.lead)} className="mt-3">
+                              <CalendarDays className="h-4 w-4" aria-hidden="true" />
+                              {t("pages.messages.startWithMeeting", "Start with a meeting")}
+                            </Button>
+                          )}
+                        </div>
+                      </div>
+                    )}
                   </div>
-                </div>
-              </>
-            ) : (
-              <div className="flex-1 flex items-center justify-center text-gray-500 dark:text-slate-400">
-                <div className="text-center">
-                  <MessageSquare className="h-12 w-12 mx-auto mb-4 text-gray-300 dark:text-slate-600" />
-                  <p className="text-lg font-medium">
-                    {t(
-                      "pages.messages.selectConversation",
-                      "Select a conversation to view messages",
-                    )}
-                  </p>
-                  <p className="text-sm mt-1">
-                    {t("pages.messages.chooseFrom", "Choose from")}{" "}
-                    {filteredConversations.length.toLocaleString(
-                      isRTL ? "he-IL" : "en-US",
-                    )}{" "}
-                    {t(
-                      "pages.messages.availableConversations",
-                      "available conversations",
-                    )}
-                    {totalPages > 1 &&
-                      ` (${t("pages.messages.page", "Page")} ${currentPage.toLocaleString(isRTL ? "he-IL" : "en-US")} ${t("pages.messages.of", "of")} ${totalPages.toLocaleString(isRTL ? "he-IL" : "en-US")})`}
-                  </p>
-                  {currentProject && (
-                    <p className="text-xs text-whatsapp-accent mt-2">
-                      {t("pages.messages.project", "Project")}:{" "}
-                      {currentProject.name}
-                    </p>
-                  )}
                 </div>
               </div>
-            )}
-          </div>
+
+              {/* Composer */}
+              <div className="shrink-0 border-t border-border bg-surface p-3">
+                {(() => {
+                  const lastInbound = [...currentMessages].reverse().find((m) => m.direction === "inbound")?.content?.toLowerCase() ?? "";
+                  const first = String(formatLeadName(selectedConversation.lead)).split(" ")[0];
+                  const suggestions = /price|cost|budget|how much/.test(lastInbound)
+                    ? [`Plans start at a fixed monthly fee, ${first}. Want the numbers for your volume?`, "Happy to walk you through pricing on a short call.", "Which team size should I quote for?"]
+                    : /meeting|call|demo|calendar|time|schedule/.test(lastInbound)
+                    ? [`Great, ${first}. Here is my calendar, pick any slot.`, "Does tomorrow morning work for a 30 minute call?", "I will send a booking link now."]
+                    : [`Thanks ${first}. What is your biggest challenge with leads today?`, "Would a short demo help?", "Can I ask about your timeline?"];
+                  return (
+                    <div className="mb-2 flex items-center gap-2 overflow-x-auto pb-1" role="group" aria-label="Suggested replies">
+                      <span className="flex shrink-0 items-center gap-1 text-xs font-medium text-muted-foreground">
+                        <Sparkles className="h-3.5 w-3.5 text-primary" aria-hidden="true" />
+                        Suggested
+                      </span>
+                      {suggestions.map((text) => (
+                        <button
+                          key={text}
+                          type="button"
+                          onClick={() => setMessageText(text)}
+                          className="max-w-[260px] shrink-0 truncate rounded-full border border-border bg-surface px-3 py-1 text-[13px] text-secondary-foreground transition-colors duration-[120ms] hover:border-ink-300 hover:bg-accent hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                          title={text}
+                        >
+                          {text}
+                        </button>
+                      ))}
+                    </div>
+                  );
+                })()}
+                <div className="flex gap-2">
+                  <div className="flex-1">
+                    <Input
+                      value={messageText}
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => setMessageText(e.target.value)}
+                      placeholder={t("pages.messages.typeMessage", "Type a message...")}
+                      aria-label="Message"
+                      onKeyPress={(e: React.KeyboardEvent<HTMLInputElement>) => {
+                        if (e.key === "Enter" && !e.shiftKey) {
+                          e.preventDefault();
+                          handleSendMessage();
+                        }
+                      }}
+                      disabled={sendingMessage}
+                      className={cn("w-full", isRTL && "font-hebrew")}
+                      dir={isRTL ? "rtl" : "ltr"}
+                    />
+                  </div>
+                  {calendlyStatus.isConnected && (
+                    <Button
+                      variant="outline"
+                      onClick={() => handleShareMeetingLink(selectedConversation.lead)}
+                      size="sm"
+                      className="px-3"
+                      aria-label={t("pages.messages.addMeetingLink", "Add meeting link to message")}
+                    >
+                      <Calendar className="h-4 w-4" aria-hidden="true" />
+                    </Button>
+                  )}
+                  <Button
+                    onClick={handleSendMessage}
+                    disabled={!messageText.trim() || sendingMessage}
+                    size="sm"
+                    className="px-3"
+                    aria-label={t("pages.messages.send", "Send message")}
+                  >
+                    {sendingMessage ? <MessageLoading /> : <Send className="h-4 w-4" aria-hidden="true" />}
+                  </Button>
+                </div>
+              </div>
+            </>
+          ) : (
+            <div className="flex flex-1 items-center justify-center bg-surface-sunken px-6 text-muted-foreground">
+              <div className="text-center">
+                <MessageSquare className="mx-auto mb-3 h-10 w-10" aria-hidden="true" />
+                <p className="text-base font-medium text-foreground">
+                  {t("pages.messages.selectConversation", "Select a conversation to view messages")}
+                </p>
+                <p className="mt-1 text-sm">
+                  {t("pages.messages.chooseFrom", "Choose from")}{" "}
+                  {filteredConversations.length.toLocaleString(isRTL ? "he-IL" : "en-US")}{" "}
+                  {t("pages.messages.availableConversations", "available conversations")}
+                  {totalPages > 1 &&
+                    ` (${t("pages.messages.page", "Page")} ${currentPage.toLocaleString(isRTL ? "he-IL" : "en-US")} ${t("pages.messages.of", "of")} ${totalPages.toLocaleString(isRTL ? "he-IL" : "en-US")})`}
+                </p>
+              </div>
+            </div>
+          )}
+        </div>
         </div>
       </div>
       

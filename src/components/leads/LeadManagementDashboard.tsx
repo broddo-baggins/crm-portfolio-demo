@@ -80,7 +80,12 @@ import {
   getHeatScaleLevel,
 } from "@/utils/leadUtils";
 import { type Lead } from "@/types";
-import { LeadProperties } from "./LeadProperties";
+import { useNavigate } from "react-router";
+import { LeadDrawer } from "./LeadDrawer";
+import { PersonAvatar } from "@/components/system/PersonAvatar";
+import { HeatTag } from "@/components/system/HeatTag";
+import { BantChip } from "@/components/system/BantChip";
+import { bantFlags, heatWord, leadFullName, relativeDay } from "@/utils/leadInsight";
 import { LeadForm } from "./LeadForm";
 import { QueuePreviewBar } from "@/components/queue/QueuePreviewBar";
 import {
@@ -245,6 +250,7 @@ export const LeadManagementDashboard: React.FC = () => {
   const { t, i18n } = useTranslation(["leads", "common"]);
   const { isRTL, flexRowReverse, textStart, textEnd } = useLang();
   const { currentProject } = useProject();
+  const navigate = useNavigate();
   const { user } = useAuth(); // Add this line
   const { refreshLeads, refreshAll, isRefreshing: isAutoRefreshing } = useProjectDataRefresh();
   const isHebrew = i18n.language === "he";
@@ -966,7 +972,7 @@ export const LeadManagementDashboard: React.FC = () => {
   };
 
   const handleSendMessage = (lead: Lead) => {
-    toast.info(`Message functionality for lead ${lead.name} will be implemented`);
+    navigate(`/messages?lead=${encodeURIComponent(lead.id)}`);
   };
 
   // Convert numeric status to string status
@@ -1278,54 +1284,23 @@ export const LeadManagementDashboard: React.FC = () => {
         </div>
       </div>
 
-      {/* Stats: one row of figures, neutral surfaces, the hue only on the icon */}
-      <div className="grid grid-cols-2 gap-3 lg:grid-cols-4 lg:gap-4">
+      {/* Stats: one strip, hairline dividers, mono figures */}
+      <Card className="grid grid-cols-2 lg:grid-cols-4 [&>*]:border-border max-lg:[&>*:nth-child(n+3)]:border-t max-lg:[&>*:nth-child(even)]:border-s lg:[&>*+*]:border-s">
         {[
-          {
-            label: t("pages.leads.totalLeads", "Total Leads"),
-            value: dashboardStats.totalLeads,
-            note: t("pages.leadManagement.allLeadsInSystem", "All leads in the system"),
-            icon: Users,
-            tone: "bg-muted text-subtle",
-          },
-          {
-            label: t("pages.leads.newLeads", "New Leads"),
-            value: dashboardStats.newLeads,
-            note: t("pages.leadManagement.requiresAttention", "Requires attention"),
-            icon: TrendingUp,
-            tone: "bg-steel-50 text-steel-600 dark:bg-steel-950 dark:text-steel-300",
-          },
-          {
-            label: t("pages.leads.hotLeads", "Hot Leads"),
-            value: dashboardStats.hotLeads,
-            note: t("pages.leadManagement.highPriorityLeads", "High priority leads"),
-            icon: Target,
-            tone: "bg-ember-50 text-ember-600 dark:bg-ember-950 dark:text-ember-300",
-          },
-          {
-            label: t("pages.leads.conversionRate", "Conversion Rate"),
-            value: `${dashboardStats.conversionRate.toFixed(1)}%`,
-            note: t("widgets.conversionsCompleted.conversionRate", "Conversion rate"),
-            icon: BarChart3,
-            tone: "bg-moss-50 text-moss-600 dark:bg-moss-950 dark:text-moss-300",
-          },
-        ].map(({ label, value, note, icon: Icon, tone }) => (
-          <Card key={label}>
-            <CardContent className="p-4 md:p-5">
-              <div className="flex items-start justify-between gap-3">
-                <p className={cn("text-sm font-medium text-subtle", textStart())}>{label}</p>
-                <span className={cn("flex h-7 w-7 shrink-0 items-center justify-center rounded-md", tone)}>
-                  <Icon className="h-4 w-4" aria-hidden="true" />
-                </span>
-              </div>
-              <p className="mt-2 text-[28px] font-semibold leading-8 tracking-[-0.02em] tabular-nums text-foreground md:text-[32px] md:leading-9">
-                {value}
-              </p>
-              <p className="mt-1 text-xs text-muted-foreground">{note}</p>
-            </CardContent>
-          </Card>
+          { label: t("pages.leads.totalLeads", "Total Leads"), value: dashboardStats.totalLeads, note: t("pages.leadManagement.allLeadsInSystem", "All leads in the system") },
+          { label: t("pages.leads.newLeads", "New Leads"), value: dashboardStats.newLeads, note: t("pages.leadManagement.requiresAttention", "Requires attention") },
+          { label: t("pages.leads.hotLeads", "Hot Leads"), value: dashboardStats.hotLeads, note: t("pages.leadManagement.highPriorityLeads", "High priority leads"), hot: true },
+          { label: t("pages.leads.conversionRate", "Conversion Rate"), value: `${dashboardStats.conversionRate.toFixed(1)}%`, note: t("widgets.conversionsCompleted.conversionRate", "Conversion rate") },
+        ].map(({ label, value, note, hot }) => (
+          <div key={label} className="px-4 py-3 md:px-5">
+            <p className={cn("text-[13px] font-medium text-subtle", textStart())}>{label}</p>
+            <p className={cn("num mt-0.5 text-[26px] font-semibold leading-8", hot ? "text-ember-600 dark:text-ember-300" : "text-foreground")}>
+              {value}
+            </p>
+            <p className="text-xs text-muted-foreground">{note}</p>
+          </div>
         ))}
-      </div>
+      </Card>
 
       {/* Real-time Updates Feed */}
       {realtimeUpdates.length > 0 && (
@@ -1381,23 +1356,16 @@ export const LeadManagementDashboard: React.FC = () => {
         {/* Leads Table Tab */}
         <TabsContent value="leads" className="space-y-4">
           {/* Filters */}
-          <Card>
-            <CardHeader>
-              <CardTitle className={cn("flex items-center gap-2", isRTL ? "flex-row-reverse" : "flex-row")}>
-                <Filter className="h-5 w-5" />
-                {t("pages.leads.filters", "Filters")}
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
-                <div className="space-y-2">
-                  <label className={cn("text-sm font-medium", textStart())}>
+          <div role="search" aria-label={t("pages.leads.filters", "Filters")} className="rounded-[10px] border border-border bg-surface p-3">
+              <div className="grid grid-cols-2 gap-3 lg:grid-cols-[minmax(0,2fr)_repeat(3,minmax(0,1fr))]">
+                <div className="col-span-2 space-y-1 lg:col-span-1">
+                  <label className={cn("text-xs font-medium text-subtle", textStart())}>
                     {t("pages.leads.search", "Search")}
                   </label>
                   <div className="relative">
                     <Search
                       className={cn(
-                        "absolute top-2.5 h-4 w-4 text-muted-foreground",
+                        "pointer-events-none absolute top-2.5 z-10 h-4 w-4 text-muted-foreground",
                         isRTL ? "right-2" : "left-2",
                       )}
                     />
@@ -1411,8 +1379,8 @@ export const LeadManagementDashboard: React.FC = () => {
                   </div>
                 </div>
 
-                <div className="space-y-2">
-                  <label className={cn("text-sm font-medium", textStart())}>
+                <div className="space-y-1">
+                  <label className={cn("text-xs font-medium text-subtle", textStart())}>
                     {t("pages.leads.status", "Status")}
                   </label>
                   <Select
@@ -1432,8 +1400,8 @@ export const LeadManagementDashboard: React.FC = () => {
                   </Select>
                 </div>
 
-                <div className="space-y-2">
-                  <label className={cn("text-sm font-medium", textStart())}>
+                <div className="space-y-1">
+                  <label className={cn("text-xs font-medium text-subtle", textStart())}>
                     {t("pages.leads.heatLevel", "Heat Level")}
                   </label>
                   <Select
@@ -1456,8 +1424,8 @@ export const LeadManagementDashboard: React.FC = () => {
                   </Select>
                 </div>
 
-                <div className="space-y-2">
-                  <label className={cn("text-sm font-medium", textStart())}>
+                <div className="space-y-1">
+                  <label className={cn("text-xs font-medium text-subtle", textStart())}>
                     {t("pages.leads.dateRange", "Date Range")}
                   </label>
                   <Select
@@ -1476,8 +1444,7 @@ export const LeadManagementDashboard: React.FC = () => {
                   </Select>
                 </div>
               </div>
-            </CardContent>
-          </Card>
+          </div>
 
           {/* Enhanced Leads Table with HubSpot-style Bulk Selection */}
           <Card>
@@ -1578,11 +1545,10 @@ export const LeadManagementDashboard: React.FC = () => {
                 <div className="relative overflow-x-auto">
                   {/* relative: the header's sr-only labels are absolutely positioned and otherwise
                       escape the scroller, widening the phone layout to 481 px */}
-                  <table className="w-full" data-testid="leads-table">
-                    <thead className="bg-muted/50">
-                      <tr className="border-b">
-                        {/* HubSpot-style Select All Header */}
-                        <th className="p-3 w-12">
+                  <table className="w-full text-[13.5px]" data-testid="leads-table">
+                    <thead className="bg-surface-sunken text-xs text-muted-foreground">
+                      <tr className="border-b border-border">
+                        <th className="w-10 p-3">
                           <Checkbox
                             size="table"
                             aria-label="Select all leads"
@@ -1590,7 +1556,7 @@ export const LeadManagementDashboard: React.FC = () => {
                               bulkSelection.selectAllMode === 'filtered' ||
                               (filteredLeads.length > 0 && filteredLeads.every(lead => bulkSelection.selectedLeads.has(lead.id)))
                                 ? true
-                                : bulkSelection.selectedLeads.size > 0 && 
+                                : bulkSelection.selectedLeads.size > 0 &&
                                   bulkSelection.selectAllMode === 'none' &&
                                   !filteredLeads.every(lead => bulkSelection.selectedLeads.has(lead.id))
                                 ? "indeterminate"
@@ -1609,51 +1575,38 @@ export const LeadManagementDashboard: React.FC = () => {
                             }}
                           />
                         </th>
-                        <th className={cn("p-2 sm:p-3 font-medium text-xs sm:text-sm", textStart())}>
-                          {t("leads.fields.name", "Name")}
-                        </th>
-                        <th className={cn("p-2 sm:p-3 font-medium text-xs sm:text-sm hidden sm:table-cell", textStart())}>
-                          {t("leads.fields.contact", "Contact")}
-                        </th>
-                        <th className={cn("p-2 sm:p-3 font-medium text-xs sm:text-sm hidden md:table-cell", textStart())}>
-                          {t("leads.fields.company", "Company")}
-                        </th>
-                        <th className={cn("p-2 sm:p-3 font-medium text-xs sm:text-sm", textStart())}>
-                          {t("leads.fields.status", "Status")}
-                        </th>
-                        <th className={cn("p-2 sm:p-3 font-medium text-xs sm:text-sm hidden lg:table-cell", textStart())}>
-                          {t("leads.fields.state", "State")}
-                        </th>
-                        <th className={cn("p-2 sm:p-3 font-medium text-xs sm:text-sm hidden lg:table-cell", textStart())}>
-                          {t("leads.fields.temperature", "Temperature")}
-                        </th>
-                        <th className={cn("p-2 sm:p-3 font-medium text-xs sm:text-sm hidden lg:table-cell", textStart())}>
-                          {t("leads.fields.bant", "BANT Status")}
-                        </th>
-                        <th className={cn("p-2 sm:p-3 font-medium text-xs sm:text-sm hidden md:table-cell", textStart())}>
-                          {t("leads.fields.interactions", "Interactions")}
-                        </th>
-                        <th className={cn("p-2 sm:p-3 font-medium text-xs sm:text-sm hidden md:table-cell", textStart())}>
-                          {t("leads.fields.created", "Created")}
-                        </th>
-                        <th className="p-2 sm:p-3 w-16">
+                        <th scope="col" className={cn("p-3 font-medium", textStart())}>{t("leads.fields.name", "Name")}</th>
+                        <th scope="col" className={cn("hidden p-3 font-medium md:table-cell", textStart())}>{t("leads.fields.contact", "Contact")}</th>
+                        <th scope="col" className={cn("p-3 font-medium", textStart())}>{t("leads.fields.temperature", "Temperature")}</th>
+                        <th scope="col" className={cn("hidden p-3 font-medium sm:table-cell", textStart())}>{t("leads.fields.bant", "BANT Status")}</th>
+                        <th scope="col" className={cn("hidden p-3 font-medium 2xl:table-cell", textStart())}>{t("leads.fields.status", "Status")}</th>
+                        <th scope="col" className={cn("hidden p-3 font-medium xl:table-cell", textStart())}>{t("leads.fields.interactions", "Interactions")}</th>
+                        <th scope="col" className={cn("hidden p-3 font-medium 2xl:table-cell", textStart())}>{t("leads.fields.created", "Created")}</th>
+                        <th scope="col" className="w-12 p-3">
                           <span className="sr-only">{t("common.actions", "Actions")}</span>
                         </th>
                       </tr>
                     </thead>
 
-                    <tbody data-testid="leads-table-body">
-                      {filteredLeads.map((lead) => (
-                        <tr 
-                          key={lead.id} 
+                    <tbody data-testid="leads-table-body" className="divide-y divide-border">
+                      {filteredLeads.map((lead) => {
+                        const name = leadFullName(lead);
+                        const flags = bantFlags(lead);
+                        return (
+                        <tr
+                          key={lead.id}
                           className={cn(
-                            "border-b hover:bg-muted/50 lead transition-colors",
-                            bulkSelection.selectedLeads.has(lead.id) && "bg-blue-50 dark:bg-blue-900/20"
+                            "lead cursor-pointer transition-colors duration-[120ms] hover:bg-accent/50",
+                            bulkSelection.selectedLeads.has(lead.id) && "bg-ember-50 dark:bg-ember-950/40",
                           )}
                           data-testid={`lead-row-${lead.id}`}
+                          onClick={(e) => {
+                            if ((e.target as HTMLElement).closest("button, a, [role=checkbox], [role=menuitem]")) return;
+                            setSelectedLead(lead);
+                            setIsLeadPropertiesOpen(true);
+                          }}
                         >
-                          {/* HubSpot-style Row Checkbox */}
-                          <td className="p-2 sm:p-3 align-top">
+                          <td className="p-3 align-middle">
                             <Checkbox
                               size="table"
                               aria-label={`Select ${lead.name}`}
@@ -1661,169 +1614,61 @@ export const LeadManagementDashboard: React.FC = () => {
                               onCheckedChange={(checked) => handleLeadSelection(lead.id, !!checked)}
                             />
                           </td>
-                          
-                          {/* Mobile-optimized Name column with stacked info */}
-                          <td className="p-2 sm:p-3">
-                            <div className="space-y-1">
-                              <div
-                                className="font-medium cursor-pointer text-blue-600 hover:text-blue-800 hover:underline text-sm sm:text-base"
-                                onClick={() => {
-                                  setSelectedLead(lead);
-                                  setIsLeadPropertiesOpen(true);
-                                }}
-                                title={t("leads.actions.clickToView", "Click to view lead properties")}
-                                data-testid={`lead-name-${lead.id}`}
-                              >
-                                {lead.name}
-                              </div>
-                              
-                              {/* Mobile: Show contact info below name */}
-                              <div className="sm:hidden space-y-0.5">
-                                {lead.phone && (
-                                  <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
-                                    <Phone className="h-3 w-3 shrink-0" aria-hidden="true" />
-                                    {lead.phone}
-                                  </div>
-                                )}
-                                {lead.email && (
-                                  <div className="flex min-w-0 items-center gap-1.5 text-xs text-muted-foreground">
-                                    <Mail className="h-3 w-3 shrink-0" aria-hidden="true" />
-                                    <span className="truncate">{lead.email}</span>
-                                  </div>
-                                )}
-                                {lead.company && (
-                                  <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
-                                    <Building className="h-3 w-3 shrink-0" aria-hidden="true" />
-                                    {lead.company}
-                                  </div>
-                                )}
-                              </div>
-                              
-                              {/* Desktop: Show company below name */}
-                              {lead.company && (
-                                <div className="hidden sm:block text-sm text-muted-foreground">
-                                  {lead.company}
-                                </div>
-                              )}
-                            </div>
-                          </td>
-                          
-                          {/* Contact column - hidden on mobile since info is in name column */}
-                          <td className="p-2 sm:p-3 hidden sm:table-cell">
-                            <div className="space-y-1">
-                              {lead.phone && (
-                                <div className="text-sm font-mono">
-                                  {lead.phone}
-                                </div>
-                              )}
-                              {lead.email && (
-                                <div className="text-sm text-muted-foreground truncate max-w-[200px]">
-                                  {lead.email}
-                                </div>
-                              )}
-                            </div>
-                          </td>
-                          
-                          {/* Company column - hidden on mobile and tablet */}
-                          <td className="p-2 sm:p-3 hidden md:table-cell">
-                            <div className="text-sm">
-                              {lead.company || lead.client_id ? (
-                                <span className="text-blue-600 font-medium">
-                                  {lead.company || `Client ${lead.client_id?.slice(0, 8)}...`}
-                                </span>
-                              ) : (
-                                <span className="text-muted-foreground">-</span>
-                              )}
-                            </div>
-                          </td>
-                          
-                          {/* Status column - always visible but mobile-friendly */}
-                          <td className="p-2 sm:p-3">
-                            <div className="space-y-1">
-                              <Badge 
-                                variant={getStatusVariant(lead.status)} 
-                                className="text-xs font-medium whitespace-nowrap"
-                              >
-                                {getDisplayStatus(lead.status)}
-                              </Badge>
-                              
-                              {/* Mobile: Show additional info below status */}
-                              <div className="lg:hidden space-y-0.5">
-                                {lead.state && (
-                                  <div className="text-xs text-muted-foreground">
-                                    State: {lead.state}
-                                  </div>
-                                )}
-                                {lead.bant_status && (
-                                  <div className="text-xs text-muted-foreground">
-                                    BANT: {lead.bant_status}
-                                  </div>
-                                )}
-                              </div>
-                            </div>
-                          </td>
 
-                          {/* State column - hidden on mobile and tablet */}
-                          <td className="p-2 sm:p-3 hidden lg:table-cell">
-                            <div className="text-sm">
-                              {lead.state ? (
-                                <Badge variant="outline" className="text-xs">
-                                  {lead.state}
-                                </Badge>
-                              ) : (
-                                <span className="text-muted-foreground">-</span>
-                              )}
-                            </div>
-                          </td>
-                          
-                          {/* Temperature column - hidden on mobile and tablet */}
-                          <td className="p-2 sm:p-3 hidden lg:table-cell">
-                            <Badge variant={getTemperatureVariant(lead.temperature)} className="text-sm">
-                              {getDisplayTemperature(lead.temperature)}
-                            </Badge>
-                          </td>
-
-                          {/* BANT Status column - hidden on mobile and tablet */}
-                          <td className="p-2 sm:p-3 hidden lg:table-cell">
-                            <div className="text-sm">
-                              {lead.bant_status ? (
-                                <Badge 
-                                  variant={lead.bant_status.includes('qualified') ? 'default' : 'secondary'} 
-                                  className="text-xs"
+                          <td className="p-3">
+                            <div className="flex min-w-0 items-center gap-3">
+                              <PersonAvatar name={name} />
+                              <div className="min-w-0">
+                                <button
+                                  type="button"
+                                  className="block max-w-[220px] truncate rounded-sm text-start font-medium text-foreground underline-offset-4 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                                  onClick={() => {
+                                    setSelectedLead(lead);
+                                    setIsLeadPropertiesOpen(true);
+                                  }}
+                                  title={t("leads.actions.clickToView", "Click to view lead properties")}
+                                  data-testid={`lead-name-${lead.id}`}
                                 >
-                                  {lead.bant_status}
-                                </Badge>
-                              ) : (
-                                <span className="text-muted-foreground">-</span>
-                              )}
+                                  {lead.name}
+                                </button>
+                                <p className="truncate text-xs text-muted-foreground">
+                                  {lead.company || lead.phone}
+                                </p>
+                              </div>
                             </div>
                           </td>
 
-                          {/* Interactions column - hidden on mobile */}
-                          <td className="p-2 sm:p-3 hidden md:table-cell">
-                            <div className="text-sm space-y-1">
-                              <div className="font-medium">
-                                {lead.interaction_count || 0}
-                              </div>
-                              {lead.last_interaction && (
-                                <div className="text-xs text-muted-foreground">
-                                  {new Date(lead.last_interaction).toLocaleDateString()}
-                                </div>
-                              )}
-                            </div>
+                          <td className="hidden p-3 md:table-cell">
+                            {lead.phone && <p className="num text-[13px]">{lead.phone}</p>}
+                            {lead.email && <p className="max-w-[200px] truncate text-xs text-muted-foreground">{lead.email}</p>}
                           </td>
-                          
-                          {/* Created column - hidden on mobile */}
-                          <td className="p-2 sm:p-3 hidden md:table-cell">
-                            <div className="text-sm text-muted-foreground">
-                              {lead.created_at 
-                                ? new Date(lead.created_at).toLocaleDateString()
-                                : "-"
-                              }
-                            </div>
+
+                          <td className="p-3">
+                            <HeatTag temperature={heatWord(lead.temperature)} />
                           </td>
-                          
-                          {/* Actions column - mobile-optimized */}
+
+                          <td className="hidden p-3 sm:table-cell">
+                            <BantChip score={flags.filter(Boolean).length} met={flags} />
+                          </td>
+
+                          <td className="hidden p-3 2xl:table-cell">
+                            <Badge variant={getStatusVariant(lead.status)} className="whitespace-nowrap text-xs font-medium">
+                              {getDisplayStatus(lead.status)}
+                            </Badge>
+                            {lead.state && <p className="mt-1 text-xs text-muted-foreground">{String(lead.state).replace(/_/g, " ")}</p>}
+                          </td>
+
+                          <td className="hidden p-3 xl:table-cell">
+                            <p className="num font-medium">{lead.interaction_count || 0}</p>
+                            {lead.last_interaction && (
+                              <p className="text-xs text-muted-foreground">{relativeDay(lead.last_interaction)}</p>
+                            )}
+                          </td>
+
+                          <td className="num hidden p-3 text-muted-foreground 2xl:table-cell">
+                            {lead.created_at ? relativeDay(lead.created_at) : "-"}
+                          </td>
+
                           <td className="p-1 sm:p-3">
                             <div className="flex items-center justify-end">
                               <DropdownMenu>
@@ -1884,7 +1729,8 @@ export const LeadManagementDashboard: React.FC = () => {
                             </div>
                           </td>
                         </tr>
-                      ))}
+                        );
+                      })}
                     </tbody>
                   </table>
                 </div>
@@ -2240,10 +2086,10 @@ export const LeadManagementDashboard: React.FC = () => {
 
       </Tabs>
 
-      {/* Lead Properties Overlay */}
-      <LeadProperties
+      {/* Lead drawer */}
+      <LeadDrawer
         lead={selectedLead}
-        isOpen={isLeadPropertiesOpen}
+        open={isLeadPropertiesOpen}
         onClose={() => {
           setIsLeadPropertiesOpen(false);
           setSelectedLead(null);
@@ -2253,16 +2099,7 @@ export const LeadManagementDashboard: React.FC = () => {
           setIsLeadFormOpen(true);
           setIsLeadPropertiesOpen(false);
         }}
-        onDelete={(leadId) => {
-          handleDeleteLead(leadId);
-          setIsLeadPropertiesOpen(false);
-        }}
-        onCall={(phone) => {
-          window.open(`tel:${phone}`, "_self");
-        }}
-        onMessage={(leadId) => {
-          toast.info("Message functionality will be implemented");
-        }}
+        onMessage={(lead) => handleSendMessage(lead)}
       />
 
       {/* Lead Form Modal */}

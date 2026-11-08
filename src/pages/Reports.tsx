@@ -1431,7 +1431,7 @@ For detailed analysis, please access the dashboard at: ${window.location.origin}
       </div>
 
       {/* Key Metrics Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <Card className="grid grid-cols-2 lg:grid-cols-4 [&>*]:border-border max-lg:[&>*:nth-child(n+3)]:border-t max-lg:[&>*:nth-child(even)]:border-s lg:[&>*+*]:border-s">
         <ModernStatsCard
           title="Total Leads"
           value={realData.leads.length}
@@ -1473,7 +1473,7 @@ For detailed analysis, please access the dashboard at: ${window.location.origin}
           isLoading={realData.loading}
           trend={{ value: -2.3, label: "vs last month" }}
         />
-      </div>
+      </Card>
 
       {/* Advanced Report Display */}
       {advancedReport && (
