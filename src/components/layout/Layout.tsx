@@ -1,8 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { Outlet, useLocation } from "react-router";
+import { Outlet, useLocation, useNavigate } from "react-router";
 import Sidebar from "./Sidebar";
 import TopBar from "./TopBar";
 import Footer from "./Footer";
+import { CommandPalette } from "./CommandPalette";
+import { BottomNav } from "./BottomNav";
+import { TooltipProvider } from "@/components/ui/tooltip";
+import { NAV_SHORTCUTS } from "@/utils/navGroups";
 import CookieConsent from "../common/CookieConsent";
 import StagingBanner from "../common/StagingBanner";
 import { useAuth } from "@/context/ClientAuthContext";
@@ -18,6 +22,54 @@ const LayoutContent = () => {
   const [pendingUsers, setPendingUsers] = useState(0);
   const [navOpen, setNavOpen] = useState(false);
   const { pathname } = useLocation();
+  const navigate = useNavigate();
+  const [paletteOpen, setPaletteOpen] = useState(false);
+  const [collapsed, setCollapsed] = useState(() => {
+    try {
+      return localStorage.getItem("crm-sidebar-collapsed") === "1";
+    } catch {
+      return false;
+    }
+  });
+  const toggleCollapsed = () =>
+    setCollapsed((c) => {
+      try {
+        localStorage.setItem("crm-sidebar-collapsed", c ? "0" : "1");
+      } catch {
+        /* storage blocked: the choice lasts for this visit */
+      }
+      return !c;
+    });
+
+  // Cmd/Ctrl K and "/" open the palette; "G" then a letter jumps to a page.
+  useEffect(() => {
+    let armed = 0;
+    const byLetter = Object.fromEntries(Object.entries(NAV_SHORTCUTS).map(([path, k]) => [k, path]));
+    const onKey = (e: KeyboardEvent) => {
+      const el = e.target as HTMLElement | null;
+      const typing = !!el && (el.isContentEditable || /^(INPUT|TEXTAREA|SELECT)$/.test(el.tagName));
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") {
+        e.preventDefault();
+        setPaletteOpen((o) => !o);
+        return;
+      }
+      if (typing || e.metaKey || e.ctrlKey || e.altKey) return;
+      if (e.key === "/") {
+        e.preventDefault();
+        setPaletteOpen(true);
+        return;
+      }
+      const k = e.key.toLowerCase();
+      if (Date.now() < armed && byLetter[k]) {
+        armed = 0;
+        navigate(byLetter[k]);
+      } else if (k === "g") {
+        armed = Date.now() + 1200;
+      }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [navigate]);
 
   // Close the mobile navigation drawer after navigating
   useEffect(() => {
@@ -70,7 +122,7 @@ const LayoutContent = () => {
       </a>
       {/* Desktop: the sidebar stands beside the page. Below 1024 px it is a drawer. */}
       <aside className="sticky top-0 hidden h-screen shrink-0 lg:block">
-        <Sidebar />
+        <Sidebar collapsed={collapsed} onToggleCollapsed={toggleCollapsed} />
       </aside>
       <Sheet open={navOpen} onOpenChange={setNavOpen}>
         <SheetContent
@@ -84,7 +136,7 @@ const LayoutContent = () => {
         </SheetContent>
       </Sheet>
       <div className="flex min-w-0 flex-1 flex-col">
-        <TopBar pendingUserCount={pendingUsers} onOpenNav={() => setNavOpen(true)} />
+        <TopBar pendingUserCount={pendingUsers} onOpenNav={() => setNavOpen(true)} onOpenSearch={() => setPaletteOpen(true)} />
         <main
           id="main-content"
           className="flex-1 overflow-x-hidden overflow-y-auto bg-background px-4 py-5 sm:px-6 md:py-6 lg:px-8"
@@ -93,6 +145,8 @@ const LayoutContent = () => {
         </main>
         <Footer />
       </div>
+      <BottomNav onMore={() => setNavOpen(true)} />
+      <CommandPalette open={paletteOpen} onOpenChange={setPaletteOpen} />
       <CookieConsent />
     </div>
   );
@@ -101,7 +155,9 @@ const LayoutContent = () => {
 const Layout = () => {
   return (
     <RTLProvider>
-      <LayoutContent />
+      <TooltipProvider delayDuration={200}>
+        <LayoutContent />
+      </TooltipProvider>
     </RTLProvider>
   );
 };

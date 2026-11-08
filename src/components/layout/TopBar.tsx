@@ -42,6 +42,7 @@ import { useTranslation } from 'react-i18next';
 import logger from "@/services/base/logger";
 import { simpleProjectService } from "@/services/simpleProjectService";
 import { searchMockData, SearchResult as MockSearchResult } from "@/services/mockSearchService";
+import { Kbd } from "@/components/system/Kbd";
 import { GeminiAgent } from "@/components/agent/GeminiAgent";
 import { useAgentOnboarding } from "@/hooks/useAgentOnboarding";
 
@@ -49,6 +50,8 @@ interface TopBarProps {
   pendingUserCount?: number;
   /** Opens the navigation drawer (shown below 1024 px). */
   onOpenNav?: () => void;
+  /** Opens the command palette (Cmd/Ctrl K). */
+  onOpenSearch?: () => void;
 }
 
 interface SearchResult {
@@ -184,7 +187,7 @@ const generateDynamicNotifications = async (t: any, isRTL: boolean) => {
   }
 };
 
-const TopBar = ({ pendingUserCount = 0, onOpenNav }: TopBarProps) => {
+const TopBar = ({ pendingUserCount = 0, onOpenNav, onOpenSearch }: TopBarProps) => {
   const { user } = useAuth();
   const { isRTL, lang, setLang } = useLang();
   const { theme, setTheme } = useTheme();
@@ -362,42 +365,21 @@ const TopBar = ({ pendingUserCount = 0, onOpenNav }: TopBarProps) => {
           <BasicProjectSelector />
         </div>
 
-        {/* Search Box */}
-        <div className="relative hidden min-w-0 max-w-[420px] flex-1 md:block">
-          <Search
-            className="pointer-events-none absolute start-3 top-1/2 z-10 h-4 w-4 -translate-y-1/2 text-muted-foreground"
-            aria-hidden="true"
-          />
-          <Input
-            placeholder="Search everything..."
-            aria-label="Search leads, projects and conversations"
-            className="h-9 w-full min-w-0 ps-9"
-            value={globalSearch}
-            onChange={e => setGlobalSearch(e.target.value)}
-            onFocus={() => globalSearch.length > 1 && setShowResults(true)}
-            onBlur={() => setTimeout(() => setShowResults(false), 200)}
-          />
-          {showResults && (
-            <div className="absolute start-0 top-11 z-50 max-h-72 w-full min-w-[280px] overflow-auto rounded-lg border border-border bg-popover py-1 shadow-float">
-              {searchResults.length === 0 ? (
-                <div className="px-4 py-3 text-sm text-muted-foreground">No results found</div>
-              ) : (
-                searchResults.map((result, idx) => (
-                  <button
-                    type="button"
-                    key={idx}
-                    className="flex w-full items-center gap-2 px-3 py-2 text-start text-sm hover:bg-accent focus-visible:bg-accent focus-visible:outline-none"
-                    onClick={() => handleSearchResultClick(result)}
-                  >
-                    {getResultIcon(result.type)}
-                    <span className="truncate font-medium text-foreground">{result.name}</span>
-                    <span className="ms-auto text-xs capitalize text-muted-foreground">{result.type}</span>
-                  </button>
-                ))
-              )}
-            </div>
-          )}
-        </div>
+        {/* Command palette trigger */}
+        <button
+          type="button"
+          onClick={onOpenSearch}
+          aria-keyshortcuts="Control+K Meta+K"
+          data-testid="search-trigger"
+          className="hidden h-9 min-w-0 max-w-[420px] flex-1 items-center gap-2 rounded-md border border-input bg-surface-sunken px-3 text-sm text-muted-foreground transition-colors duration-[120ms] hover:border-ink-300 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring md:flex"
+        >
+          <Search className="h-4 w-4 shrink-0" aria-hidden="true" />
+          <span className="truncate">Search pages, leads, projects</span>
+          <span className="ms-auto flex shrink-0 gap-0.5" dir="ltr" aria-hidden="true">
+            <Kbd>{typeof navigator !== "undefined" && /Mac/.test(navigator.platform) ? "⌘" : "Ctrl"}</Kbd>
+            <Kbd>K</Kbd>
+          </span>
+        </button>
 
         <a
           href="https://amityogev.com/?cmd=crm"

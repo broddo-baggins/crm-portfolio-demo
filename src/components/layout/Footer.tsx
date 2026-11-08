@@ -16,7 +16,7 @@ const Footer: React.FC = () => {
 
   return (
     <footer
-      className={cn("border-t border-border bg-surface px-4 py-4 sm:px-6 lg:px-8", isRTL && "font-hebrew")}
+      className={cn("border-t border-border bg-surface px-4 py-4 pb-20 sm:px-6 lg:px-8 lg:pb-4", isRTL && "font-hebrew")}
       dir={isRTL ? "rtl" : "ltr"}
     >
       <div className="flex flex-col gap-3 text-[13px] leading-5 md:flex-row md:items-center md:justify-between">

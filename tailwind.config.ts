@@ -34,7 +34,7 @@ const config: Config = {
       fontFamily: {
         sans: ['Geist', 'ui-sans-serif', 'system-ui', 'sans-serif'],
         hebrew: ['Rubik', 'Geist', 'system-ui', 'sans-serif'],
-        mono: ['ui-monospace', 'SFMono-Regular', 'Menlo', 'monospace'],
+        mono: ['Geist Mono Variable', 'ui-monospace', 'SFMono-Regular', 'Menlo', 'monospace'],
         geist: ['Geist', 'ui-sans-serif', 'system-ui', 'sans-serif'],
         rubik: ['Rubik', 'Geist', 'system-ui', 'sans-serif'],
       },

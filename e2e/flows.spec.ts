@@ -428,3 +428,57 @@ test.describe('other pages', () => {
     await context.close();
   });
 });
+
+test.describe('design 1.2: palette, sidebar rail, bottom nav', () => {
+  test.beforeEach(async ({ page }) => {
+    await acceptCookies(page);
+  });
+
+  test('Ctrl K opens the command palette and Enter jumps to a page', async ({ page }, info) => {
+    test.skip(isMobile(info.project.name), 'keyboard shortcut');
+    await page.goto('/dashboard');
+    await waitForApp(page);
+    await page.keyboard.press('Control+k');
+    const dialog = page.getByTestId('command-palette');
+    await expect(dialog).toBeVisible();
+    await page.getByRole('combobox', { name: 'Search pages, leads and projects' }).fill('calend');
+    await page.keyboard.press('Enter');
+    await expect(page).toHaveURL(/\/calendar$/);
+    await expect(dialog).toHaveCount(0);
+  });
+
+  test('G then L goes to Leads', async ({ page }, info) => {
+    test.skip(isMobile(info.project.name), 'keyboard shortcut');
+    await page.goto('/dashboard');
+    await waitForApp(page);
+    await page.keyboard.press('g');
+    await page.keyboard.press('l');
+    await expect(page).toHaveURL(/\/leads$/);
+  });
+
+  test('the sidebar collapses to an icon rail and remembers it', async ({ page }, info) => {
+    test.skip(isMobile(info.project.name), 'desktop rail');
+    await page.goto('/dashboard');
+    await waitForApp(page);
+    await page.getByTestId('sidebar-collapse').click();
+    await expect(page.getByTestId('main-sidebar')).toHaveAttribute('data-collapsed', 'true');
+    await expect(page.getByTestId('nav-link-leads')).toHaveAccessibleName('Leads');
+    await page.reload();
+    await waitForApp(page);
+    await expect(page.getByTestId('main-sidebar')).toHaveAttribute('data-collapsed', 'true');
+    await page.getByTestId('sidebar-expand').click();
+    await expect(page.getByTestId('main-sidebar')).not.toHaveAttribute('data-collapsed', 'true');
+  });
+
+  test('phones get a bottom navigation with a More button for the drawer', async ({ page }, info) => {
+    test.skip(!isMobile(info.project.name), 'phone only');
+    await page.goto('/dashboard');
+    await waitForApp(page);
+    const nav = page.getByTestId('bottom-nav');
+    await expect(nav).toBeVisible();
+    await nav.getByRole('link', { name: 'Leads' }).click();
+    await expect(page).toHaveURL(/\/leads$/);
+    await nav.getByRole('button', { name: 'More' }).click();
+    await expect(page.getByTestId('navigation-drawer')).toBeVisible();
+  });
+});

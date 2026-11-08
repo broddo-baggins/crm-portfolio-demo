@@ -13,7 +13,12 @@ import {
   Users,
   TrendingUp,
   Loader2,
+  PanelLeftClose,
+  PanelLeftOpen,
 } from "lucide-react";
+import { Kbd } from "@/components/system/Kbd";
+import { NAV_GROUPS, NAV_SHORTCUTS } from "@/utils/navGroups";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { useAuth } from "@/context/ClientAuthContext";
 import { useProject } from "@/context/ProjectContext";
 import { useTranslation } from "react-i18next";
@@ -23,11 +28,15 @@ import { simpleProjectService } from "@/services/simpleProjectService";
 import { useAdminAccess } from "@/hooks/useAdminAccess";
 
 interface SidebarProps {
+  /** Icon rail on desktop. Ignored in the mobile drawer. */
+  collapsed?: boolean;
+  onToggleCollapsed?: () => void;
   /** Set when the sidebar lives in the mobile drawer: called after a nav link is followed. */
   onNavigate?: () => void;
 }
 
-const Sidebar = ({ onNavigate }: SidebarProps = {}) => {
+const Sidebar = ({ onNavigate, collapsed: collapsedProp, onToggleCollapsed }: SidebarProps = {}) => {
+  const collapsed = !onNavigate && !!collapsedProp;
   const { logout, user, loading } = useAuth();
   const { currentProject } = useProject();
   const { t } = useTranslation("common");
@@ -213,16 +222,26 @@ const Sidebar = ({ onNavigate }: SidebarProps = {}) => {
     : user?.user_metadata?.full_name || user?.email || "User";
   const userEmail = loading ? "" : user?.email || "";
 
+  const groups = NAV_GROUPS.map((g) => ({
+    ...g,
+    items: g.paths.flatMap((path) => navItems.filter((n) => n.path === path)),
+  })).filter((g) => g.items.length > 0);
+
   return (
     <div
       className={cn(
-        "flex h-full w-[248px] flex-col bg-sidebar text-sidebar-foreground",
+        "flex h-full flex-col bg-sidebar text-sidebar-foreground transition-[width] duration-200",
+        collapsed ? "w-16" : "w-[248px]",
         !onNavigate && (isRTL ? "border-l border-sidebar-border" : "border-r border-sidebar-border"),
       )}
       data-testid="main-sidebar"
+      data-collapsed={collapsed || undefined}
     >
       {/* Header */}
-      <div className="flex h-[60px] shrink-0 items-center px-5" data-testid="sidebar-header">
+      <div
+        className={cn("flex h-[60px] shrink-0 items-center", collapsed ? "justify-center px-2" : "justify-between px-4")}
+        data-testid="sidebar-header"
+      >
         <NavLink
           to="/dashboard"
           onClick={onNavigate}
@@ -231,138 +250,200 @@ const Sidebar = ({ onNavigate }: SidebarProps = {}) => {
         >
           <span className="inline-flex items-center gap-2">
             <BrandMark />
-            <span className="text-[15px] font-semibold tracking-[-0.01em] text-foreground">
-              {t("appName", "CRM Demo")}
-            </span>
+            {!collapsed && (
+              <span className="text-[15px] font-semibold tracking-[-0.01em] text-foreground">
+                {t("appName", "CRM Demo")}
+              </span>
+            )}
           </span>
         </NavLink>
+        {!collapsed && onToggleCollapsed && !onNavigate && (
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-8 w-8 text-muted-foreground hover:text-foreground"
+            onClick={onToggleCollapsed}
+            aria-label="Collapse sidebar"
+            data-testid="sidebar-collapse"
+          >
+            <PanelLeftClose className="h-4 w-4 rtl:rotate-180" aria-hidden="true" />
+          </Button>
+        )}
       </div>
 
       {/* Navigation Menu */}
-      <div className="flex-1 overflow-y-auto px-3 pb-4" data-testid="sidebar-content">
-        <nav className="space-y-0.5" data-testid="sidebar-menu" aria-label="Main">
+      <div className={cn("flex-1 overflow-y-auto pb-4", collapsed ? "px-2" : "px-3")} data-testid="sidebar-content">
+        <nav className="space-y-5" data-testid="sidebar-menu" aria-label="Main">
           {navItems.length === 0 && (
-            <div
-              data-testid="sidebar-empty"
-              className="px-3 py-4 text-sm text-muted-foreground"
-            >
+            <div data-testid="sidebar-empty" className="px-3 py-4 text-sm text-muted-foreground">
               No navigation items available
             </div>
           )}
-          {navItems.map((item) => {
-            const IconComponent = item.icon;
-            // Generate testid from item name (convert to lowercase and replace spaces with hyphens)
-            const testId = item.name.toLowerCase().replace(/\s+/g, "-");
-            return (
-              <NavLink
-                key={item.path}
-                to={item.path}
-                onClick={onNavigate}
-                data-testid={`nav-link-${testId}`}
-                className={({ isActive }) =>
-                  cn(
-                    "group relative flex h-9 w-full items-center gap-3 rounded-md px-3 text-sm font-medium transition-colors duration-[120ms]",
-                    "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
-                    isActive
-                      ? "bg-sidebar-accent text-sidebar-accent-foreground"
-                      : "text-sidebar-foreground hover:bg-accent hover:text-foreground",
-                  )
-                }
-              >
-                {({ isActive }) => (
-                  <>
-                    {isActive && (
-                      <span
-                        aria-hidden="true"
-                        className="absolute inset-y-2 start-0 w-[3px] rounded-full bg-primary"
-                      />
-                    )}
-                    <IconComponent
-                      className={cn("h-[18px] w-[18px] shrink-0", isActive ? "text-primary" : "text-muted-foreground group-hover:text-foreground")}
-                      strokeWidth={1.75}
-                      aria-hidden="true"
-                    />
-                    <span className="truncate">{item.name}</span>
-                  </>
-                )}
-              </NavLink>
-            );
-          })}
+          {groups.map((group) => (
+            <div key={group.id} role="group" aria-label={group.label}>
+              {collapsed ? (
+                <div className="mx-2 mb-2 border-t border-sidebar-border first:hidden" aria-hidden="true" />
+              ) : (
+                <p className="mb-1 px-3 text-xs font-medium text-muted-foreground">{group.label}</p>
+              )}
+              <div className="space-y-0.5">
+                {group.items.map((item) => {
+                  const IconComponent = item.icon;
+                  const testId = item.name.toLowerCase().replace(/\s+/g, "-");
+                  const key = NAV_SHORTCUTS[item.path];
+                  const link = (
+                    <NavLink
+                      key={item.path}
+                      to={item.path}
+                      onClick={onNavigate}
+                      data-testid={`nav-link-${testId}`}
+                      aria-label={collapsed ? item.name : undefined}
+                      aria-keyshortcuts={key ? `G ${key.toUpperCase()}` : undefined}
+                      className={({ isActive }) =>
+                        cn(
+                          "group relative flex h-9 w-full items-center rounded-md text-sm font-medium transition-colors duration-[120ms]",
+                          collapsed ? "justify-center" : "gap-3 px-3",
+                          "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+                          isActive
+                            ? "bg-sidebar-accent text-sidebar-accent-foreground"
+                            : "text-sidebar-foreground hover:bg-accent hover:text-foreground",
+                        )
+                      }
+                    >
+                      {({ isActive }) => (
+                        <>
+                          {isActive && (
+                            <span
+                              aria-hidden="true"
+                              className="absolute inset-y-2 start-0 w-[3px] rounded-full bg-primary"
+                            />
+                          )}
+                          <IconComponent
+                            className={cn(
+                              "h-[18px] w-[18px] shrink-0",
+                              isActive ? "text-primary" : "text-muted-foreground group-hover:text-foreground",
+                            )}
+                            strokeWidth={1.75}
+                            aria-hidden="true"
+                          />
+                          {!collapsed && <span className="truncate">{item.name}</span>}
+                          {!collapsed && key && !onNavigate && (
+                            <span className="ms-auto hidden gap-0.5 opacity-0 transition-opacity group-hover:opacity-100 group-focus-visible:opacity-100 lg:flex">
+                              <Kbd>G</Kbd>
+                              <Kbd>{key.toUpperCase()}</Kbd>
+                            </span>
+                          )}
+                        </>
+                      )}
+                    </NavLink>
+                  );
+                  return collapsed ? (
+                    <Tooltip key={item.path}>
+                      <TooltipTrigger asChild>{link}</TooltipTrigger>
+                      <TooltipContent side={isRTL ? "left" : "right"}>{item.name}</TooltipContent>
+                    </Tooltip>
+                  ) : (
+                    link
+                  );
+                })}
+              </div>
+            </div>
+          ))}
         </nav>
 
         {/* Stats Section */}
-        <section className="mt-6 border-t border-sidebar-border pt-5" aria-labelledby="sidebar-stats-title">
-          <div className="mb-3 px-3">
-            <h2 id="sidebar-stats-title" className="flex items-center gap-2 text-xs font-medium text-muted-foreground">
-              <Activity className="h-3.5 w-3.5" aria-hidden="true" />
-              {t("quickStats", "Quick Stats")}
-            </h2>
-            {currentProject && (
-              <p className="mt-1 truncate text-xs text-muted-foreground" title={currentProject.name}>
-                {currentProject.name}
-              </p>
-            )}
-          </div>
-          <dl className="space-y-0.5">
-            {[
-              { icon: Users, label: t("sidebarLeadsCount", "Leads Count"), value: stats.leadsCount },
-              { icon: MessageSquare, label: t("activeChats", "Active Chats"), value: stats.activeChats },
-              { icon: TrendingUp, label: t("conversionRate", "Conversion"), value: `${stats.conversionRate}%` },
-            ].map(({ icon: Icon, label, value }) => (
-              <div key={label} className="flex h-8 items-center justify-between rounded-md px-3 text-sm">
-                <dt className="flex items-center gap-2 text-sidebar-foreground">
-                  <Icon className="h-3.5 w-3.5 text-muted-foreground" aria-hidden="true" />
-                  {label}
-                </dt>
-                <dd className="font-medium tabular-nums text-foreground">
-                  {stats.loading ? (
-                    <Loader2 className="h-3.5 w-3.5 animate-spin text-muted-foreground" aria-label="Loading" />
-                  ) : (
-                    value
-                  )}
-                </dd>
-              </div>
-            ))}
-          </dl>
-        </section>
+        {!collapsed && (
+          <section className="mt-6 border-t border-sidebar-border pt-4" aria-labelledby="sidebar-stats-title">
+            <div className="mb-2 px-3">
+              <h2 id="sidebar-stats-title" className="flex items-center gap-2 text-xs font-medium text-muted-foreground">
+                <Activity className="h-3.5 w-3.5" aria-hidden="true" />
+                {t("quickStats", "Quick Stats")}
+              </h2>
+              {currentProject && (
+                <p className="mt-1 truncate text-xs text-muted-foreground" title={currentProject.name}>
+                  {currentProject.name}
+                </p>
+              )}
+            </div>
+            <dl className="space-y-0.5">
+              {[
+                { icon: Users, label: t("sidebarLeadsCount", "Leads Count"), value: stats.leadsCount },
+                { icon: MessageSquare, label: t("activeChats", "Active Chats"), value: stats.activeChats },
+                { icon: TrendingUp, label: t("conversionRate", "Conversion"), value: `${stats.conversionRate}%` },
+              ].map(({ icon: Icon, label, value }) => (
+                <div key={label} className="flex h-8 items-center justify-between rounded-md px-3 text-sm">
+                  <dt className="flex items-center gap-2 text-sidebar-foreground">
+                    <Icon className="h-3.5 w-3.5 text-muted-foreground" aria-hidden="true" />
+                    {label}
+                  </dt>
+                  <dd className="num text-[13px] font-medium text-foreground">
+                    {stats.loading ? (
+                      <Loader2 className="h-3.5 w-3.5 animate-spin text-muted-foreground" aria-label="Loading" />
+                    ) : (
+                      value
+                    )}
+                  </dd>
+                </div>
+              ))}
+            </dl>
+          </section>
+        )}
       </div>
 
       {/* Footer */}
-      <div
-        className="mt-auto border-t border-sidebar-border p-3"
-        data-testid="sidebar-footer"
-      >
+      <div className="mt-auto border-t border-sidebar-border p-3" data-testid="sidebar-footer">
         {onNavigate && (
           <div className="mb-2 flex items-center justify-between gap-2 px-2 sm:hidden">
             <DaisyUIThemeController />
             <LanguageSelector variant="dropdown" size="sm" />
           </div>
         )}
-        <div className="flex items-center gap-3 px-2 py-1.5">
-          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-ink-800 text-sm font-medium text-ink-50 dark:bg-ink-200 dark:text-ink-900">
-            {userName.charAt(0).toUpperCase()}
+        {collapsed ? (
+          <div className="flex flex-col items-center gap-1">
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-9 w-9 text-muted-foreground hover:text-foreground"
+              onClick={onToggleCollapsed}
+              aria-label="Expand sidebar"
+              data-testid="sidebar-expand"
+            >
+              <PanelLeftOpen className="h-4 w-4 rtl:rotate-180" aria-hidden="true" />
+            </Button>
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={handleLogout}
+              className="h-9 w-9"
+              data-testid="logout-button"
+              aria-label={t("logout", "Logout")}
+            >
+              <LogOut className="h-4 w-4" aria-hidden="true" />
+            </Button>
           </div>
-          <div className="min-w-0 flex-1">
-            <p className="truncate text-sm font-medium text-foreground">
-              {userName}
-            </p>
-            {userEmail && (
-              <p className="truncate text-xs text-muted-foreground">
-                {userEmail}
-              </p>
-            )}
-          </div>
-        </div>
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={handleLogout}
-          className="mt-1 w-full justify-start px-2"
-          data-testid="logout-button"
-        >
-          <LogOut className="h-4 w-4" aria-hidden="true" />
-          {t("logout", "Logout")}
-        </Button>
+        ) : (
+          <>
+            <div className="flex items-center gap-3 px-2 py-1.5">
+              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-ink-800 text-sm font-medium text-ink-50 dark:bg-ink-200 dark:text-ink-900">
+                {userName.charAt(0).toUpperCase()}
+              </div>
+              <div className="min-w-0 flex-1">
+                <p className="truncate text-sm font-medium text-foreground">{userName}</p>
+                {userEmail && <p className="truncate text-xs text-muted-foreground">{userEmail}</p>}
+              </div>
+            </div>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={handleLogout}
+              className="mt-1 w-full justify-start px-2"
+              data-testid="logout-button"
+            >
+              <LogOut className="h-4 w-4" aria-hidden="true" />
+              {t("logout", "Logout")}
+            </Button>
+          </>
+        )}
       </div>
     </div>
   );
