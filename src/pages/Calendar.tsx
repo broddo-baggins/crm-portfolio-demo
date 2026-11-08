@@ -880,7 +880,7 @@ const Calendar = () => {
         </CardHeader>
         <CardContent className="p-0">
           {/* Calendar Grid */}
-          <div className="grid grid-cols-7 gap-0 border border-border rounded-lg overflow-hidden min-h-[600px]">
+          <div className="grid grid-cols-7 auto-rows-min gap-0 border border-border rounded-lg overflow-hidden min-h-[600px]">
             {/* Day headers */}
             {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((day) => (
               <div
