@@ -53,7 +53,7 @@ export const PUBLIC_ROUTES: RouteCase[] = [
 /** Rendered inside the app layout; `expect` is matched within <main> so the sidebar can't satisfy it. */
 export const APP_ROUTES: RouteCase[] = [
   { path: '/dashboard', expect: 'Total Leads' },
-  { path: '/leads', expect: 'Lead Management Dashboard' },
+  { path: '/leads', expect: 'Search, filter and open a lead' },
   { path: '/queue-management', expect: 'Queue Depth' },
   { path: '/queue', expect: 'Queue Depth', redirectsTo: '/queue-management' },
   { path: '/lead-pipeline', expect: 'Message Template Management' },

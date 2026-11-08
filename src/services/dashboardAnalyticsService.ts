@@ -10,6 +10,17 @@ import { supabase } from "@/integrations/supabase/client";
 import { ServiceErrorHandler } from "./base/errorHandler";
 import { mockApi } from '@/data/mockData';
 
+export interface LeadSummary {
+  leads: number;
+  contacted: number;
+  qualified: number;
+  meetings: number;
+  /** Hot and burning leads; only the sample project reports it, otherwise the page counts its own rows */
+  hot?: number;
+  /** Whole percent, defined once in utils/conversionRate.ts */
+  conversionRate: number;
+}
+
 export interface DashboardMetrics {
   // BANT Metrics
   bant_qualification_rate: {
@@ -57,11 +68,37 @@ export class DashboardAnalyticsService {
    * from the given leads (meetings booked / total leads).
    */
   async getConversionRate(leads: Parameters<typeof conversionRateForLeads>[0]): Promise<number> {
+    return (await this.getLeadSummary(leads)).conversionRate;
+  }
+
+  /**
+   * The one source for leads, qualified, meetings and conversion of the selected
+   * project. Dashboard, sidebar Quick Stats, Reports and the Leads page all read it,
+   * so the numbers agree everywhere. Demo mode reports the sample project figures
+   * (the lead table holds a sample of them); otherwise they come from the given leads.
+   */
+  async getLeadSummary(leads: Parameters<typeof conversionRateForLeads>[0]): Promise<LeadSummary> {
     if (import.meta.env.VITE_DEMO_MODE === 'true') {
       const metrics = await this.getDashboardMetrics();
-      return metrics.meeting_pipeline.conversion_rate;
+      const total = metrics.lead_temperature_distribution.total;
+      const meetings = metrics.meeting_pipeline.total_meetings;
+      return {
+        leads: total,
+        contacted: metrics.first_message_rate.contacted_count,
+        qualified: metrics.bant_qualification_rate.qualified_count,
+        meetings,
+        hot: metrics.lead_temperature_distribution.hot + metrics.lead_temperature_distribution.burning,
+        conversionRate: calcConversionRate(meetings, total),
+      };
     }
-    return conversionRateForLeads(leads);
+    const meetings = leads.filter(isMeetingBooked).length;
+    return {
+      leads: leads.length,
+      contacted: leads.filter((l) => l.status?.toLowerCase() !== 'new').length,
+      qualified: leads.filter((l) => l.status?.toLowerCase() === 'qualified' || l.state === 'qualified').length,
+      meetings,
+      conversionRate: conversionRateForLeads(leads),
+    };
   }
 
   /**

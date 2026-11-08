@@ -1,6 +1,6 @@
 {
-  "title": "Lead Management Dashboard",
-  "subtitle": "Manage and track your leads with real-time updates",
+  "title": "Leads",
+  "subtitle": "Search, filter and open a lead to see its BANT score and conversation",
   "loading": "Loading dashboard data...",
   "stats": {
     "totalLeads": "Total Leads",
@@ -10,7 +10,11 @@
     "hotLeads": "Hot Leads",
     "hotLeadsDesc": "High priority leads",
     "conversionRate": "Conversion Rate",
-    "conversionRateDesc": "Success conversion percentage"
+    "conversionRateDesc": "Success conversion percentage",
+    "qualified": "Qualified",
+    "qualifiedDesc": "BANT qualified",
+    "meetingsBooked": "{{count}} meetings booked",
+    "sampleShown": "Showing {{shown}} sample leads"
   },
   "status": "Status & Temperature",
   "actions": {
@@ -107,5 +111,10 @@
   "contactInfo": "Contact Information",
   "notAvailable": "N/A",
   "lastMessage": "Last Message",
-  "notes": "Notes"
+  "notes": "Notes",
+  "connection": {
+    "live": "Live",
+    "liveDemo": "Live demo",
+    "offline": "Offline"
+  }
 }

@@ -1,5 +1,5 @@
 import React, { useState, Suspense, useEffect } from "react";
-import { dashboardAnalyticsService } from "@/services/dashboardAnalyticsService";
+import { useLeadSummary } from "@/hooks/useLeadSummary";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
@@ -345,16 +345,8 @@ const Reports = () => {
     retryCount: 0,
   });
 
-  const [conversionRate, setConversionRate] = useState(0);
-  useEffect(() => {
-    let active = true;
-    dashboardAnalyticsService
-      .getConversionRate(realData.leads)
-      .then((rate) => active && setConversionRate(rate));
-    return () => {
-      active = false;
-    };
-  }, [realData.leads]);
+  const summary = useLeadSummary(realData.leads);
+  const conversionRate = summary?.conversionRate ?? 0;
 
   const { currentProject } = useProject();
   const { user } = useAuth();
@@ -383,7 +375,7 @@ const Reports = () => {
     loadRealData();
   }, [currentProject, user]);
 
-  const loadRealData = async () => {
+  const loadRealData = async (notify = false) => {
     try {
       setRealData((prev) => ({
         ...prev,
@@ -447,10 +439,7 @@ const Reports = () => {
           retryCount: realData.retryCount + 1,
         });
 
-        toast.success(
-          `Reports loaded with sample data: ${staticFallbackData.leads.length} leads analyzed`,
-          { description: "Using sample data for demonstration" }
-        );
+        if (notify) toast.success("Reports refreshed with sample data");
         return;
       }
 
@@ -466,9 +455,7 @@ const Reports = () => {
         retryCount: realData.retryCount + 1,
       });
 
-      toast.success(
-        `Reports updated with sample data: ${leads.length} leads analyzed`,
-      );
+      if (notify) toast.success("Reports refreshed with sample data");
     } catch (error) {
       console.error("ERROR Error loading real data for reports:", error);
 
@@ -575,6 +562,16 @@ const Reports = () => {
   // FIXED: Generate real lead funnel data using proper database mappings
   const generateFunnelData = () => {
     const { leads } = getFilteredData();
+
+    // Demo: the funnel reads the same project figures as the dashboard
+    if (summary && import.meta.env.VITE_DEMO_MODE === "true") {
+      return [
+        { name: "Total Leads", count: summary.leads, color: statusColors.new },
+        { name: "Contacted", count: summary.contacted, color: statusColors.contacted },
+        { name: "Qualified", count: summary.qualified, color: statusColors.interested },
+        { name: "Meeting Scheduled", count: summary.meetings, color: statusColors.meeting },
+      ];
+    }
 
     if (!leads || !Array.isArray(leads) || !leads.length) {
       return [{ name: "No Data", count: 0, color: "#8E9196" }];
@@ -1268,7 +1265,7 @@ For detailed analysis, please access the dashboard at: ${window.location.origin}
           {!realData.loading && (
             <div className="flex items-center gap-2 text-sm text-muted-foreground">
               <TrendingUp className="h-4 w-4 text-green-600" />
-              {realData.leads.length} {t('pages:reports.leadsAnalyzed', 'leads analyzed')}
+              {summary?.leads ?? realData.leads.length} {t('pages:reports.leadsAnalyzed', 'leads analyzed')}
               {currentProject && currentProject.id !== "all" && (
                 <span className="text-blue-600">• {currentProject.name}</span>
               )}
@@ -1320,7 +1317,7 @@ For detailed analysis, please access the dashboard at: ${window.location.origin}
           {/* Action buttons */}
           <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-3">
             <Button
-              onClick={() => loadRealData()}
+              onClick={() => loadRealData(true)}
               variant="outline"
               disabled={realData.loading}
               className="w-full sm:w-auto h-10"
@@ -1434,7 +1431,7 @@ For detailed analysis, please access the dashboard at: ${window.location.origin}
       <Card className="grid grid-cols-2 lg:grid-cols-4 [&>*]:border-border max-lg:[&>*:nth-child(n+3)]:border-t max-lg:[&>*:nth-child(even)]:border-s lg:[&>*+*]:border-s">
         <ModernStatsCard
           title="Total Leads"
-          value={realData.leads.length}
+          value={summary?.leads ?? realData.leads.length}
           description="Active prospects"
           icon={Target}
           color="blue"
@@ -1443,9 +1440,7 @@ For detailed analysis, please access the dashboard at: ${window.location.origin}
         />
         <ModernStatsCard
           title="Qualified Leads" 
-          value={realData.leads.filter(l => 
-            l.bant_status && ['partially_qualified', 'fully_qualified', 'need_qualified'].includes(l.bant_status)
-          ).length}
+          value={summary?.qualified ?? 0}
           description="BANT qualified prospects"
           icon={Activity}
           color="green"
@@ -1455,7 +1450,7 @@ For detailed analysis, please access the dashboard at: ${window.location.origin}
         <ModernStatsCard
           title="Conversion Rate"
           value={`${conversionRate}%`}
-          description="Leads with a meeting booked"
+          description={summary ? `${summary.meetings} meetings booked` : "Leads with a meeting booked"}
           icon={TrendingUp}
           color="purple"
           isLoading={realData.loading}

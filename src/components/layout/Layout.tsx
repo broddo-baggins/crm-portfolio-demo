@@ -83,19 +83,8 @@ const LayoutContent = () => {
     const checkPendingUsers = async () => {
       if (user?.role === "ADMIN" || user?.role === "SUPER_ADMIN") {
         try {
-          // In a real implementation, this would make an API call to get pending users
-          // For demo, we'll simulate this with a timeout and random number
-          setTimeout(() => {
-            // Demo: Random number between 0 and 5
-            const randomPending = Math.floor(Math.random() * 6);
-            setPendingUsers(randomPending);
-
-            if (randomPending > 0) {
-              toast.info(
-                `You have ${randomPending} pending user registration(s) to review.`,
-              );
-            }
-          }, 3000);
+          // Demo: a fixed count in the bell. Visitors of the demo get no admin toast on load.
+          setTimeout(() => setPendingUsers(2), 1500);
 
           // In production this would be:
           // const response = await fetch('/api/auth/pending-users', {

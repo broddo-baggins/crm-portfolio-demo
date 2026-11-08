@@ -444,7 +444,7 @@ function App() {
                           </Routes>
                         </Suspense>
                       </div>
-                      <Toaster />
+                      <Toaster offset={{ bottom: "calc(var(--cookie-bar-h, 0px) + 16px)", right: 16 }} mobileOffset={{ bottom: "calc(var(--cookie-bar-h, 0px) + 72px)", left: 16, right: 16 }} />
                       <ShadcnToaster />
                       {showLogoutBanner && (
                         <DemoLogoutBanner onDismiss={() => setShowLogoutBanner(false)} />

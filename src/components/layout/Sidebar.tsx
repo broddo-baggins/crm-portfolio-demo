@@ -63,7 +63,7 @@ const Sidebar = ({ onNavigate, collapsed: collapsedProp, onToggleCollapsed }: Si
       }
 
       // ENHANCED: Check localStorage cache first for faster loading
-      const cacheKey = `quick-stats-${currentProject?.id || 'all'}-${user.id}`;
+      const cacheKey = `quick-stats-v2-${currentProject?.id || 'all'}-${user.id}`;
       const cachedData = localStorage.getItem(cacheKey);
       const cacheTime = localStorage.getItem(`${cacheKey}-timestamp`);
       const now = Date.now();
@@ -146,10 +146,11 @@ const Sidebar = ({ onNavigate, collapsed: collapsedProp, onToggleCollapsed }: Si
         // Debug logging for Active Chats calculation (removed for production)
 
         // Calculate conversion rate
-        const conversionRate = await dashboardAnalyticsService.getConversionRate(projectLeads);
+        const summary = await dashboardAnalyticsService.getLeadSummary(projectLeads);
+        const conversionRate = summary.conversionRate;
 
         const newStats = {
-          leadsCount: projectLeads.length,
+          leadsCount: summary.leads,
           activeChats: uniqueActiveConversations.length,
           conversionRate,
           loading: false,

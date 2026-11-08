@@ -1,6 +1,6 @@
 {
-  "title": "לוח ניהול לידים",
-  "subtitle": "נהל ועקוב אחר הלידים שלך עם עדכונים בזמן אמת",
+  "title": "לידים",
+  "subtitle": "חפשו, סננו ופתחו ליד כדי לראות את ציון ה-BANT והשיחה",
   "loading": "טוען נתוני לוח הבקרה...",
   "stats": {
     "totalLeads": "סך הכל לידים",
@@ -14,8 +14,11 @@
     "total": "סה\"כ לידים",
     "new": "חדשים",
     "contacted": "נוצר קשר",
-    "qualified": "מוכשרים",
-    "converted": "הומרו"
+    "qualified": "מוסמכים",
+    "converted": "הומרו",
+    "qualifiedDesc": "מוסמכי BANT",
+    "meetingsBooked": "{{count}} פגישות נקבעו",
+    "sampleShown": "מוצגים {{shown}} לידים לדוגמה"
   },
   "status": "סטטוס וטמפרטורה",
   "actions": {
@@ -150,5 +153,10 @@
   "contactInfo": "פרטי קשר",
   "notAvailable": "לא זמין",
   "lastMessage": "הודעה אחרונה",
-  "notes": "הערות"
+  "notes": "הערות",
+  "connection": {
+    "live": "חי",
+    "liveDemo": "הדגמה חיה",
+    "offline": "לא מקוון"
+  }
 }

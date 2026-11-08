@@ -28,6 +28,7 @@ import { Separator } from "@/components/ui/separator";
 import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
 import { useLang } from "@/hooks/useLang";
+import { useLeadSummary } from "@/hooks/useLeadSummary";
 import { useProject } from "@/context/ProjectContext";
 import { useProjectDataRefresh } from "@/hooks/useProjectDataRefresh";
 import { simpleProjectService } from "@/services/simpleProjectService";
@@ -827,6 +828,8 @@ export const LeadManagementDashboard: React.FC = () => {
     }
   };
 
+  const summary = useLeadSummary(leads);
+
   const calculateStats = useCallback(() => {
     const now = new Date();
     const stats: DashboardStats = {
@@ -1227,12 +1230,12 @@ export const LeadManagementDashboard: React.FC = () => {
       <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
         <div className={textStart()}>
           <h1 className="text-2xl font-semibold leading-8 tracking-[-0.02em] text-foreground">
-            {t("pages.leads.leadManagementDashboard", "Lead Management Dashboard")}
+            {t("title", "Leads")}
           </h1>
           <p className="mt-1 text-sm text-muted-foreground">
             {t(
-              "pages.leads.manageAndTrackLeads",
-              "Manage and track your leads with real-time updates",
+              "subtitle",
+              "Search, filter and open a lead to see its BANT score and conversation",
             )}
           </p>
         </div>
@@ -1243,15 +1246,15 @@ export const LeadManagementDashboard: React.FC = () => {
             className="inline-flex h-8 items-center gap-1.5 rounded-full border border-border bg-surface px-3 text-xs font-medium text-subtle"
             role="status"
           >
-            {isRealTimeConnected ? (
+            {isRealTimeConnected || import.meta.env.VITE_DEMO_MODE === "true" ? (
               <>
                 <span className="h-1.5 w-1.5 rounded-full bg-moss-500" aria-hidden="true" />
-                {t("leads.status.live", "Live")}
+                {import.meta.env.VITE_DEMO_MODE === "true" ? t("connection.liveDemo", "Live demo") : t("connection.live", "Live")}
               </>
             ) : (
               <>
                 <XCircle className="h-3.5 w-3.5 text-muted-foreground" aria-hidden="true" />
-                {t("leads.status.offline", "Offline")}
+                {t("connection.offline", "Offline")}
               </>
             )}
             <span className="text-muted-foreground">·</span>
@@ -1287,10 +1290,10 @@ export const LeadManagementDashboard: React.FC = () => {
       {/* Stats: one strip, hairline dividers, mono figures */}
       <Card className="grid grid-cols-2 lg:grid-cols-4 [&>*]:border-border max-lg:[&>*:nth-child(n+3)]:border-t max-lg:[&>*:nth-child(even)]:border-s lg:[&>*+*]:border-s">
         {[
-          { label: t("pages.leads.totalLeads", "Total Leads"), value: dashboardStats.totalLeads, note: t("pages.leadManagement.allLeadsInSystem", "All leads in the system") },
-          { label: t("pages.leads.newLeads", "New Leads"), value: dashboardStats.newLeads, note: t("pages.leadManagement.requiresAttention", "Requires attention") },
-          { label: t("pages.leads.hotLeads", "Hot Leads"), value: dashboardStats.hotLeads, note: t("pages.leadManagement.highPriorityLeads", "High priority leads"), hot: true },
-          { label: t("pages.leads.conversionRate", "Conversion Rate"), value: `${dashboardStats.conversionRate.toFixed(1)}%`, note: t("widgets.conversionsCompleted.conversionRate", "Conversion rate") },
+          { label: t("pages.leads.totalLeads", "Total Leads"), value: summary?.leads ?? dashboardStats.totalLeads, note: t("pages.leadManagement.allLeadsInSystem", "All leads in the system") },
+          { label: t("stats.qualified", "Qualified"), value: summary?.qualified ?? dashboardStats.convertedLeads, note: t("stats.qualifiedDesc", "BANT qualified") },
+          { label: t("pages.leads.hotLeads", "Hot Leads"), value: summary?.hot ?? dashboardStats.hotLeads, note: t("pages.leadManagement.highPriorityLeads", "High priority leads"), hot: true },
+          { label: t("pages.leads.conversionRate", "Conversion Rate"), value: `${summary?.conversionRate ?? 0}%`, note: summary ? t("stats.meetingsBooked", "{{count}} meetings booked", { count: summary.meetings }) : t("widgets.conversionsCompleted.conversionRate", "Conversion rate") },
         ].map(({ label, value, note, hot }) => (
           <div key={label} className="px-4 py-3 md:px-5">
             <p className={cn("text-[13px] font-medium text-subtle", textStart())}>{label}</p>
@@ -1452,7 +1455,12 @@ export const LeadManagementDashboard: React.FC = () => {
               <div className={cn("flex items-center justify-between", isRTL ? "flex-row-reverse" : "flex-row")}>
                 <CardTitle className={cn("flex items-center gap-2", isRTL ? "flex-row-reverse" : "flex-row")}>
                   <Users className="h-5 w-5" />
-                  {t("pages.leads.leadsTable", "Leads")} ({filteredLeads.length})
+                  {t("pages.leads.leadsTable", "Leads")} ({filteredLeads.length === leads.length && summary ? summary.leads : filteredLeads.length})
+                  {filteredLeads.length === leads.length && summary && summary.leads > leads.length && (
+                    <span className="text-sm font-normal text-muted-foreground">
+                      {t("stats.sampleShown", "Showing {{shown}} sample leads", { shown: leads.length })}
+                    </span>
+                  )}
                 </CardTitle>
                 
                 {/* HubSpot-style Bulk Action Controls */}

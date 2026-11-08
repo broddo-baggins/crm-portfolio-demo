@@ -371,11 +371,12 @@ const TopBar = ({ pendingUserCount = 0, onOpenNav, onOpenSearch }: TopBarProps) 
           onClick={onOpenSearch}
           aria-keyshortcuts="Control+K Meta+K"
           data-testid="search-trigger"
-          className="hidden h-9 min-w-0 max-w-[420px] flex-1 items-center gap-2 rounded-md border border-input bg-surface-sunken px-3 text-sm text-muted-foreground transition-colors duration-[120ms] hover:border-ink-300 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring md:flex"
+          className="hidden h-9 min-w-0 max-w-[420px] flex-1 items-center gap-2 rounded-md border border-input bg-surface-sunken px-3 text-sm text-muted-foreground transition-colors duration-[120ms] hover:border-ink-300 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring md:flex max-xl:w-9 max-xl:flex-none max-xl:justify-center max-xl:px-0"
+          aria-label="Search pages, leads, projects"
         >
           <Search className="h-4 w-4 shrink-0" aria-hidden="true" />
-          <span className="truncate">Search pages, leads, projects</span>
-          <span className="ms-auto flex shrink-0 gap-0.5" dir="ltr" aria-hidden="true">
+          <span className="truncate max-xl:hidden">Search pages, leads, projects</span>
+          <span className="ms-auto hidden shrink-0 gap-0.5 xl:flex" dir="ltr" aria-hidden="true">
             <Kbd>{typeof navigator !== "undefined" && /Mac/.test(navigator.platform) ? "⌘" : "Ctrl"}</Kbd>
             <Kbd>K</Kbd>
           </span>

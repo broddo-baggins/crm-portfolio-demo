@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Link } from "react-router";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -22,6 +22,7 @@ const CookieConsent = () => {
   const { t } = useTranslation('common');
     const [showConsent, setShowConsent] = useState(false);
   const [showDetails, setShowDetails] = useState(false);
+  const barRef = useRef<HTMLDivElement>(null);
   const [consent, setConsent] = useState<ConsentOptions>({
     essential: true, // Essential cookies are always required
     analytics: false,
@@ -53,6 +54,24 @@ const CookieConsent = () => {
       }
     }
   }, []);
+
+  // Publish the bar's height so toasts stack above it instead of covering Decline and Accept
+  useEffect(() => {
+    const root = document.documentElement;
+    const bar = barRef.current;
+    if (!showConsent || !bar) {
+      root.style.removeProperty("--cookie-bar-h");
+      return;
+    }
+    const publish = () => root.style.setProperty("--cookie-bar-h", `${bar.offsetHeight}px`);
+    publish();
+    const observer = new ResizeObserver(publish);
+    observer.observe(bar);
+    return () => {
+      observer.disconnect();
+      root.style.removeProperty("--cookie-bar-h");
+    };
+  }, [showConsent, showDetails]);
 
   const saveConsent = async (options: ConsentOptions) => {
     try {
@@ -158,6 +177,7 @@ const CookieConsent = () => {
 
   return (
     <div
+      ref={barRef}
       className="fixed inset-x-0 bottom-0 z-50 border-t border-border bg-popover shadow-float"
       data-testid="cookie-consent"
       role="region"
