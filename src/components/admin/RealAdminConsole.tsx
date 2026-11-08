@@ -636,7 +636,6 @@ function RealAdminConsole({ adminLevel }: AdminConsoleProps) {
         {/* Clients Tab (System Admin Only) */}
         {currentAdminLevel === 'system_admin' && (
           <TabsContent value="clients" className="space-y-6">
-            {console.log('SEARCH [AdminConsole] Rendering Clients tab')}
             <AdminDataTable
               title="Clients"
               data={clients}
@@ -729,7 +728,6 @@ function RealAdminConsole({ adminLevel }: AdminConsoleProps) {
 
         {/* Users Tab */}
         <TabsContent value="users" className="space-y-6">
-          {console.log('SEARCH [AdminConsole] Rendering Users tab')}
           <AdminDataTable
             title="Users"
             data={users}

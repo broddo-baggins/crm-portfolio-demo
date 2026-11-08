@@ -120,6 +120,8 @@ export const env = {
 
   // Debug info (without service role references)
   get debugInfo() {
+    // Configuration presence is for local debugging only: nothing ships in the production bundle
+    if (!import.meta.env.DEV) return null;
     return {
       hasSupabaseUrl: !!this.SUPABASE_URL,
       hasAnonKey: !!this.SUPABASE_ANON_KEY,

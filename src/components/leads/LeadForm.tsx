@@ -338,7 +338,7 @@ export const LeadForm = ({ open, onClose, onSuccess, lead }: LeadFormProps) => {
           description: 'All changes have been saved',
           action: {
             label: 'View',
-            onClick: () => console.log('View lead:', lead.id)
+            onClick: () => undefined
           }
         });
       } else {
@@ -388,7 +388,7 @@ export const LeadForm = ({ open, onClose, onSuccess, lead }: LeadFormProps) => {
           description: `New lead ${formData.first_name} ${formData.last_name} has been added`,
           action: {
             label: 'View',
-            onClick: () => console.log('View new lead:', data.id)
+            onClick: () => undefined
           }
         });
       }

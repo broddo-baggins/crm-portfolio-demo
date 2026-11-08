@@ -305,7 +305,7 @@ export async function queryAgent(
     const isJson = res.headers.get('content-type')?.includes('application/json');
     if (res.status === 503 || res.status === 404 || !isJson) {
       // 503: no AI keys configured; 404 or HTML: no functions (e.g. vite dev/preview)
-      console.warn('AI backend not available, using mock responses with RAG');
+      console.warn('AI backend not available, using sample responses with RAG');
       aiBackendAvailable = false;
       return mockFallback();
     }
@@ -322,7 +322,7 @@ export async function queryAgent(
     }
     return text;
   } catch (error) {
-    console.warn('📋 AI assistant failed, using mock responses', error);
+    console.warn('📋 AI assistant failed, using sample responses', error);
     return mockFallback(
       `⚠️ **AI Temporarily Unavailable**\n\nBoth Gemini and Groq AI services are currently unavailable. Here's a mock response:\n\n`
     );

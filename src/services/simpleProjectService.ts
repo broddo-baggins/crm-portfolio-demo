@@ -670,7 +670,7 @@ export class SimpleProjectService {
       }
 
       // For other errors, return mock data
-      console.error("Returning mock leads due to error");
+      console.error("Returning sample leads due to error");
       return mockDataService.getMockLeads();
     }
   }

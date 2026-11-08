@@ -62,6 +62,12 @@ export default defineConfig(({ mode }) => {
       reportCompressedSize: false,
       chunkSizeWarningLimit: 1500,
       rolldownOptions: {
+        // Production only: calls to console.log/info/debug/trace are dropped so a visitor's
+        // devtools stays quiet. console.warn and console.error stay.
+        treeshake:
+          mode === "production"
+            ? { manualPureFunctions: ["console.log", "console.info", "console.debug", "console.trace"] }
+            : undefined,
         output: {
           codeSplitting: {
             groups: [
