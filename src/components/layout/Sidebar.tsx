@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { dashboardAnalyticsService } from "@/services/dashboardAnalyticsService";
 import { NavLink } from "react-router";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -136,20 +137,7 @@ const Sidebar = ({ onNavigate }: SidebarProps = {}) => {
         // Debug logging for Active Chats calculation (removed for production)
 
         // Calculate conversion rate
-        const convertedLeads = projectLeads.filter((lead) =>
-          ["converted", "closed_won", "won"].includes(
-            typeof lead.status === 'string' ? lead.status.toLowerCase() : '',
-          ),
-        );
-        let conversionRate =
-          projectLeads.length > 0
-            ? Math.round((convertedLeads.length / projectLeads.length) * 100)
-            : 0;
-        
-        // Demo fallback: if conversion rate is 0, show a realistic rate
-        if (conversionRate === 0 && projectLeads.length > 0) {
-          conversionRate = 28; // Realistic 28% conversion rate for demo
-        }
+        const conversionRate = await dashboardAnalyticsService.getConversionRate(projectLeads);
 
         const newStats = {
           leadsCount: projectLeads.length,

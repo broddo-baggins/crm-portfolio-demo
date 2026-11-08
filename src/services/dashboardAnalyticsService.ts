@@ -5,6 +5,7 @@
  * meeting pipeline, and conversation metrics using existing database structure
  */
 
+import { calcConversionRate, conversionRateForLeads, isMeetingBooked } from "@/utils/conversionRate";
 import { supabase } from "@/integrations/supabase/client";
 import { ServiceErrorHandler } from "./base/errorHandler";
 import { mockApi } from '@/data/mockData';
@@ -51,6 +52,19 @@ export interface DashboardMetrics {
 
 export class DashboardAnalyticsService {
   /**
+   * Conversion rate shown on the dashboard, Reports and sidebar.
+   * Demo mode reports the sample analytics figure; otherwise it is computed
+   * from the given leads (meetings booked / total leads).
+   */
+  async getConversionRate(leads: Parameters<typeof conversionRateForLeads>[0]): Promise<number> {
+    if (import.meta.env.VITE_DEMO_MODE === 'true') {
+      const metrics = await this.getDashboardMetrics();
+      return metrics.meeting_pipeline.conversion_rate;
+    }
+    return conversionRateForLeads(leads);
+  }
+
+  /**
    * Get comprehensive dashboard metrics
    */
   async getDashboardMetrics(projectId?: string): Promise<DashboardMetrics> {
@@ -81,7 +95,7 @@ export class DashboardAnalyticsService {
         meeting_pipeline: {
           total_meetings: 34,
           meetings_this_week: 8,
-          conversion_rate: 36,
+          conversion_rate: calcConversionRate(34, 247),
           trend_weekly: 15.5
         },
         calculation_timestamp: new Date().toISOString(),
@@ -484,41 +498,23 @@ export class DashboardAnalyticsService {
     // Use ALL leads for the project, not just last 30 days
     const currentLeads = leads || [];
 
-    // Meeting indicators
-    const meetingStatuses = ["Demo Scheduled", "Proposal Sent", "Negotiation"];
-    const meetingStates = ["qualified_for_meeting", "meeting_set"];
-
-    const totalMeetings = currentLeads.filter(
-      (lead) =>
-        lead.requires_human_review ||
-        meetingStatuses.includes(lead.status) ||
-        meetingStates.includes(lead.state),
-    ).length;
+    const totalMeetings = currentLeads.filter(isMeetingBooked).length;
 
     // This week's meetings
     const oneWeekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
     const thisWeekMeetings = currentLeads.filter((lead) => {
-      const isRecentMeeting =
-        lead.requires_human_review ||
-        meetingStatuses.includes(lead.status) ||
-        meetingStates.includes(lead.state);
+      const isRecentMeeting = isMeetingBooked(lead);
       const isThisWeek = new Date(lead.updated_at) >= oneWeekAgo;
       return isRecentMeeting && isThisWeek;
     }).length;
 
     // Conversion rate (meetings / total leads)
-    const conversionRate =
-      currentLeads.length > 0
-        ? Math.round((totalMeetings / currentLeads.length) * 100)
-        : 0;
+    const conversionRate = calcConversionRate(totalMeetings, currentLeads.length);
 
     // Weekly trend
     const previousWeek = new Date(Date.now() - 14 * 24 * 60 * 60 * 1000);
     const previousWeekMeetings = currentLeads.filter((lead) => {
-      const isRecentMeeting =
-        lead.requires_human_review ||
-        meetingStatuses.includes(lead.status) ||
-        meetingStates.includes(lead.state);
+      const isRecentMeeting = isMeetingBooked(lead);
       const isPreviousWeek =
         new Date(lead.updated_at) >= previousWeek &&
         new Date(lead.updated_at) < oneWeekAgo;

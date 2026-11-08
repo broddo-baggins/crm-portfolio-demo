@@ -1426,7 +1426,7 @@ export const mockAnalytics = {
     meetings_scheduled: 34,
     response_rate: 70,
     avg_response_time: '2.5 hours',
-    conversion_rate: 36
+    conversion_rate: 14 // 34 meetings / 247 leads
   },
   monthly_trends: [
     { month: 'Jul', leads: 45, qualified: 18, meetings: 7 },

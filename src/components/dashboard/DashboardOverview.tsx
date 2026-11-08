@@ -402,7 +402,7 @@ const DashboardOverview: React.FC<DashboardOverviewProps> = ({
             ) : (
               <div className="overflow-x-auto">
                 <table
-                  className="w-full min-w-[560px] text-sm"
+                  className="w-full min-w-[360px] text-sm"
                   data-testid="hot-leads-table"
                 >
                   <thead className="bg-surface-sunken text-start text-xs text-muted-foreground">
@@ -427,7 +427,7 @@ const DashboardOverview: React.FC<DashboardOverviewProps> = ({
                       </th>
                       <th
                         scope="col"
-                        className="px-5 py-2 text-start font-medium"
+                        className="hidden px-5 py-2 text-start font-medium 2xl:table-cell"
                       >
                         Next step
                       </th>
@@ -452,12 +452,14 @@ const DashboardOverview: React.FC<DashboardOverviewProps> = ({
                           </Badge>
                         </td>
                         <td
-                          className="max-w-[280px] truncate px-3 py-2.5 text-secondary-foreground"
+                          className="px-3 py-2.5 text-secondary-foreground"
                           title={l.notes}
                         >
-                          {l.notes || "No messages yet"}
+                          <span className="line-clamp-2 min-w-[160px] max-w-[320px] break-words">
+                            {l.notes || "No messages yet"}
+                          </span>
                         </td>
-                        <td className="whitespace-nowrap px-5 py-2.5 text-secondary-foreground">
+                        <td className="hidden whitespace-nowrap px-5 py-2.5 text-secondary-foreground 2xl:table-cell">
                           {stateLabel(l.state) || "Follow up"}
                           {l.next_followup && (
                             <span className="text-muted-foreground">{` · ${formatShort(l.next_followup)}`}</span>

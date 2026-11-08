@@ -1,4 +1,5 @@
 import React, { useState, Suspense, useEffect } from "react";
+import { dashboardAnalyticsService } from "@/services/dashboardAnalyticsService";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
@@ -343,6 +344,17 @@ const Reports = () => {
     lastAttempt: null,
     retryCount: 0,
   });
+
+  const [conversionRate, setConversionRate] = useState(0);
+  useEffect(() => {
+    let active = true;
+    dashboardAnalyticsService
+      .getConversionRate(realData.leads)
+      .then((rate) => active && setConversionRate(rate));
+    return () => {
+      active = false;
+    };
+  }, [realData.leads]);
 
   const { currentProject } = useProject();
   const { user } = useAuth();
@@ -1442,8 +1454,8 @@ For detailed analysis, please access the dashboard at: ${window.location.origin}
         />
         <ModernStatsCard
           title="Conversion Rate"
-          value={`${realData.leads.length > 0 ? ((realData.leads.filter(l => l.status === "CLOSED_WON").length / realData.leads.length) * 100).toFixed(1) : "0"}%`}
-          description="Lead to customer"
+          value={`${conversionRate}%`}
+          description="Leads with a meeting booked"
           icon={TrendingUp}
           color="purple"
           isLoading={realData.loading}
